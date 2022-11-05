@@ -1,0 +1,24 @@
+{
+  "env": {
+    "browser": true,
+    "es2021": true
+  },
+  "extends": ["eslint:recommended", "plugin:react/recommended", "plugin:prettier/recommended"],
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true
+    },
+    "ecmaVersion": 12,
+    "sourceType": "module"
+  },
+  "plugins": ["import", "react"],
+  "rules": {
+    "eqeqeq": "warn",
+    "no-console": "warn",
+    "import/extensions": ["error", { "js": "ignorePackages" }],
+    "prefer-destructuring": ["warn", { "object": true, "array": false }],
+    "import/newline-after-import": ["warn", { "count": 1 }],
+    "react/react-in-jsx-scope": "off",
+    "prettier/prettier": "error"
+  }
+}
