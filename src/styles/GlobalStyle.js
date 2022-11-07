@@ -4,14 +4,13 @@ import { reset } from "styled-reset";
 const GlobalStyle = createGlobalStyle`
     ${reset}
     body {
-      background-color: var(--color-0);
-      font-family: "Roboto", Sans-Serif;
+      background-color: #F6F5FC;
+      font-family: 'CircularStd-Medium', sans-serif;
       width: 100%;
       max-width: 100vw;
-      height: 100%;
     }
     *{
-      font-family: "Roboto", Sans-Serif;
+      font-family:'CircularStd-Medium', sans-serif;
       box-sizing: border-box;
     }
 `;
