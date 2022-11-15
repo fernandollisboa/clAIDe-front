@@ -7,7 +7,7 @@ import logoLsd from "../../assets/foto_lsd.svg";
 import arrow from "../../assets/arrow.svg";
 import { Link } from "react-router-dom";
 
-export default function ProjectForm({ typeLabel, buttonLabel }) {
+export default function ProjectForm({ onSubmit, typeLabel, buttonLabel }) {
   const [name, setName] = useState("");
   const [creationDate, setCreationDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -37,12 +37,25 @@ export default function ProjectForm({ typeLabel, buttonLabel }) {
   function handleChangeFinancier(event) {
     setFinancier(event.target.value);
   }
+  async function handleSubmit(event) {
+    event.preventDefault();
+
+    await onSubmit({
+      name,
+      creationDate,
+      endDate,
+      room,
+      building,
+      embrapiiCode,
+      financier,
+    });
+  }
   return (
     <Container>
       <div className="logo">
         <img src={logoLsd} alt="Logo lsd" width="345" />
       </div>
-      <Form>
+      <Form onSubmit={handleSubmit}>
         <Header>
           <Link to="/">
             <img src={arrow} alt="voltars" />
@@ -55,6 +68,7 @@ export default function ProjectForm({ typeLabel, buttonLabel }) {
           placeholder="Data de criação"
           value={creationDate}
           onChange={handleChangeCreationDate}
+          datatype="dd/mm/yyyy"
         />
         <Input placeholder="Data de término" value={endDate} onChange={handleChangeEndDate} />
         <Input placeholder="Sala" value={room} onChange={handleChangeRoom} />
@@ -65,15 +79,15 @@ export default function ProjectForm({ typeLabel, buttonLabel }) {
           onChange={handleChangeEmbrapiiCode}
         />
         <Input placeholder="Financeiro" value={financier} onChange={handleChangeFinancier} />
-        <Button>{buttonLabel}</Button>
+        <Button type="submit">{buttonLabel}</Button>
       </Form>
-      <Footer />
     </Container>
   );
 }
 ProjectForm.propTypes = {
   buttonLabel: PropTypes.string.isRequired,
   typeLabel: PropTypes.string.isRequired,
+  onSubmit: PropTypes.func.isRequired,
 };
 const Container = styled.div`
   width: 100%;
@@ -110,9 +124,4 @@ const Header = styled.div`
     font-weight: bold;
     margin-bottom: 15px;
   }
-`;
-const Footer = styled.div`
-  width: 100%;
-  height: 100px1;
-  background: blue;
 `;
