@@ -1,9 +1,9 @@
 import PropTypes from "prop-types";
 import styled from "styled-components";
 
-export default function Button({ type, children, onClick }) {
+export default function Button({ type, children, onClick, disabled }) {
   return (
-    <ButtonStyle type={type} onClick={onClick}>
+    <ButtonStyle type={type} onClick={onClick} disabled={disabled}>
       {children}
     </ButtonStyle>
   );
@@ -12,6 +12,7 @@ Button.propTypes = {
   type: PropTypes.string,
   children: PropTypes.node.isRequired,
   onClick: PropTypes.func,
+  disabled: PropTypes.bool,
 };
 Button.defaultProps = {
   type: "button",
@@ -34,5 +35,9 @@ const ButtonStyle = styled.button`
   }
   &:active {
     background: #3346f0;
+  }
+  &[disabled] {
+    background: #ccc !important;
+    cursor: default !important;
   }
 `;

@@ -8,13 +8,12 @@ export default function NewProject() {
       const project = {
         name: formData.name,
         creationDate: formData.creationDate,
-        endDate: formData.endDate,
+        endDate: formData.endDate || null,
         room: formData.room,
         building: formData.building,
         embrapii_code: formData.embrapiiCode,
         financier: formData.financier,
       };
-      console.log(project);
       ProjectsService.create(project);
     } catch (err) {
       console.log(err);

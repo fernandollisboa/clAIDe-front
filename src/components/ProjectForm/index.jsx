@@ -6,6 +6,8 @@ import Button from "../Button";
 import logoLsd from "../../assets/foto_lsd.svg";
 import arrow from "../../assets/arrow.svg";
 import { Link } from "react-router-dom";
+import useErrors from "../../hooks/useErrors";
+import FormGroup from "../FormGroup";
 
 export default function ProjectForm({ onSubmit, typeLabel, buttonLabel }) {
   const [name, setName] = useState("");
@@ -15,12 +17,26 @@ export default function ProjectForm({ onSubmit, typeLabel, buttonLabel }) {
   const [building, setBuilding] = useState("");
   const [embrapiiCode, setEmbrapiiCode] = useState("");
   const [financier, setFinancier] = useState("");
+  const { setError, removeError, getErrorMessageByFieldName, errors } = useErrors();
+
+  const isFormValid = name && creationDate && errors.length === 0;
 
   function handleChangeName(event) {
     setName(event.target.value);
+
+    if (!event.target.value) {
+      setError({ field: "name", message: "Nome é obrigatório" });
+    } else {
+      removeError("name");
+    }
   }
   function handleChangeCreationDate(event) {
     setCreationDate(event.target.value);
+    if (!event.target.value) {
+      setError({ field: "creationDate", message: "Data de criação é obrigatório" });
+    } else {
+      removeError("creationDate");
+    }
   }
   function handleChangeEndDate(event) {
     setEndDate(event.target.value);
@@ -63,23 +79,39 @@ export default function ProjectForm({ onSubmit, typeLabel, buttonLabel }) {
           </Link>
           <h1>{typeLabel}</h1>
         </Header>
-        <Input placeholder="Nome" value={name} onChange={handleChangeName} />
-        <Input
-          placeholder="Data de criação"
-          value={creationDate}
-          onChange={handleChangeCreationDate}
-          datatype="dd/mm/yyyy"
-        />
-        <Input placeholder="Data de término" value={endDate} onChange={handleChangeEndDate} />
-        <Input placeholder="Sala" value={room} onChange={handleChangeRoom} />
-        <Input placeholder="Predio" value={building} onChange={handleChangeBuilding} />
-        <Input
-          placeholder="Codigo embrapii "
-          value={embrapiiCode}
-          onChange={handleChangeEmbrapiiCode}
-        />
-        <Input placeholder="Financeiro" value={financier} onChange={handleChangeFinancier} />
-        <Button type="submit">{buttonLabel}</Button>
+        <FormGroup error={getErrorMessageByFieldName("name")}>
+          <Input placeholder="Nome" value={name} onChange={handleChangeName} />
+        </FormGroup>
+        <FormGroup error={getErrorMessageByFieldName("creationDate")}>
+          <Input
+            placeholder="Data de criação"
+            value={creationDate}
+            onChange={handleChangeCreationDate}
+            datatype="dd/mm/yyyy"
+          />
+        </FormGroup>
+        <FormGroup>
+          <Input placeholder="Data de término" value={endDate} onChange={handleChangeEndDate} />
+        </FormGroup>
+        <FormGroup>
+          <Input placeholder="Sala" value={room} onChange={handleChangeRoom} />
+        </FormGroup>
+        <FormGroup>
+          <Input placeholder="Predio" value={building} onChange={handleChangeBuilding} />
+        </FormGroup>
+        <FormGroup>
+          <Input
+            placeholder="Codigo embrapii "
+            value={embrapiiCode}
+            onChange={handleChangeEmbrapiiCode}
+          />
+        </FormGroup>
+        <FormGroup>
+          <Input placeholder="Financeiro" value={financier} onChange={handleChangeFinancier} />
+        </FormGroup>
+        <Button type="submit" disabled={!isFormValid}>
+          {buttonLabel}
+        </Button>
       </Form>
     </Container>
   );
