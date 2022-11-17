@@ -3,11 +3,11 @@ import { useState } from "react";
 import PropTypes from "prop-types";
 import Input from "../Input";
 import Button from "../Button";
-import logoLsd from "../../assets/foto_lsd.svg";
 import arrow from "../../assets/arrow.svg";
 import { Link } from "react-router-dom";
 import useErrors from "../../hooks/useErrors";
 import FormGroup from "../FormGroup";
+import maskDate from "../../utils/maskDate";
 
 export default function ProjectForm({ onSubmit, typeLabel, buttonLabel }) {
   const [name, setName] = useState("");
@@ -20,7 +20,6 @@ export default function ProjectForm({ onSubmit, typeLabel, buttonLabel }) {
   const { setError, removeError, getErrorMessageByFieldName, errors } = useErrors();
 
   const isFormValid = name && creationDate && errors.length === 0;
-
   function handleChangeName(event) {
     setName(event.target.value);
 
@@ -31,7 +30,7 @@ export default function ProjectForm({ onSubmit, typeLabel, buttonLabel }) {
     }
   }
   function handleChangeCreationDate(event) {
-    setCreationDate(event.target.value);
+    setCreationDate(maskDate(event.target.value));
     if (!event.target.value) {
       setError({ field: "creationDate", message: "Data de criação é obrigatório" });
     } else {
@@ -39,7 +38,7 @@ export default function ProjectForm({ onSubmit, typeLabel, buttonLabel }) {
     }
   }
   function handleChangeEndDate(event) {
-    setEndDate(event.target.value);
+    setEndDate(maskDate(event.target.value));
   }
   function handleChangeRoom(event) {
     setRoom(event.target.value);
@@ -65,38 +64,38 @@ export default function ProjectForm({ onSubmit, typeLabel, buttonLabel }) {
       embrapiiCode,
       financier,
     });
+    setName("");
+    setCreationDate("");
+    setEndDate("");
+    setRoom("");
+    setBuilding("");
+    setEmbrapiiCode("");
+    setFinancier("");
   }
   return (
     <Container>
-      <div className="logo">
-        <img src={logoLsd} alt="Logo lsd" width="345" />
-      </div>
       <Form onSubmit={handleSubmit}>
-        <Header>
+        <Title>
           <Link to="/">
-            <img src={arrow} alt="voltars" />
+            <img src={arrow} alt="voltar" />
             <span>Voltar</span>
           </Link>
           <h1>{typeLabel}</h1>
-        </Header>
+        </Title>
         <FormGroup error={getErrorMessageByFieldName("name")}>
-          <Input placeholder="Nome" value={name} onChange={handleChangeName} />
+          <Input placeholder="Nome *" value={name} onChange={handleChangeName} />
         </FormGroup>
         <FormGroup error={getErrorMessageByFieldName("creationDate")}>
           <Input
-            placeholder="Data de criação"
+            placeholder="Data de criação *"
             value={creationDate}
             onChange={handleChangeCreationDate}
-            type="date"
+            type="text"
+            onfocus="(this.type='date')"
           />
         </FormGroup>
         <FormGroup>
-          <Input
-            placeholder="Data de término"
-            value={endDate}
-            onChange={handleChangeEndDate}
-            type="date"
-          />
+          <Input placeholder="Data de término" value={endDate} onChange={handleChangeEndDate} />
         </FormGroup>
         <FormGroup>
           <Input placeholder="Sala" value={room} onChange={handleChangeRoom} />
@@ -141,7 +140,7 @@ const Form = styled.form`
   max-width: 500px;
   margin: 0 auto;
 `;
-const Header = styled.div`
+const Title = styled.div`
   a {
     text-decoration: none;
     display: flex;
