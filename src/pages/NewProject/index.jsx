@@ -19,8 +19,6 @@ export default function NewProject() {
       alert("Formulario enviado");
     } catch (err) {
       alert("Ocorreu um erro ao enviar o formulario");
-
-      console.log(err);
     }
   }
   return (

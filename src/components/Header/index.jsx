@@ -8,7 +8,7 @@ export default function Header() {
     <Container>
       <img src={logo} alt="logo lsd" />
       <NavBar>
-        <Link to="/project">Membros</Link>
+        <Link to="/member">Membros</Link>
         <Link to="/teacher">Professores</Link>
         <Link to="/project">Projetos</Link>
       </NavBar>
