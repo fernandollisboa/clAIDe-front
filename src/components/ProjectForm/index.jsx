@@ -87,11 +87,16 @@ export default function ProjectForm({ onSubmit, typeLabel, buttonLabel }) {
             placeholder="Data de criação"
             value={creationDate}
             onChange={handleChangeCreationDate}
-            datatype="dd/mm/yyyy"
+            type="date"
           />
         </FormGroup>
         <FormGroup>
-          <Input placeholder="Data de término" value={endDate} onChange={handleChangeEndDate} />
+          <Input
+            placeholder="Data de término"
+            value={endDate}
+            onChange={handleChangeEndDate}
+            type="date"
+          />
         </FormGroup>
         <FormGroup>
           <Input placeholder="Sala" value={room} onChange={handleChangeRoom} />
