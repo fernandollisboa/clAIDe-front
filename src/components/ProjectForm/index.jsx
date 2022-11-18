@@ -1,12 +1,15 @@
+import PropTypes from "prop-types";
 import styled from "styled-components";
 import { useState } from "react";
-import PropTypes from "prop-types";
+import { Link } from "react-router-dom";
+
+import arrow from "../../assets/arrow.svg";
+
 import Input from "../Input";
 import Button from "../Button";
-import arrow from "../../assets/arrow.svg";
-import { Link } from "react-router-dom";
-import useErrors from "../../hooks/useErrors";
 import FormGroup from "../FormGroup";
+
+import useErrors from "../../hooks/useErrors";
 import maskDate from "../../utils/maskDate";
 
 export default function ProjectForm({ onSubmit, typeLabel, buttonLabel }) {
@@ -111,7 +114,7 @@ export default function ProjectForm({ onSubmit, typeLabel, buttonLabel }) {
           />
         </FormGroup>
         <FormGroup>
-          <Input placeholder="Financeiro" value={financier} onChange={handleChangeFinancier} />
+          <Input placeholder="Financiador" value={financier} onChange={handleChangeFinancier} />
         </FormGroup>
         <Button type="submit" disabled={!isFormValid}>
           {buttonLabel}

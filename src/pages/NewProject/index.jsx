@@ -1,6 +1,7 @@
 import ProjectForm from "../../components/ProjectForm";
-import ProjectsService from "../../services/ProjectsService";
 import Header from "../../components/Header";
+
+import ProjectsService from "../../services/ProjectsService";
 
 export default function NewProject() {
   function handleSubmit(formData) {
