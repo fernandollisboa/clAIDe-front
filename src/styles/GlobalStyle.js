@@ -9,6 +9,7 @@ const GlobalStyle = createGlobalStyle`
       overflow: hidden;
       font-size: 12px;
       margin: 0px;
+      caret-color: transparent;
     }
     *{
       box-sizing: border-box;

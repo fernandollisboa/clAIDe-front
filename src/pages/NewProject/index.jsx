@@ -4,7 +4,7 @@ import Header from "../../components/Header";
 import ProjectsService from "../../services/ProjectsService";
 
 export default function NewProject() {
-  function handleSubmit(formData) {
+  async function handleSubmit(formData) {
     try {
       const project = {
         name: formData.name,
@@ -16,7 +16,7 @@ export default function NewProject() {
         financier: formData.financier || null,
       };
 
-      ProjectsService.create(project);
+      await ProjectsService.create(project);
       alert("Formulario enviado");
     } catch (err) {
       alert("Ocorreu um erro ao enviar o formulario");

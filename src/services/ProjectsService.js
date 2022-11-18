@@ -1,8 +1,11 @@
 import api from "./api";
 
 class ProjectsService {
-  async create(body) {
-    return await api.post("/projects/", body);
+  create(body) {
+    return api.post("/projects/", body);
+  }
+  getAll() {
+    return api.get(`projects/`);
   }
 }
 export default new ProjectsService();
