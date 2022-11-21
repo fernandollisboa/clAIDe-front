@@ -23,13 +23,13 @@ const ButtonStyle = styled.button`
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.04);
   font-weight: bold;
   background: #486fbd;
-  padding: 0 16px;
+  padding: 0 1%;
   height: 52px;
   color: #fff;
   border-radius: 5px;
-  font-size: 16px;
+  font-size: 1rem;
   width: 100%;
-  margin-top: 16px;
+  margin-top: 4%;
   &:hover {
     background: #6674f4;
   }

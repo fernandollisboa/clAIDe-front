@@ -1,5 +1,5 @@
 import ProjectForm from "../../components/ProjectForm";
-import Header from "../../components/Header";
+import Layout from "../../components/Layout";
 
 import ProjectsService from "../../services/ProjectsService";
 
@@ -23,9 +23,8 @@ export default function NewProject() {
     }
   }
   return (
-    <>
-      <Header />
+    <Layout>
       <ProjectForm typeLabel="Novo projeto" buttonLabel="Cadastrar" onSubmit={handleSubmit} />
-    </>
+    </Layout>
   );
 }
