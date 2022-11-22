@@ -22,12 +22,12 @@ FormGroup.defaultProps = {
 };
 const Container = styled.div`
   & + & {
-    margin-top: 16px;
+    margin-top: 4%;
   }
   small {
     color: #fc5050;
-    font-size: 12px;
+    font-size: 1rem;
     display: block;
-    margin-top: 8px;
+    margin-top: 2%;
   }
 `;

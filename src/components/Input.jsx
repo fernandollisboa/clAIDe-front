@@ -9,8 +9,8 @@ export default styled.input`
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.04);
   border-radius: 4px;
   outline: none;
-  padding: 0 16px;
-  font-size: 16px;
+  padding: 0 5%;
+  font-size: 1rem;
   transition: border-color 0.2s ease-in;
   appearance: none;
   &:focus {
@@ -19,8 +19,5 @@ export default styled.input`
   &[disabled] {
     background-color: #e5e5e5;
     border-color: #bcbcbc;
-  }
-  & + & {
-    margin-top: 16px;
   }
 `;

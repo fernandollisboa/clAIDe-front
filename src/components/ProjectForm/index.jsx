@@ -79,7 +79,7 @@ export default function ProjectForm({ onSubmit, typeLabel, buttonLabel }) {
     <Container>
       <Form onSubmit={handleSubmit}>
         <Title>
-          <Link to="/">
+          <Link to="/project">
             <img src={arrow} alt="voltar" />
             <span>Voltar</span>
           </Link>
@@ -132,12 +132,6 @@ const Container = styled.div`
   width: 100%;
   display: block;
   align-items: center;
-  .logo {
-    align-items: center;
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 10px;
-  }
 `;
 const Form = styled.form`
   max-width: 500px;
@@ -148,9 +142,9 @@ const Title = styled.div`
     text-decoration: none;
     display: flex;
     align-items: center;
-    margin-bottom: 5px;
+    margin-bottom: 1%;
     img {
-      margin-right: 8px;
+      margin-right: 1.5%;
       transform: rotate(-90deg);
     }
     span {
@@ -159,8 +153,8 @@ const Title = styled.div`
     }
   }
   h1 {
-    font-size: 24px;
+    font-size: 2rem;
     font-weight: bold;
-    margin-bottom: 15px;
+    margin-bottom: 3%;
   }
 `;

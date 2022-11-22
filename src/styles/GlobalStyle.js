@@ -6,9 +6,9 @@ const GlobalStyle = createGlobalStyle`
     body {
       background-color: #f5f5f5;
       font-family: 'Century Gothic', sans-serif;
-      overflow: hidden;
       font-size: 12px;
       margin: 0px;
+      caret-color: transparent;
     }
     *{
       box-sizing: border-box;
