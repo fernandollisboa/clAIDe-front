@@ -11,7 +11,7 @@ export default function Header() {
       <NavBar>
         <Link to="/member">Membros</Link>
         <Link to="/teacher">Professores</Link>
-        <Link to="/project">Projetos</Link>
+        <Link to="/projects">Projetos</Link>
       </NavBar>
       <img src={profile} alt="account" />
     </Container>

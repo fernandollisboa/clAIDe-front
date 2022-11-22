@@ -1,4 +1,5 @@
-export function dateIsoToDate(date) {
-  let [year, day, month] = date.split("-");
-  return `${day}/${month.substring(0, 2)}/${year}`;
+import dayjs from "dayjs";
+
+export function transformDate(date) {
+  return dayjs(date).format("DD/MM/YYYY");
 }

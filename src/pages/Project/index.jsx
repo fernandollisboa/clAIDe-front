@@ -4,19 +4,19 @@ import { Link } from "react-router-dom";
 
 import Layout from "../../components/Layout";
 
-import { dateIsoToDate } from "../../utils/transformDate";
+import { transformDate } from "../../utils/transformDate";
 import ProjectsService from "../../services/ProjectsService";
 
 export default function Project() {
   const [projects, setProjects] = useState([]);
-  const [searchProject, setSearchProject] = useState("");
+  const [projectNameToBeSearched, setProjectNameToBeSearched] = useState("");
 
   const filteredProjects = useMemo(
     () =>
-      projects.filter((project) =>
-        project.name.toLowerCase().includes(searchProject.toLowerCase())
+      projects.filter(({ name }) =>
+        name.toLowerCase().includes(projectNameToBeSearched.toLowerCase())
       ),
-    [projects, searchProject]
+    [projects, projectNameToBeSearched]
   );
 
   async function loadProjects() {
@@ -34,7 +34,7 @@ export default function Project() {
   }, []);
 
   function handleChangeSearchProject(event) {
-    setSearchProject(event.target.value);
+    setProjectNameToBeSearched(event.target.value);
   }
   return (
     <>
@@ -42,7 +42,7 @@ export default function Project() {
         <Menu>
           <h1>Projetos cadastrados</h1>
           <InputSearch
-            value={searchProject}
+            value={projectNameToBeSearched}
             placeholder="Pesquisar Projeto..."
             type="text"
             onChange={handleChangeSearchProject}
@@ -57,7 +57,7 @@ export default function Project() {
               <div className="project-info">
                 <div className="name">{project.name}</div>
                 <div className="creation-date">
-                  Data de início: <span>{dateIsoToDate(project.creationDate)}</span>
+                  Data de início: <span>{transformDate(project.creationDate)}</span>
                 </div>
                 <div className="building">
                   Prédio: <span>{project.building}</span>
