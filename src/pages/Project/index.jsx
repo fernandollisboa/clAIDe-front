@@ -56,17 +56,17 @@ export default function Project() {
             <Card key={project.id}>
               <div className="project-info">
                 <div className="name">{project.name}</div>
-                <div className="creation-date">
+                <div>
                   Data de início: <span>{transformDate(project.creationDate)}</span>
                 </div>
-                <div className="building">
+                <div>
                   Prédio: <span>{project.building}</span>
                 </div>
-                <div className="room">
+                <div>
                   Sala: <span>{project.room}</span>
                 </div>
               </div>
-              <div className="active">{project.endDate === null ? "🟢" : "🔴"}</div>
+              <div>{project.endDate === null ? "🟢" : "🔴"}</div>
             </Card>
           ))}
         </Container>
