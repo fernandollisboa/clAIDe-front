@@ -56,9 +56,15 @@ export default function Project() {
             <Card key={project.id}>
               <div className="project-info">
                 <div className="name">{project.name}</div>
-                <div>
-                  Data de início: <span>{transformDate(project.creationDate)}</span>
-                </div>
+                {project.endDate ? (
+                  <div>
+                    Data de Fim: <span>{transformDate(project.endDate)}</span>
+                  </div>
+                ) : (
+                  <div>
+                    Data de início: <span>{transformDate(project.creationDate)}</span>
+                  </div>
+                )}
                 <div>
                   Prédio: <span>{project.building}</span>
                 </div>
