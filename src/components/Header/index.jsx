@@ -6,21 +6,31 @@ import profile from "../../assets/profile.svg";
 
 export default function Header() {
   return (
-    <Container>
-      <img src={logo} alt="logo lsd" />
-      <NavBar>
-        <Link to="/member">Membros</Link>
-        <Link to="/teacher">Professores</Link>
-        <Link to="/projects">Projetos</Link>
-      </NavBar>
-      <img src={profile} alt="account" />
-    </Container>
+    <HeaderContainer>
+      <Container>
+        <img src={logo} alt="logo lsd" />
+        <NavBar>
+          <Link to="/members">Membros</Link>
+          <Link to="/teachers">Professores</Link>
+          <Link to="/projects">Projetos</Link>
+        </NavBar>
+        <img src={profile} alt="account" />
+      </Container>
+    </HeaderContainer>
   );
 }
+
+const HeaderContainer = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0%;
+  width: 100vw;
+`;
+
 const Container = styled.div`
   display: flex;
-  align-items: center;
   max-width: 68%;
+  align-items: center;
   margin: 1% auto;
   justify-content: space-between;
   background: #fff;

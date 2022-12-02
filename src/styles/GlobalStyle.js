@@ -4,7 +4,7 @@ import { reset } from "styled-reset";
 const GlobalStyle = createGlobalStyle`
     ${reset}
     body {
-      background-color: #f5f5f5;
+      background-color: #F6F5FC;
       font-family: 'Century Gothic', sans-serif;
       font-size: 12px;
       margin: 0px;
