@@ -158,21 +158,21 @@ export default function MemberForm({ onSubmit, typeLabel, buttonLabel }) {
       isBrazilian,
       hasKey,
     });
-    // setName("");
-    // setBirthDate("");
-    // setUsername("");
-    // setCpf("");
-    // setRg("");
-    // setPassport("");
-    // setPhone("");
-    // setEmailLsd("");
-    // setEmail("");
-    // setSecondEmail("");
-    // setMemberType("");
-    // setLattes("");
-    // setRoom("");
-    // setIsBrazilian("");
-    // setHasKey("");
+    setName("");
+    setBirthDate("");
+    setUsername("");
+    setCpf("");
+    setRg("");
+    setPassport("");
+    setPhone("");
+    setEmailLsd("");
+    setEmail("");
+    setSecondEmail("");
+    setMemberType("");
+    setLattes("");
+    setRoom("");
+    setIsBrazilian("");
+    setHasKey("");
   }
   return (
     <Container>
