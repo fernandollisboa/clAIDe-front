@@ -4,8 +4,8 @@ class ProjectsService {
   create(body) {
     return api.post("projects/", body);
   }
-  getAll() {
-    return api.get(`projects/`);
+  getAll(isActive, desc) {
+    return api.get(`projects/?isActive=${isActive}&desc=${desc}`);
   }
 }
 export default new ProjectsService();
