@@ -23,7 +23,7 @@ export default function Member() {
 
   async function loadMembers() {
     try {
-      const membersList = await MembersService.getAll();
+      const membersList = await MembersService.getAll(isActive, desc);
 
       setMembers(membersList.data);
     } catch (err) {
