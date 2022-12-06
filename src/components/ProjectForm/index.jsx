@@ -79,7 +79,7 @@ export default function ProjectForm({ onSubmit, typeLabel, buttonLabel }) {
     <Container>
       <Form onSubmit={handleSubmit}>
         <Title>
-          <Link to="/project">
+          <Link to="/projects">
             <img src={arrow} alt="voltar" />
             <span>Voltar</span>
           </Link>
