@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { Link } from "react-router-dom";
 
 import Layout from "../../components/Layout";
+import Select from "../../components/Select";
 
 import { transformDate } from "../../utils/transformDate";
 import ProjectsService from "../../services/ProjectsService";
@@ -10,6 +11,8 @@ import ProjectsService from "../../services/ProjectsService";
 export default function Project() {
   const [projects, setProjects] = useState([]);
   const [projectNameToBeSearched, setProjectNameToBeSearched] = useState("");
+  const [isActive, setIsActive] = useState("");
+  const [desc, setDesc] = useState("");
 
   const filteredProjects = useMemo(
     () =>
@@ -21,7 +24,7 @@ export default function Project() {
 
   async function loadProjects() {
     try {
-      const projectsList = await ProjectsService.getAll();
+      const projectsList = await ProjectsService.getAll(isActive, desc);
 
       setProjects(projectsList.data);
     } catch (err) {
@@ -31,8 +34,14 @@ export default function Project() {
 
   useEffect(() => {
     loadProjects();
-  }, []);
+  }, [isActive, desc]);
 
+  function handleToggleIsActive(event) {
+    setIsActive(event.target.value);
+  }
+  function handleToggleDesc() {
+    setDesc((prevState) => (prevState === true ? false : true));
+  }
   function handleChangeSearchProject(event) {
     setProjectNameToBeSearched(event.target.value);
   }
@@ -41,14 +50,22 @@ export default function Project() {
       <Layout>
         <Menu>
           <h1>Projetos cadastrados</h1>
+          <Button onClick={handleToggleDesc}>Nome</Button>
           <InputSearch
             value={projectNameToBeSearched}
             placeholder="Pesquisar Projeto..."
             type="text"
             onChange={handleChangeSearchProject}
           />
+          <div className="filters">
+            <Select style={{ height: "40px" }} onClick={handleToggleIsActive}>
+              <option value={""}>Todos</option>
+              <option value={true}>Ativos</option>
+              <option value={false}>Inativos</option>
+            </Select>
+          </div>
           <div className="buttons">
-            <Link to="/newProject">Cadastrar Projeto </Link>
+            <Link to="/newProject">Cadastrar</Link>
           </div>
         </Menu>
         <Container>
@@ -91,6 +108,12 @@ const Menu = styled.div`
     font-size: 2rem;
     font-weight: 600;
   }
+  .filters {
+    display: flex;
+  }
+  select {
+    margin-right: 1%;
+  }
   .buttons {
     a {
       text-decoration: none;
@@ -112,6 +135,18 @@ const InputSearch = styled.input`
   font-size: 1rem;
   justify-content: center;
   padding: 0 2%;
+`;
+const Button = styled.button`
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.04);
+  font-weight: bold;
+  padding: 3%;
+  height: 40px;
+  font-size: 1rem;
+  border: 2px solid #131313;
+  border-radius: 4px;
+  background: #f6f5fc;
+  padding: 1%;
+  height: 40px;
 `;
 const Container = styled.div`
   display: flex;

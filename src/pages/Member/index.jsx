@@ -3,12 +3,15 @@ import styled from "styled-components";
 import { Link } from "react-router-dom";
 
 import Layout from "../../components/Layout";
+import Select from "../../components/Select";
 
 import MembersService from "../../services/MembersService";
 
 export default function Member() {
   const [members, setMembers] = useState([]);
   const [membersNameToBeSearched, setMembersNameToBeSearched] = useState("");
+  const [isActive, setIsActive] = useState("");
+  const [desc, setDesc] = useState("");
 
   const filteredMembers = useMemo(
     () =>
@@ -20,7 +23,7 @@ export default function Member() {
 
   async function loadMembers() {
     try {
-      const membersList = await MembersService.getAll();
+      const membersList = await MembersService.getAll(isActive, desc);
 
       setMembers(membersList.data);
     } catch (err) {
@@ -30,8 +33,14 @@ export default function Member() {
 
   useEffect(() => {
     loadMembers();
-  }, []);
+  }, [isActive, desc]);
 
+  function handleToggleIsActive(event) {
+    setIsActive(event.target.value);
+  }
+  function handleToggleDesc() {
+    setDesc((prevState) => (prevState === true ? false : true));
+  }
   function handleChangeSearchMember(event) {
     setMembersNameToBeSearched(event.target.value);
   }
@@ -40,14 +49,23 @@ export default function Member() {
       <Layout>
         <Menu>
           <h1>Membros cadastrados</h1>
+          <Button onClick={handleToggleDesc}>Nome</Button>
+
           <InputSearch
             value={membersNameToBeSearched}
             placeholder="Pesquisar Membro..."
             type="text"
             onChange={handleChangeSearchMember}
           />
+          <div className="filters">
+            <Select style={{ height: "40px" }} onClick={handleToggleIsActive}>
+              <option value={""}>Todos</option>
+              <option value={true}>Ativos</option>
+              <option value={false}>Inativos</option>
+            </Select>
+          </div>
           <div className="buttons">
-            <Link to="/newMember">Cadastrar Membro </Link>
+            <Link to="/newMember">Cadastrar</Link>
           </div>
         </Menu>
         <Container>
@@ -105,6 +123,18 @@ const InputSearch = styled.input`
   font-size: 1rem;
   justify-content: center;
   padding: 0 2%;
+`;
+const Button = styled.button`
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.04);
+  font-weight: bold;
+  padding: 3%;
+  height: 40px;
+  font-size: 1rem;
+  border: 2px solid #131313;
+  border-radius: 4px;
+  background: #f6f5fc;
+  padding: 1%;
+  height: 40px;
 `;
 const Container = styled.div`
   display: flex;
