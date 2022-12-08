@@ -29,9 +29,8 @@ const HeaderContainer = styled.div`
 
 const Container = styled.div`
   display: flex;
-  max-width: 68%;
+  max-width: 100%;
   align-items: center;
-  margin: 1% auto;
   justify-content: space-between;
   background: #fff;
   border: none;

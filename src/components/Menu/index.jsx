@@ -60,7 +60,7 @@ const Container = styled.div`
     border: 2px solid #131313;
     text-decoration: none;
     border-radius: 4px;
-    padding: 1.8vh 2vh;
+    padding: 1.2vh 2vh;
     color: #131313;
     font-weight: 700;
     font-size: 1rem;
