@@ -288,7 +288,7 @@ const Title = styled.div`
       transform: rotate(-90deg);
     }
     span {
-      color: #5061fc;
+      color: #131313;
       font-weight: bold;
     }
   }
