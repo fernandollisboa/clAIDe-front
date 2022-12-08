@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import styled from "styled-components";
 
+import Card from "../../components/Card";
 import Layout from "../../components/Layout";
 import Menu from "../../components/Menu";
 
@@ -59,7 +60,7 @@ export default function Project() {
         <Container>
           {filteredProjects.map((project) => (
             <Card key={project.id}>
-              <div className="project-info">
+              <div className="info">
                 <div className="name">{project.name}</div>
                 {project.endDate ? (
                   <div>
@@ -94,27 +95,4 @@ const Container = styled.div`
   flex-wrap: wrap;
   gap: 2vh;
   margin-top: 1%;
-`;
-const Card = styled.div`
-  display: flex;
-  width: 23%;
-  background: #ffffff;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.04);
-  border-radius: 20px;
-  padding: 1.2%;
-  justify-content: space-between;
-  .project-info {
-    font-size: 0.8rem;
-
-    .name {
-      font-size: 1rem;
-      font-weight: 700;
-    }
-    div {
-      margin-bottom: 3%;
-    }
-    span {
-      color: #bcbcbc;
-    }
-  }
 `;

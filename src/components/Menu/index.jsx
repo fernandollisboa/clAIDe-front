@@ -43,7 +43,7 @@ export default function Menu({
 }
 Menu.propTypes = {
   type: PropTypes.string.isRequired,
-  desc: PropTypes.string.isRequired,
+  desc: PropTypes.bool.isRequired,
   handleToggleDesc: PropTypes.func.isRequired,
   nameToBeSearched: PropTypes.string.isRequired,
   handleChangeSearch: PropTypes.func.isRequired,

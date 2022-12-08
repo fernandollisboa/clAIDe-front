@@ -7,5 +7,8 @@ class MembersService {
   getAll(isActive, desc) {
     return api.get(`members/?isActive=${isActive}&desc=${desc}`);
   }
+  getById(id) {
+    return api.get(`members/${id}`);
+  }
 }
 export default new MembersService();

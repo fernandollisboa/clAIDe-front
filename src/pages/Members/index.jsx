@@ -1,16 +1,19 @@
 import { useState, useEffect, useMemo } from "react";
 import styled from "styled-components";
 
+import Card from "../../components/Card";
 import Menu from "../../components/Menu";
 import Layout from "../../components/Layout";
 
 import MembersService from "../../services/MembersService";
+import { useNavigate } from "react-router-dom";
 
 export default function Member() {
   const [members, setMembers] = useState([]);
   const [membersNameToBeSearched, setMembersNameToBeSearched] = useState("");
   const [isActive, setIsActive] = useState("");
-  const [desc, setDesc] = useState("");
+  const [desc, setDesc] = useState(false);
+  const navigate = useNavigate();
 
   const filteredMembers = useMemo(
     () =>
@@ -38,10 +41,13 @@ export default function Member() {
     setIsActive(event.target.value);
   }
   function handleToggleDesc() {
-    setDesc((prevState) => (prevState === true ? false : true));
+    setDesc((prevState) => (prevState ? false : true));
   }
   function handleChangeSearchMember(event) {
     setMembersNameToBeSearched(event.target.value);
+  }
+  function navigateToMember(id) {
+    navigate(`/member/${id}`);
   }
   return (
     <>
@@ -57,8 +63,13 @@ export default function Member() {
         />
         <Container>
           {filteredMembers.map((member) => (
-            <Card key={member.id}>
-              <div className="member-info">
+            <Card
+              key={member.id}
+              onClick={() => {
+                navigateToMember(member.id);
+              }}
+            >
+              <div className="info">
                 <div className="name">{member.name}</div>
                 <div>
                   Projeto: <span>Falta colocar no obj</span>
@@ -88,27 +99,4 @@ const Container = styled.div`
   margin-top: 1%;
   overflow: scroll;
   max-height: 70vh;
-`;
-const Card = styled.div`
-  display: flex;
-  width: 23%;
-  background: #ffffff;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.04);
-  border-radius: 20px;
-  padding: 1.2%;
-  justify-content: space-between;
-  .member-info {
-    font-size: 0.8rem;
-
-    .name {
-      font-size: 1rem;
-      font-weight: 700;
-    }
-    div {
-      margin-bottom: 3%;
-    }
-    span {
-      color: #bcbcbc;
-    }
-  }
 `;
