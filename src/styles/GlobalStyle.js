@@ -4,16 +4,21 @@ import { reset } from "styled-reset";
 const GlobalStyle = createGlobalStyle`
     ${reset}
     body {
-      background-color: var(--color-0);
-      font-family: "Roboto", Sans-Serif;
-      width: 100%;
-      max-width: 100vw;
-      height: 100%;
+      background-color: #F6F5FC;
+      font-family: 'Century Gothic', sans-serif;
+      font-size: 12px;
+      margin: 0px;
+      caret-color: transparent;
     }
     *{
-      font-family: "Roboto", Sans-Serif;
       box-sizing: border-box;
     }
+
+    input:-webkit-autofill,
+    input:-webkit-autofill:focus {
+    transition: background-color 600000s 0s, color 600000s 0s;
+    }
+  
 `;
 
 export default GlobalStyle;
