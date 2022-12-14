@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 export default styled.div`
   display: flex;
-  width: 23%;
+  width: 300px;
   background: #ffffff;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.04);
   border-radius: 20px;

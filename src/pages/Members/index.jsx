@@ -97,6 +97,4 @@ const Container = styled.div`
   flex-wrap: wrap;
   gap: 2vh;
   margin-top: 1%;
-  overflow: scroll;
-  max-height: 70vh;
 `;

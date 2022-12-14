@@ -1,24 +1,40 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
+import DatePicker from "react-date-picker";
 
-// import useSafeAsyncAction from "../../hooks/useSafeAsyncAction";
+import "react-date-picker/dist/DatePicker.css";
 
 import Layout from "../../components/Layout";
+import Modal from "../../components/Modal";
 
+import ProjectService from "../../services/ProjectsService";
 import MembersService from "../../services/MembersService";
 
 import maskCpf from "../../utils/maskCpf";
+import { transformDate } from "../../utils/transformDate";
 
 export default function Member() {
   const [member, setMember] = useState({});
+  const [viewProjectButton, setviewProjectButton] = useState(true);
+  const [activeProject, setActiveProject] = useState({});
+  const [projects, setProjects] = useState([]);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedProject, setSelectedProject] = useState({});
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
   const params = useParams();
 
   async function loadMember() {
     try {
-      const { data } = await MembersService.getById(params.id);
+      const memberId = params.id;
+      const { data: member } = await MembersService.getById(memberId);
+      const { data: project } =
+        (await ProjectService.getAssociateProjectMemberId(memberId)) || null;
 
-      setMember(data);
+      setMember(member);
+      setProjects(project);
+      setActiveProject({});
     } catch (error) {
       alert(error);
     }
@@ -26,9 +42,74 @@ export default function Member() {
   useEffect(() => {
     loadMember();
   }, [params.id]);
+
+  async function associateStudentWithProject() {
+    try {
+      await ProjectService.associateMemberWithProject(
+        member.id,
+        selectedProject.id,
+        transformDate(startDate),
+        transformDate(endDate)
+      );
+      setModalOpen(false);
+    } catch (error) {
+      alert(error);
+    }
+  }
+
+  async function handleToggleAssociationProject() {
+    setviewProjectButton((prevState) => (prevState ? false : true));
+    if (viewProjectButton) {
+      try {
+        const { data } = await ProjectService.getAll(true);
+
+        setProjects(data);
+      } catch (error) {
+        alert(error);
+      }
+    } else {
+      setProjects([]);
+    }
+  }
+  console.log(projects);
   return (
     <>
       <Layout>
+        <Modal modalOpen={modalOpen}>
+          <ModalContainer>
+            <span>
+              Tem certeza que deseja associar o aluno <strong> {member.name} </strong> ao projeto
+              <strong> {selectedProject.name}</strong>?
+            </span>
+            <InputsModal>
+              <DatePicker
+                defaultValue={null}
+                required={true}
+                onChange={setStartDate}
+                value={startDate}
+              />
+
+              <DatePicker defaultValue={null} onChange={setEndDate} value={endDate} />
+
+              <Button
+                onClick={() => {
+                  setModalOpen(false);
+                  setSelectedProject({});
+                  setStartDate("");
+                  setEndDate("");
+                }}
+              >
+                Cancelar
+              </Button>
+              <Button
+                style={{ border: "2px solid red", color: "red" }}
+                onClick={associateStudentWithProject}
+              >
+                Confirmar
+              </Button>
+            </InputsModal>
+          </ModalContainer>
+        </Modal>
         <Container>
           <Title>Informações de Membro</Title>
           <Dashboard>
@@ -42,10 +123,16 @@ export default function Member() {
                 <Username>{member.username}</Username>
               </Info>
               <Buttons>
-                <Button> Editar</Button>
-                <Select>
-                  <option value="">Gerenciar projetos</option>
-                </Select>
+                {viewProjectButton ? (
+                  <>
+                    <Button> Editar</Button>
+                    <AssociationButtonProject>
+                      <option onClick={handleToggleAssociationProject}>Gerenciar projetos</option>
+                    </AssociationButtonProject>
+                  </>
+                ) : (
+                  <Button onClick={handleToggleAssociationProject}> Voltar</Button>
+                )}
               </Buttons>
             </Header>
             <Body>
@@ -91,57 +178,66 @@ export default function Member() {
                   )}
                 </div>
               </ListInfo>
-              <List>
-                <ProjectTitle>Projeto</ProjectTitle>
-                <ProjectCard>
-                  <div>
-                    <span>Projeto 199</span>
-                    <span>
-                      Professor: <p>Eanes</p>
-                    </span>
-                    <span>
-                      Sala: <p>105 B</p>
-                    </span>
-                    <span>
-                      Data de inicio: <p>00/00/0000</p>
-                    </span>
+              {viewProjectButton ? (
+                <List>
+                  <Project>
+                    <ProjectTitle>Projeto Atual</ProjectTitle>
+                    <CardProjectActive>
+                      <div>
+                        <span>{activeProject.name}</span>
+                        <span>
+                          Professor: <p>Eanes</p>
+                        </span>
+                        <span>
+                          Sala: <p>105 B</p>
+                        </span>
+                        <span>
+                          Data de inicio: <p>00/00/0000</p>
+                        </span>
+                      </div>
+                      <div>{"🟢"} </div>
+                    </CardProjectActive>
+                  </Project>
+
+                  <Services>
+                    <ServiceHeader>
+                      <ServiceTitle>Servicos</ServiceTitle>
+                      <AssociationSelectService>
+                        <option value="">Associar Servico</option>
+                        <option value="">GitHub</option>
+                        <option value="">Cloud</option>
+                      </AssociationSelectService>
+                    </ServiceHeader>
+                    <Cards>
+                      <ServiceCard>Card 1</ServiceCard>
+                      <ServiceCard>Card 1</ServiceCard>
+                    </Cards>
+                  </Services>
+                </List>
+              ) : (
+                <ListProjects>
+                  <p>Associar à Novo Projeto</p>
+                  <div className="card-body">
+                    {projects.map((project) => (
+                      <CardProject
+                        key={project.id}
+                        onClick={() => {
+                          setModalOpen(true);
+                          setSelectedProject(project);
+                        }}
+                      >
+                        <div className="info">
+                          <div className="name">{project.name}</div>
+                          <div className="name-teacher">
+                            Professor: <p>Eanes, Manel da Silva, Fubica</p>
+                          </div>
+                        </div>
+                        <div>{project.endDate === null ? "🟢" : "🔴"}</div>
+                      </CardProject>
+                    ))}
                   </div>
-                  <div>{"🟢"} </div>
-                </ProjectCard>
-                <Services>
-                  <ServiceHeader>
-                    <ServiceTitle>Servicos</ServiceTitle>
-                    <AssociationSelect>
-                      <option value="">Associar Servico</option>
-                      <option value="">GitHub</option>
-                      <option value="">Cloud</option>
-                    </AssociationSelect>
-                  </ServiceHeader>
-                  <Cards>
-                    <ServiceCard>Card 1</ServiceCard>
-                    <ServiceCard>Card 1</ServiceCard>
-                    <ServiceCard>Card 1</ServiceCard>
-                    <ServiceCard>Card 1</ServiceCard>
-                    <ServiceCard>Card 1</ServiceCard>
-                    <ServiceCard>Card 1</ServiceCard>
-                    <ServiceCard>Card 1</ServiceCard>
-                    <ServiceCard>Card 1</ServiceCard>
-                    <ServiceCard>Card 1</ServiceCard>
-                    <ServiceCard>Card 1</ServiceCard>
-                    <ServiceCard>Card 1</ServiceCard>
-                    <ServiceCard>Card 1</ServiceCard>
-                    <ServiceCard>Card 1</ServiceCard>
-                    <ServiceCard>Card 1</ServiceCard>
-                    <ServiceCard>Card 1</ServiceCard>
-                    <ServiceCard>Card 1</ServiceCard>
-                    <ServiceCard>Card 1</ServiceCard>
-                    <ServiceCard>Card 1</ServiceCard>
-                    <ServiceCard>Card 1</ServiceCard>
-                    <ServiceCard>Card 1</ServiceCard>
-                    <ServiceCard>Card 1</ServiceCard>
-                  </Cards>
-                </Services>
-              </List>
+                </ListProjects>
+              )}
             </Body>
           </Dashboard>
         </Container>
@@ -150,6 +246,22 @@ export default function Member() {
   );
 }
 
+const ModalContainer = styled.div`
+  width: 100%;
+  height: 100%;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  strong {
+    font-weight: 700;
+  }
+`;
+const InputsModal = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+`;
 const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -212,6 +324,10 @@ const Username = styled.span`
 const Buttons = styled.div`
   width: 300px;
   display: flex;
+  justify-content: end;
+  img {
+    transform: rotate(-90deg);
+  }
 `;
 const Button = styled.button`
   border: 2px solid #131313;
@@ -224,7 +340,7 @@ const Button = styled.button`
   margin-right: 5%;
   cursor: pointer;
 `;
-const Select = styled.select`
+const AssociationButtonProject = styled.button`
   border: 2px solid #131313;
   text-decoration: none;
   border-radius: 4px;
@@ -235,15 +351,19 @@ const Select = styled.select`
   cursor: pointer;
 `;
 const Body = styled.div`
-  width: 100%;
   display: flex;
-  height: 480px;
+  justify-content: space-between;
+  padding-top: 1%;
 `;
 const ListInfo = styled.div`
-  /* border-right: 1px solid #bcbcbc; */
   width: 50%;
+  border-right: 2px solid #bcbcbc;
+  padding-right: 2%;
+  span & span {
+    padding: 7px;
+  }
   span {
-    margin: 2%;
+    padding: 7px;
     font-size: 1rem;
     display: flex;
     font-weight: 700;
@@ -252,14 +372,21 @@ const ListInfo = styled.div`
     }
   }
   .data {
-    /* border-bottom: 1px solid #bcbcbc; */
+    height: 200px;
+    border-bottom: 2px solid #bcbcbc;
   }
   .personal-data {
+    height: 200px;
+    padding-top: 2%;
   }
 `;
 const List = styled.div`
-  margin: 0 auto;
-  width: 45%;
+  width: 50%;
+  padding: 0 2%;
+`;
+const Project = styled.div`
+  height: 200px;
+  border-bottom: 2px solid #bcbcbc;
 `;
 const ProjectTitle = styled.div`
   display: flex;
@@ -269,9 +396,9 @@ const ProjectTitle = styled.div`
   line-height: 25px;
   padding: 3% 0;
 `;
-const ProjectCard = styled.div`
+const CardProjectActive = styled.div`
   margin: 0 auto;
-  width: 422px;
+  width: 60%;
   display: flex;
   justify-content: space-between;
   padding: 3%;
@@ -289,9 +416,8 @@ const ProjectCard = styled.div`
   }
 `;
 const Services = styled.div`
-  margin-top: 5%;
-  padding-top: 5%;
-  /* border-top: 1px solid #bcbcbc; ; */
+  height: 200px;
+  padding-top: 2%;
 `;
 const ServiceHeader = styled.div`
   display: flex;
@@ -303,7 +429,8 @@ const ServiceTitle = styled.h1`
   font-size: 20px;
   line-height: 25px;
 `;
-const AssociationSelect = styled.select`
+const AssociationSelectService = styled.select`
+  width: 40%;
   border: 2px solid #131313;
   text-decoration: none;
   border-radius: 4px;
@@ -318,11 +445,10 @@ const Cards = styled.div`
   margin-top: 2%;
   overflow-y: scroll;
   flex-wrap: wrap;
-  gap: 2vh;
+  gap: 3vh;
   max-height: 15vh;
   padding: 1%;
 `;
-
 const ServiceCard = styled.div`
   font-weight: 700;
   font-size: 1rem;
@@ -331,4 +457,51 @@ const ServiceCard = styled.div`
   background: #fff;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
   border-radius: 20px;
+`;
+const ListProjects = styled.div`
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  height: 400px;
+  align-items: center;
+  padding: 0 3%;
+  p {
+    font-weight: 700;
+    font-size: 1.4rem;
+    margin-bottom: 3%;
+  }
+  .card-body {
+    width: 100%;
+    overflow-y: auto;
+  }
+  .name {
+    font-weight: 700;
+    font-size: 1.4rem;
+    line-height: 30px;
+  }
+`;
+
+const CardProject = styled.div`
+  display: flex;
+  justify-content: space-between;
+  padding: 3%;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.08);
+  border-radius: 20px;
+  font-size: 1rem;
+
+  &:hover {
+    transition: all 200ms ease-in;
+    transform: scale(0.93);
+  }
+  & + & {
+    margin-bottom: 1%;
+  }
+  div {
+    font-size: 1rem;
+    font-weight: 700;
+    p {
+      font-size: 1rem;
+      font-weight: 400;
+    }
+  }
 `;
