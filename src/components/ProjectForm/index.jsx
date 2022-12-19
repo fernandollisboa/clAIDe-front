@@ -8,11 +8,12 @@ import arrow from "../../assets/arrow.svg";
 import Input from "../Input";
 import Button from "../Button";
 import FormGroup from "../FormGroup";
+import FormDate from "../FormDate";
 
 import useErrors from "../../hooks/useErrors";
-import maskDate from "../../utils/maskDate";
+import { transformDate } from "../../utils/transformDate";
 
-export default function ProjectForm({ onSubmit, typeLabel, buttonLabel }) {
+export default function ProjectForm({ onSubmit, typeLabel, buttonLabel, formSent }) {
   const [name, setName] = useState("");
   const [creationDate, setCreationDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -21,7 +22,6 @@ export default function ProjectForm({ onSubmit, typeLabel, buttonLabel }) {
   const [embrapiiCode, setEmbrapiiCode] = useState("");
   const [financier, setFinancier] = useState("");
   const { setError, removeError, getErrorMessageByFieldName, errors } = useErrors();
-
   const isFormValid = name && creationDate && errors.length === 0;
   function handleChangeName(event) {
     setName(event.target.value);
@@ -31,17 +31,6 @@ export default function ProjectForm({ onSubmit, typeLabel, buttonLabel }) {
     } else {
       removeError("name");
     }
-  }
-  function handleChangeCreationDate(event) {
-    setCreationDate(maskDate(event.target.value));
-    if (!event.target.value) {
-      setError({ field: "creationDate", message: "Data de criação é obrigatório" });
-    } else {
-      removeError("creationDate");
-    }
-  }
-  function handleChangeEndDate(event) {
-    setEndDate(maskDate(event.target.value));
   }
   function handleChangeRoom(event) {
     setRoom(event.target.value);
@@ -60,20 +49,23 @@ export default function ProjectForm({ onSubmit, typeLabel, buttonLabel }) {
 
     await onSubmit({
       name,
-      creationDate,
-      endDate,
+      creationDate: transformDate(creationDate),
+      endDate: transformDate(endDate),
       room,
       building,
       embrapiiCode,
       financier,
     });
-    setName("");
-    setCreationDate("");
-    setEndDate("");
-    setRoom("");
-    setBuilding("");
-    setEmbrapiiCode("");
-    setFinancier("");
+
+    if (formSent) {
+      setName("");
+      setCreationDate("");
+      setEndDate("");
+      setRoom("");
+      setBuilding("");
+      setEmbrapiiCode("");
+      setFinancier("");
+    }
   }
   return (
     <Container>
@@ -88,18 +80,21 @@ export default function ProjectForm({ onSubmit, typeLabel, buttonLabel }) {
         <FormGroup error={getErrorMessageByFieldName("name")}>
           <Input placeholder="Nome *" value={name} onChange={handleChangeName} />
         </FormGroup>
-        <FormGroup error={getErrorMessageByFieldName("creationDate")}>
-          <Input
+        <FormGroup>
+          <FormDate
             placeholder="Data de criação *"
+            onChange={(date) => setCreationDate(date)}
             value={creationDate}
-            onChange={handleChangeCreationDate}
-            type="text"
-            onfocus="(this.type='date')"
           />
         </FormGroup>
         <FormGroup>
-          <Input placeholder="Data de término" value={endDate} onChange={handleChangeEndDate} />
+          <FormDate
+            placeholder="Data de término *"
+            onChange={(date) => setEndDate(date)}
+            value={endDate}
+          />
         </FormGroup>
+
         <FormGroup>
           <Input placeholder="Sala" value={room} onChange={handleChangeRoom} />
         </FormGroup>
@@ -127,6 +122,7 @@ ProjectForm.propTypes = {
   buttonLabel: PropTypes.string.isRequired,
   typeLabel: PropTypes.string.isRequired,
   onSubmit: PropTypes.func.isRequired,
+  formSent: PropTypes.bool.isRequired,
 };
 const Container = styled.div`
   width: 100%;

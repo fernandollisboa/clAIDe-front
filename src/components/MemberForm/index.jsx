@@ -9,15 +9,16 @@ import Input from "../Input";
 import Button from "../Button";
 import Select from "../Select";
 import FormGroup from "../FormGroup";
+import FormDate from "../FormDate";
 
 import useErrors from "../../hooks/useErrors";
-import maskDate from "../../utils/maskDate";
 import maskCpf from "../../utils/maskCpf";
 import maskPhone from "../../utils/maskPhone";
 import removeChar from "../../utils/removeChar";
 import isEmailValid from "../../utils/isEmailValid";
+import { transformDate } from "../../utils/transformDate";
 
-export default function MemberForm({ onSubmit, typeLabel, buttonLabel }) {
+export default function MemberForm({ onSubmit, typeLabel, buttonLabel, formSent }) {
   const [name, setName] = useState("");
   const [birthDate, setBirthDate] = useState("");
   const [username, setUsername] = useState("");
@@ -55,14 +56,7 @@ export default function MemberForm({ onSubmit, typeLabel, buttonLabel }) {
       removeError("name");
     }
   }
-  function handleChangeBirthDate(event) {
-    setBirthDate(maskDate(event.target.value));
-    if (!event.target.value) {
-      setError({ field: "birthDate", message: "Data de nascimento é obrigatório" });
-    } else {
-      removeError("birthDate");
-    }
-  }
+
   function handleChangeUsername(event) {
     setUsername(event.target.value);
 
@@ -143,7 +137,7 @@ export default function MemberForm({ onSubmit, typeLabel, buttonLabel }) {
 
     await onSubmit({
       name,
-      birthDate,
+      birthDate: transformDate(birthDate),
       username,
       cpf: removeChar(cpf),
       rg,
@@ -158,21 +152,23 @@ export default function MemberForm({ onSubmit, typeLabel, buttonLabel }) {
       isBrazilian,
       hasKey,
     });
-    setName("");
-    setBirthDate("");
-    setUsername("");
-    setCpf("");
-    setRg("");
-    setPassport("");
-    setPhone("");
-    setEmailLsd("");
-    setEmail("");
-    setSecondEmail("");
-    setMemberType("");
-    setLattes("");
-    setRoom("");
-    setIsBrazilian("");
-    setHasKey("");
+    if (formSent) {
+      setName("");
+      setBirthDate("");
+      setUsername("");
+      setCpf("");
+      setRg("");
+      setPassport("");
+      setPhone("");
+      setEmailLsd("");
+      setEmail("");
+      setSecondEmail("");
+      setMemberType("");
+      setLattes("");
+      setRoom("");
+      setIsBrazilian(true);
+      setHasKey(false);
+    }
   }
   return (
     <Container>
@@ -187,12 +183,11 @@ export default function MemberForm({ onSubmit, typeLabel, buttonLabel }) {
         <FormGroup error={getErrorMessageByFieldName("name")}>
           <Input placeholder="Nome *" value={name} onChange={handleChangeName} />
         </FormGroup>
-        <FormGroup error={getErrorMessageByFieldName("birthDate")}>
-          <Input
+        <FormGroup>
+          <FormDate
             placeholder="Data de nascimento *"
+            onChange={(date) => setBirthDate(date)}
             value={birthDate}
-            onChange={handleChangeBirthDate}
-            type="text"
           />
         </FormGroup>
         <FormGroup error={getErrorMessageByFieldName("username")}>
@@ -233,9 +228,9 @@ export default function MemberForm({ onSubmit, typeLabel, buttonLabel }) {
             <option value=""> Sem tipo </option>
             <option value="STUDENT"> Estudante </option>
             <option value="PROFESSOR"> Professor </option>
-            <option value="PROFESSIONAL"> Profissional </option>
             <option value="EXTERNAL"> Externo </option>
             <option value="SUPPORT"> Suporte </option>
+            <option value="ADMIN"> Administrador </option>
           </Select>
         </FormGroup>
         <FormGroup error={getErrorMessageByFieldName("lattes")}>
@@ -267,6 +262,7 @@ MemberForm.propTypes = {
   buttonLabel: PropTypes.string.isRequired,
   typeLabel: PropTypes.string.isRequired,
   onSubmit: PropTypes.func.isRequired,
+  formSent: PropTypes.bool.isRequired,
 };
 const Container = styled.div`
   width: 100%;
@@ -276,6 +272,21 @@ const Container = styled.div`
 const Form = styled.form`
   max-width: 500px;
   margin: 0 auto;
+  .birthDate {
+    width: 100%;
+    background: #fff;
+    border: none;
+    border: 2px solid #fff;
+    height: 52px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.04);
+    border-radius: 4px;
+    border: 0 none;
+    outline: 0;
+    padding: 0 5%;
+    font-size: 1rem;
+    transition: border-color 0.2s ease-in;
+    appearance: none;
+  }
 `;
 const Title = styled.div`
   a {
