@@ -16,7 +16,7 @@ const StyleModal = {
     bottom: "0",
     margin: "auto",
     width: "70vw",
-    height: "30vh",
+    height: "40vh",
     boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
     borderRadius: "20px",
     fontSize: "1rem",

@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
-import DatePicker from "react-date-picker";
-
-import "react-date-picker/dist/DatePicker.css";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 import Layout from "../../components/Layout";
 import Modal from "../../components/Modal";
@@ -11,13 +10,14 @@ import Modal from "../../components/Modal";
 import ProjectService from "../../services/ProjectsService";
 import MembersService from "../../services/MembersService";
 
+import { alertUser } from "../../utils/alertUser";
 import maskCpf from "../../utils/maskCpf";
 import { transformDate } from "../../utils/transformDate";
 
 export default function Member() {
   const [member, setMember] = useState({});
   const [viewProjectButton, setviewProjectButton] = useState(true);
-  const [activeProject, setActiveProject] = useState({});
+  const [activeProjects, setActiveProjects] = useState([]);
   const [projects, setProjects] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedProject, setSelectedProject] = useState({});
@@ -25,22 +25,20 @@ export default function Member() {
   const [endDate, setEndDate] = useState(null);
   const params = useParams();
 
-  async function loadMember() {
+  async function loadDashboardMember() {
     try {
       const memberId = params.id;
       const { data: member } = await MembersService.getById(memberId);
-      const { data: project } =
-        (await ProjectService.getAssociateProjectMemberId(memberId)) || null;
+      const { data: projects } = await ProjectService.getAssociateProjectMemberId(memberId);
 
       setMember(member);
-      setProjects(project);
-      setActiveProject({});
+      setActiveProjects(projects);
     } catch (error) {
-      alert(error);
+      alertUser({ text: error.response.data.message, type: "error" });
     }
   }
   useEffect(() => {
-    loadMember();
+    loadDashboardMember();
   }, [params.id]);
 
   async function associateStudentWithProject() {
@@ -52,8 +50,9 @@ export default function Member() {
         transformDate(endDate)
       );
       setModalOpen(false);
+      alertUser({ text: "Projeto associado!", type: "success" });
     } catch (error) {
-      alert(error);
+      alertUser({ text: error.response.data.message, type: "error" });
     }
   }
 
@@ -71,7 +70,7 @@ export default function Member() {
       setProjects([]);
     }
   }
-  console.log(projects);
+
   return (
     <>
       <Layout>
@@ -83,15 +82,22 @@ export default function Member() {
             </span>
             <InputsModal>
               <DatePicker
-                defaultValue={null}
-                required={true}
+                placeholderText="Data de inicio"
+                className="date"
+                required
                 onChange={setStartDate}
-                value={startDate}
+                value={transformDate(startDate)}
               />
 
-              <DatePicker defaultValue={null} onChange={setEndDate} value={endDate} />
+              <DatePicker
+                placeholderText="Data de fim"
+                className="date"
+                onChange={setEndDate}
+                value={transformDate(endDate)}
+              />
 
               <Button
+                style={{ padding: "1%", height: "52px" }}
                 onClick={() => {
                   setModalOpen(false);
                   setSelectedProject({});
@@ -102,7 +108,7 @@ export default function Member() {
                 Cancelar
               </Button>
               <Button
-                style={{ border: "2px solid red", color: "red" }}
+                style={{ border: "2px solid red", color: "red", padding: "1%", height: "52px" }}
                 onClick={associateStudentWithProject}
               >
                 Confirmar
@@ -126,9 +132,7 @@ export default function Member() {
                 {viewProjectButton ? (
                   <>
                     <Button> Editar</Button>
-                    <AssociationButtonProject>
-                      <option onClick={handleToggleAssociationProject}>Gerenciar projetos</option>
-                    </AssociationButtonProject>
+                    <Button onClick={handleToggleAssociationProject}>Gerenciar projetos</Button>
                   </>
                 ) : (
                   <Button onClick={handleToggleAssociationProject}> Voltar</Button>
@@ -181,22 +185,29 @@ export default function Member() {
               {viewProjectButton ? (
                 <List>
                   <Project>
-                    <ProjectTitle>Projeto Atual</ProjectTitle>
-                    <CardProjectActive>
-                      <div>
-                        <span>{activeProject.name}</span>
-                        <span>
-                          Professor: <p>Eanes</p>
-                        </span>
-                        <span>
-                          Sala: <p>105 B</p>
-                        </span>
-                        <span>
-                          Data de inicio: <p>00/00/0000</p>
-                        </span>
-                      </div>
-                      <div>{"🟢"} </div>
-                    </CardProjectActive>
+                    <ProjectTitle>
+                      {activeProjects.length > 1 ? (
+                        <h1>Projetos Atuais</h1>
+                      ) : (
+                        <h1>Projeto Atual</h1>
+                      )}
+                    </ProjectTitle>
+                    {activeProjects.map((projectAssociation) => (
+                      <CardProjectActive key={projectAssociation.id}>
+                        <div>
+                          <span>
+                            Nome: <p>{projectAssociation.project.name}</p>
+                          </span>
+                          <span>
+                            Sala: <p>{projectAssociation.project.room || "Sem sala"}</p>
+                          </span>
+                          <span>
+                            Data de inicio: <p>{transformDate(projectAssociation.startDate)}</p>
+                          </span>
+                        </div>
+                        <div>{projectAssociation.project.isActive ? "🟢" : "🔴"} </div>
+                      </CardProjectActive>
+                    ))}
                   </Project>
 
                   <Services>
@@ -227,12 +238,17 @@ export default function Member() {
                         }}
                       >
                         <div className="info">
-                          <div className="name">{project.name}</div>
-                          <div className="name-teacher">
-                            Professor: <p>Eanes, Manel da Silva, Fubica</p>
-                          </div>
+                          <span>
+                            Nome: <p>{project.name}</p>
+                          </span>
+                          <span>
+                            Sala: <p>{project.room || "Sem sala"}</p>
+                          </span>
+                          <span>
+                            Predio: <p>{project.building || "Sem predio"}</p>
+                          </span>
                         </div>
-                        <div>{project.endDate === null ? "🟢" : "🔴"}</div>
+                        <div>{project.isActive ? "🟢" : "🔴"}</div>
                       </CardProject>
                     ))}
                   </div>
@@ -261,6 +277,14 @@ const InputsModal = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
+  .date {
+    margin-right: 5%;
+    border: 2px solid black;
+    outline: 0;
+    padding: 0 5%;
+    font-size: 1rem;
+    height: 52px;
+  }
 `;
 const Container = styled.div`
   display: flex;
@@ -333,23 +357,14 @@ const Button = styled.button`
   border: 2px solid #131313;
   text-decoration: none;
   border-radius: 4px;
-  padding: 1.2vh 2vh;
+  padding: 4%;
   background: #fff;
   font-weight: 700;
   font-size: 1rem;
   margin-right: 5%;
   cursor: pointer;
 `;
-const AssociationButtonProject = styled.button`
-  border: 2px solid #131313;
-  text-decoration: none;
-  border-radius: 4px;
-  padding: 1.2vh 2vh;
-  background: #fff;
-  font-weight: 700;
-  font-size: 1rem;
-  cursor: pointer;
-`;
+
 const Body = styled.div`
   display: flex;
   justify-content: space-between;
@@ -387,6 +402,7 @@ const List = styled.div`
 const Project = styled.div`
   height: 200px;
   border-bottom: 2px solid #bcbcbc;
+  overflow-y: auto;
 `;
 const ProjectTitle = styled.div`
   display: flex;
@@ -496,12 +512,15 @@ const CardProject = styled.div`
   & + & {
     margin-bottom: 1%;
   }
-  div {
-    font-size: 1rem;
-    font-weight: 700;
-    p {
+  .info {
+    span {
+      display: flex;
       font-size: 1rem;
-      font-weight: 400;
+      font-weight: 700;
+      p {
+        font-size: 1rem;
+        font-weight: 400;
+      }
     }
   }
 `;

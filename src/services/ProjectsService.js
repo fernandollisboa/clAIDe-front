@@ -7,6 +7,9 @@ class ProjectsService {
   getAll(isActive, desc) {
     return api.get(`projects/?isActive=${isActive}&desc=${desc}`);
   }
+  async getById(id) {
+    return await api.get(`projects/${id}`);
+  }
   associateMemberWithProject(memberId, projectId, startDate, endDate) {
     const body = { startDate, endDate };
     return api.post(`projects/${projectId}/members/${memberId}`, body);
