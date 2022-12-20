@@ -39,7 +39,7 @@ export default function Member() {
   }
   useEffect(() => {
     loadDashboardMember();
-  }, [params.id]);
+  }, [params.id, projects]);
 
   async function associateStudentWithProject() {
     try {
@@ -49,6 +49,8 @@ export default function Member() {
         transformDate(startDate),
         transformDate(endDate)
       );
+      setStartDate(null);
+      setEndDate(null);
       setModalOpen(false);
       alertUser({ text: "Projeto associado!", type: "success" });
     } catch (error) {
@@ -349,9 +351,6 @@ const Buttons = styled.div`
   width: 300px;
   display: flex;
   justify-content: end;
-  img {
-    transform: rotate(-90deg);
-  }
 `;
 const Button = styled.button`
   border: 2px solid #131313;

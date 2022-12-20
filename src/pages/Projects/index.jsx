@@ -78,7 +78,7 @@ export default function Project() {
                   Sala: <span>{project.room}</span>
                 </div>
               </div>
-              <div>{project.endDate === null ? "🟢" : "🔴"}</div>
+              <div>{project.isActive ? "🟢" : "🔴"}</div>
             </Card>
           ))}
         </Container>
