@@ -27,5 +27,8 @@ class ProjectsService {
     const config = createHeaders();
     return api.get(`projects/members/${memberId}`, config);
   }
+  getAssociateProjectByProjectId(projectId) {
+    return api.get(`projects/${projectId}/members`);
+  }
 }
 export default new ProjectsService();
