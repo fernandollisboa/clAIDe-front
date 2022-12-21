@@ -132,11 +132,11 @@ export default function Member() {
           <Dashboard>
             <HeaderDashboard>
               <Info status={member.status}>
-                <div className="member-info">
-                  <div className="name">{member.name}</div>
-                  <div className="type">{member.memberType}</div>
-                  <div className="status">{(member.status && <p>Ativo</p>) || <p>Inativo</p>}</div>
-                </div>
+                <MemberInfo>
+                  <Name>{member.name}</Name>
+                  <Type>{member.memberType}</Type>
+                  <Status>{(member.status && <p>Ativo</p>) || <p>Inativo</p>}</Status>
+                </MemberInfo>
                 <Username>{member.username}</Username>
               </Info>
               <Buttons>
@@ -152,46 +152,49 @@ export default function Member() {
             </HeaderDashboard>
             <Body>
               <ListInfo>
-                <div className="data">
-                  <span>
-                    E-mail principal: <p>{member.email}</p>
-                  </span>
-                  <span>
-                    E-mail LSD: <p>{member.lsdEmail}</p>
-                  </span>
-                  <span>
-                    E-mail secundário: <p>{member.secondaryEmail}</p>
-                  </span>
-                  <span>
-                    Lattes: <p>{member.lattes}</p>
-                  </span>
-                  <span>
-                    Sala LSD: <p>{member.roomName}</p>
-                  </span>
-                  <span>
-                    Tem chave: {(member.hasKey && <p>Tem a chave</p>) || <p>Tem a chave</p>}
-                  </span>
-                </div>
-                <div className="personal-data">
-                  <span>
-                    Data de nascimento: <p>{member.birthDate}</p>
-                  </span>
-                  <span>
-                    CPF: <p>{maskCpf(member.cpf)}</p>
-                  </span>
-                  <span>
-                    RG: <p>{member.rg}</p>
-                  </span>
+                <Data>
+                  <FormatData>
+                    E-mail principal: <FontData>{member.email}</FontData>
+                  </FormatData>
+                  <FormatData>
+                    E-mail LSD: <FontData>{member.lsdEmail}</FontData>
+                  </FormatData>
+                  <FormatData>
+                    E-mail secundário: <FontData>{member.secondaryEmail}</FontData>
+                  </FormatData>
+                  <FormatData>
+                    Lattes: <FontData>{member.lattes}</FontData>
+                  </FormatData>
+                  <FormatData>
+                    Sala LSD: <FontData>{member.roomName}</FontData>
+                  </FormatData>
+                  <FormatData>
+                    Tem chave:
+                    {(member.hasKey && <FontData>Tem a chave</FontData>) || (
+                      <FontData>Tem a chave</FontData>
+                    )}
+                  </FormatData>
+                </Data>
+                <PersonalData>
+                  <FormatData>
+                    Data de nascimento: <FontData>{member.birthDate}</FontData>
+                  </FormatData>
+                  <FormatData>
+                    CPF: <FontData>{maskCpf(member.cpf)}</FontData>
+                  </FormatData>
+                  <FormatData>
+                    RG: <FontData>{member.rg}</FontData>
+                  </FormatData>
                   {(member.passport && (
-                    <span>
-                      Passaporte: <p>{member.passport}</p>{" "}
-                    </span>
+                    <FormatData>
+                      Passaporte: <FontData>{member.passport}</FontData>{" "}
+                    </FormatData>
                   )) || (
-                    <span>
-                      Passaporte: <p>Nao tem informacao</p>{" "}
-                    </span>
+                    <FormatData>
+                      Passaporte: <FontData>Nao tem informacao</FontData>{" "}
+                    </FormatData>
                   )}
-                </div>
+                </PersonalData>
               </ListInfo>
               {viewProjectButton ? (
                 <List>
@@ -212,13 +215,15 @@ export default function Member() {
                       >
                         <div>
                           <span>
-                            Nome: <p>{projectAssociation.project.name}</p>
+                            Nome: <FontData>{projectAssociation.project.name}</FontData>
                           </span>
                           <span>
-                            Sala: <p>{projectAssociation.project.room || "Sem sala"}</p>
+                            Sala:{" "}
+                            <FontData>{projectAssociation.project.room || "Sem sala"}</FontData>
                           </span>
                           <span>
-                            Data de inicio: <p>{transformDate(projectAssociation.startDate)}</p>
+                            Data de inicio:{" "}
+                            <FontData>{transformDate(projectAssociation.startDate)}</FontData>
                           </span>
                         </div>
                         <div>{projectAssociation.project.isActive ? "🟢" : "🔴"} </div>
@@ -331,33 +336,33 @@ const HeaderDashboard = styled.div`
 `;
 const Info = styled.div`
   width: 500px;
-  .member-info {
-    display: flex;
-    align-items: center;
-    .name {
-      font-weight: 700;
-      font-size: 2.5rem;
-      line-height: 50px;
-    }
-    .type {
-      font-weight: 800;
-      font-size: 0.7rem;
-      color: #486fbd;
-      background: #f6f5fc;
-      border-radius: 4px;
-      padding: 0.5vh;
-      margin-left: 1%;
-      margin-right: 1%;
-    }
-    .status {
-      font-weight: 800;
-      font-size: 0.7rem;
-      color: ${({ status }) => (status ? "#069d15" : "red")};
-      background: #f6f5fc;
-      border-radius: 4px;
-      padding: 0.5vh;
-    }
-  }
+`;
+const MemberInfo = styled.div`
+  display: flex;
+  align-items: center;
+`;
+const Name = styled.div`
+  font-weight: 700;
+  font-size: 2.5rem;
+  line-height: 50px;
+`;
+const Type = styled.div`
+  font-weight: 800;
+  font-size: 0.7rem;
+  color: #486fbd;
+  background: #f6f5fc;
+  border-radius: 4px;
+  padding: 0.5vh;
+  margin-left: 1%;
+  margin-right: 1%;
+`;
+const Status = styled.div`
+  font-weight: 800;
+  font-size: 0.7rem;
+  color: ${({ status }) => (status ? "#069d15" : "red")};
+  background: #f6f5fc;
+  border-radius: 4px;
+  padding: 0.5vh;
 `;
 const Username = styled.span`
   font-weight: 400;
@@ -391,24 +396,23 @@ const ListInfo = styled.div`
   width: 50%;
   border-right: 2px solid #bcbcbc;
   padding-right: 2%;
-
-  span {
-    padding: 7px;
-    font-size: 1rem;
-    display: flex;
-    font-weight: 700;
-    p {
-      font-weight: 400;
-    }
-  }
-  .data {
-    height: 200px;
-    border-bottom: 2px solid #bcbcbc;
-  }
-  .personal-data {
-    height: 200px;
-    padding-top: 2%;
-  }
+`;
+const Data = styled.div`
+  height: 200px;
+  border-bottom: 2px solid #bcbcbc;
+`;
+const PersonalData = styled.div`
+  height: 200px;
+  padding-top: 2%;
+`;
+const FormatData = styled.span`
+  padding: 7px;
+  font-size: 1rem;
+  display: flex;
+  font-weight: 700;
+`;
+const FontData = styled.p`
+  font-weight: 400;
 `;
 const List = styled.div`
   width: 50%;
@@ -440,10 +444,6 @@ const CardProjectActive = styled.div`
     display: flex;
     font-weight: 700;
     margin-bottom: 4%;
-
-    p {
-      font-weight: 400;
-    }
   }
 `;
 const Services = styled.div`
