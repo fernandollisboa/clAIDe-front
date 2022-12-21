@@ -11,8 +11,7 @@ export default function Header() {
         <img src={logo} alt="logo lsd" />
         <NavBar>
           <Link to="/members">Membros</Link>
-          <Link to="/teachers">Professores</Link>
-          <Link to="/projects">Projetos</Link>
+          {/* <Link to="/teachers">Professores</Link> */}
         </NavBar>
         <img src={profile} alt="account" />
       </Container>
@@ -29,9 +28,8 @@ const HeaderContainer = styled.div`
 
 const Container = styled.div`
   display: flex;
-  max-width: 68%;
+  max-width: 100%;
   align-items: center;
-  margin: 1% auto;
   justify-content: space-between;
   background: #fff;
   border: none;
@@ -45,7 +43,7 @@ const NavBar = styled.nav`
   flex-direction: row;
   width: 30%;
   align-items: center;
-  justify-content: space-between;
+  justify-content: space-around;
   a {
     font-style: normal;
     font-weight: 700;

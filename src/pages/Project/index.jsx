@@ -1,182 +1,281 @@
-import { useState, useEffect, useMemo } from "react";
+import { useEffect, useState } from "react";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { Link } from "react-router-dom";
 
 import Layout from "../../components/Layout";
-import Select from "../../components/Select";
+import arrowback from "../../assets/arrow-back.svg";
+
+import ProjectService from "../../services/ProjectsService";
 
 import { transformDate } from "../../utils/transformDate";
-import ProjectsService from "../../services/ProjectsService";
+import { alertUser } from "../../utils/alertUser";
 
 export default function Project() {
-  const [projects, setProjects] = useState([]);
-  const [projectNameToBeSearched, setProjectNameToBeSearched] = useState("");
-  const [isActive, setIsActive] = useState("");
-  const [desc, setDesc] = useState("");
+  const [project, setProject] = useState({});
+  const [members, setMembers] = useState([]);
 
-  const filteredProjects = useMemo(
-    () =>
-      projects.filter(({ name }) =>
-        name.toLowerCase().includes(projectNameToBeSearched.toLowerCase())
-      ),
-    [projects, projectNameToBeSearched]
-  );
-
-  async function loadProjects() {
+  const params = useParams();
+  const navigate = useNavigate();
+  async function loadDashboardProject() {
     try {
-      const projectsList = await ProjectsService.getAll(isActive, desc);
-
-      setProjects(projectsList.data);
-    } catch (err) {
-      alert(err);
+      const projectId = params.id;
+      const { data: project } = await ProjectService.getById(projectId);
+      const { data: members } = await ProjectService.getAssociateProjectByProjectId(projectId);
+      console.log(members);
+      setMembers(members);
+      setProject(project);
+    } catch (error) {
+      alertUser({ text: error.response.data.message, type: "error" });
     }
   }
-
   useEffect(() => {
-    loadProjects();
-  }, [isActive, desc]);
-
-  function handleToggleIsActive(event) {
-    setIsActive(event.target.value);
-  }
-  function handleToggleDesc() {
-    setDesc((prevState) => (prevState === true ? false : true));
-  }
-  function handleChangeSearchProject(event) {
-    setProjectNameToBeSearched(event.target.value);
+    loadDashboardProject();
+  }, [params.id]);
+  function navigateToMember(id) {
+    navigate(`/member/${id}`);
   }
   return (
     <>
       <Layout>
-        <Menu>
-          <h1>Projetos cadastrados</h1>
-          <Button onClick={handleToggleDesc}>Nome</Button>
-          <InputSearch
-            value={projectNameToBeSearched}
-            placeholder="Pesquisar Projeto..."
-            type="text"
-            onChange={handleChangeSearchProject}
-          />
-          <div className="filters">
-            <Select style={{ height: "40px" }} onClick={handleToggleIsActive}>
-              <option value={""}>Todos</option>
-              <option value={true}>Ativos</option>
-              <option value={false}>Inativos</option>
-            </Select>
-          </div>
-          <div className="buttons">
-            <Link to="/newProject">Cadastrar</Link>
-          </div>
-        </Menu>
         <Container>
-          {filteredProjects.map((project) => (
-            <Card key={project.id}>
-              <div className="project-info">
-                <div className="name">{project.name}</div>
-                {project.endDate ? (
-                  <div>
-                    Data de Fim: <span>{transformDate(project.endDate)}</span>
+          <Header>
+            <Link to="/projects">
+              <img src={arrowback} />
+            </Link>
+            <Title>Informações do Projeto</Title>
+          </Header>
+
+          <Dashboard>
+            <HeaderDashboard>
+              <Info status={project.isActive}>
+                <div className="project-info">
+                  <div className="name">{project.name}</div>
+                  <div className="status">
+                    {(project.isActive && <p>Ativo</p>) || <p>Inativo</p>}
                   </div>
-                ) : (
-                  <div>
-                    Data de início: <span>{transformDate(project.creationDate)}</span>
-                  </div>
-                )}
-                <div>
-                  Prédio: <span>{project.building}</span>
                 </div>
-                <div>
-                  Sala: <span>{project.room}</span>
+              </Info>
+              <Buttons>
+                <Button> Editar</Button>
+              </Buttons>
+            </HeaderDashboard>
+            <Body>
+              <ListInfo>
+                <div className="data">
+                  <span>
+                    Data de Criacao: <p>{transformDate(project.creationDate)}</p>
+                  </span>
+                  <span>
+                    Data de Termino: <p>{transformDate(project.endDate) || "Sem data"}</p>
+                  </span>
+                  <span>
+                    Predio: <p>{project.building || "Sem predio"}</p>
+                  </span>
+                  <span>
+                    Sala: <p>{project.room || "Sem sala"}</p>
+                  </span>
+                  <span>
+                    Codigo Embrapii: <p>{project.embrapiiCode || "Sem codigo"}</p>
+                  </span>
+                  <span>
+                    Financiador: <p>{project.financier || "Sem financiador"}</p>
+                  </span>
                 </div>
-              </div>
-              <div>{project.endDate === null ? "🟢" : "🔴"}</div>
-            </Card>
-          ))}
+                <div className="list-teachers">
+                  <span>Professores:</span>
+                  {members
+                    .filter(
+                      (associationMember) => associationMember.member.memberType === "PROFESSOR"
+                    )
+                    .map((associationMember) => (
+                      <Card
+                        key={associationMember.member.id}
+                        onClick={() => {
+                          navigateToMember(associationMember.member.id);
+                        }}
+                      >
+                        <div className="info">
+                          <span className="name">
+                            Nome: <p>{associationMember.member.name}</p>
+                          </span>
+                          <span>
+                            Sala: <p>{associationMember.member.roomName}</p>
+                          </span>
+                          <span>
+                            Email LSD: <p>{associationMember.member.lsdEmail}</p>
+                          </span>
+                        </div>
+                        <div>{associationMember.member.isActive ? "🟢" : "🔴"}</div>
+                      </Card>
+                    ))}
+                </div>
+              </ListInfo>
+              <Members>
+                <span>Alunos:</span>
+                {members
+                  .filter((associationMember) => associationMember.member.memberType === "STUDENT")
+                  .map((associationMember) => (
+                    <Card
+                      key={associationMember.member.id}
+                      onClick={() => {
+                        navigateToMember(associationMember.member.id);
+                      }}
+                    >
+                      <div className="info">
+                        <span className="name">
+                          Nome: <p>{associationMember.member.name}</p>
+                        </span>
+                        <span>
+                          Sala: <p>{associationMember.member.roomName}</p>
+                        </span>
+                        <span>
+                          Email LSD: <p>{associationMember.member.lsdEmail}</p>
+                        </span>
+                      </div>
+                      <div>{associationMember.member.isActive ? "🟢" : "🔴"}</div>
+                    </Card>
+                  ))}
+              </Members>
+            </Body>
+          </Dashboard>
         </Container>
       </Layout>
     </>
   );
 }
 
-const Menu = styled.div`
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto;
+  width: 88%;
+  height: 653px;
+  background: #fff;
+  border-radius: 10px;
+  padding: 1% 2%;
+`;
+const Title = styled.h1`
+  font-weight: 400;
+  font-size: 3rem;
+  margin: 0 auto;
+`;
+const Header = styled.div`
+  display: flex;
+`;
+const Dashboard = styled.div``;
+const HeaderDashboard = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  max-width: 68%;
-  margin: 1% auto;
-  h1 {
-    font-size: 2rem;
-    font-weight: 600;
-  }
-  .filters {
+  border-bottom: 1px solid #bcbcbc;
+  padding-bottom: 1%;
+`;
+const Info = styled.div`
+  width: 500px;
+  .project-info {
     display: flex;
-  }
-  select {
-    margin-right: 1%;
-  }
-  .buttons {
-    a {
-      text-decoration: none;
-      border: 2px solid #131313;
-      border-radius: 4px;
-      padding: 1vh 2vh;
-      color: #131313;
+    align-items: center;
+    .name {
       font-weight: 700;
-      font-size: 1rem;
+      font-size: 2.5rem;
+      line-height: 50px;
+      margin-right: 2%;
+    }
+    .status {
+      font-weight: 800;
+      font-size: 0.7rem;
+      color: ${({ status }) => (status ? "#069d15" : "red")};
+      background: #f6f5fc;
+      border-radius: 4px;
+      padding: 0.5vh;
     }
   }
 `;
-const InputSearch = styled.input`
-  width: 30%;
-  background: #fff;
-  border: 2px solid #fff;
-  height: 50px;
-  border-radius: 25px;
-  font-size: 1rem;
-  justify-content: center;
-  padding: 0 2%;
+const Buttons = styled.div`
+  width: 300px;
+  display: flex;
+  justify-content: end;
 `;
 const Button = styled.button`
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.04);
-  font-weight: bold;
-  padding: 3%;
-  height: 40px;
-  font-size: 1rem;
   border: 2px solid #131313;
+  text-decoration: none;
   border-radius: 4px;
-  background: #f6f5fc;
-  padding: 1%;
-  height: 40px;
+  padding: 4%;
+  background: #fff;
+  font-weight: 700;
+  font-size: 1rem;
+  margin-right: 5%;
+  cursor: pointer;
 `;
-const Container = styled.div`
+
+const Body = styled.div`
   display: flex;
+  justify-content: space-between;
+  padding-top: 1%;
+`;
+const ListInfo = styled.div`
+  width: 50%;
+  border-right: 2px solid #bcbcbc;
+  padding-right: 2%;
+  span {
+    padding: 7px;
+    font-size: 1rem;
+    display: flex;
+    font-weight: 700;
+    p {
+      font-weight: 400;
+    }
+  }
+  .data {
+    height: 200px;
+    border-bottom: 2px solid #bcbcbc;
+  }
+  .list-teachers {
+    height: 200px;
+    padding-top: 2%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-y: auto;
+    span {
+      padding: 0;
+    }
+  }
+`;
+const Members = styled.div`
+  width: 50%;
+  padding: 0 2%;
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  max-width: 68%;
+  font-size: 1rem;
   margin: 0 auto;
-  flex-wrap: wrap;
-  gap: 2vh;
-  margin-top: 1%;
+  overflow-y: auto;
+  font-weight: 700;
 `;
 const Card = styled.div`
   display: flex;
-  width: 23%;
-  background: #ffffff;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.04);
+  width: 100%;
+  padding: 2%;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.08);
   border-radius: 20px;
-  padding: 1.2%;
   justify-content: space-between;
-  .project-info {
-    font-size: 0.8rem;
-
-    .name {
+  &:hover {
+    transition: all 200ms ease-in;
+    transform: scale(0.93);
+  }
+  & + & {
+    margin-bottom: 1%;
+  }
+  .info {
+    span {
+      display: flex;
       font-size: 1rem;
       font-weight: 700;
-    }
-    div {
       margin-bottom: 3%;
-    }
-    span {
-      color: #bcbcbc;
+      p {
+        font-weight: 400;
+      }
     }
   }
 `;

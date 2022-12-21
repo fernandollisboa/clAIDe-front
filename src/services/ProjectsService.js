@@ -1,11 +1,34 @@
 import api from "./api";
 
+function createHeaders() {
+  const token = window.localStorage.getItem("claideToken");
+  const config = { headers: { Authorization: `Bearer ${token}` } };
+  return config;
+}
 class ProjectsService {
   create(body) {
-    return api.post("projects/", body);
+    const config = createHeaders();
+    return api.post("projects/", body, config);
   }
   getAll(isActive, desc) {
-    return api.get(`projects/?isActive=${isActive}&desc=${desc}`);
+    const config = createHeaders();
+    return api.get(`projects/?isActive=${isActive}&desc=${desc}`, config);
+  }
+  async getById(id) {
+    const config = createHeaders();
+    return await api.get(`projects/${id}`, config);
+  }
+  associateMemberWithProject(memberId, projectId, startDate, endDate) {
+    const config = createHeaders();
+    const body = { startDate, endDate };
+    return api.post(`projects/${projectId}/members/${memberId}`, body, config);
+  }
+  getAssociateProjectMemberId(memberId) {
+    const config = createHeaders();
+    return api.get(`projects/members/${memberId}`, config);
+  }
+  getAssociateProjectByProjectId(projectId) {
+    return api.get(`projects/${projectId}/members`);
   }
 }
 export default new ProjectsService();

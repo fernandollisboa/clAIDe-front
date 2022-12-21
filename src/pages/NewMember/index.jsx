@@ -1,10 +1,15 @@
+import { useState } from "react";
+
 import Layout from "../../components/Layout";
 import MemberForm from "../../components/MemberForm";
+
 import MembersService from "../../services/MembersService";
+import { alertUser } from "../../utils/alertUser";
 
 export default function NewMember() {
+  const [formSent, setFormSent] = useState(false);
+
   async function handleSubmit(formData) {
-    formData;
     try {
       const member = {
         name: formData.name,
@@ -12,7 +17,7 @@ export default function NewMember() {
         username: formData.username,
         cpf: formData.cpf,
         rg: formData.rg,
-        passport: formData.passport || null,
+        passport: formData.passport,
         phone: formData.phone,
         lsdEmail: formData.emailLsd,
         email: formData.email,
@@ -25,14 +30,22 @@ export default function NewMember() {
       };
 
       await MembersService.create(member);
-      alert("Formulario enviado");
-    } catch (err) {
-      alert(err);
+
+      alertUser({ text: "Formulario enviado", type: "success" });
+      setFormSent(true);
+    } catch (error) {
+      alertUser({ text: error.response.data, type: "error" });
+      setFormSent(false);
     }
   }
   return (
     <Layout>
-      <MemberForm onSubmit={handleSubmit} typeLabel="Novo membro" buttonLabel="Cadastrar" />
+      <MemberForm
+        onSubmit={handleSubmit}
+        typeLabel="Novo membro"
+        buttonLabel="Cadastrar"
+        formSent={formSent}
+      />
     </Layout>
   );
 }

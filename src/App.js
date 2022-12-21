@@ -2,10 +2,12 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import GlobalStyle from "./styles/GlobalStyle.js";
 import Login from "./pages/Login";
 import NewProject from "./pages/NewProject";
-import Project from "./pages/Project";
+import Projects from "./pages/Projects";
 import Teacher from "./pages/Teacher";
-import Member from "./pages/Member";
 import NewMember from "./pages/NewMember";
+import Members from "./pages/Members";
+import Member from "./pages/Member";
+import Project from "./pages/Project";
 
 function App() {
   return (
@@ -14,10 +16,12 @@ function App() {
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/newProject" element={<NewProject />} />
-        <Route path="/projects" element={<Project />} />
+        <Route path="/projects" element={<Projects />} />
+        <Route path="/project/:id" element={<Project />} />
         <Route path="/teachers" element={<Teacher />} />
         <Route path="/newMember" element={<NewMember />} />
-        <Route path="/members" element={<Member />} />
+        <Route path="/members" element={<Members />} />
+        <Route path="/member/:id" element={<Member />} />
       </Routes>
     </BrowserRouter>
   );
