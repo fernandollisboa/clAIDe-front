@@ -10,7 +10,6 @@ import Member from "./pages/Member";
 import Activty from "./pages/Activity/index.jsx";
 import Project from "./pages/Project";
 
-
 function App() {
   return (
     <BrowserRouter>
