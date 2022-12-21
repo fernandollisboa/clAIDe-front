@@ -1,9 +1,10 @@
 import { Link } from "react-router-dom";
 import styled from "styled-components";
+import { IoLogOutOutline } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 
 import logo from "../../assets/foto_lsd.svg";
-import profile from "../../assets/profile.svg";
+// import profile from "../../assets/profile.svg";
 
 export default function Header() {
   const navigate = useNavigate();
@@ -18,8 +19,10 @@ export default function Header() {
         <NavBar>
           <Link to="/members">Membros</Link>
           {/* <Link to="/teachers">Professores</Link> */}
+          <Link to="/projects">Projetos</Link>
         </NavBar>
-        <img src={profile} alt="account" onClick={logout} />
+        {/* <img src={profile} alt="account" /> */}
+        <IoLogOutOutline onClick={logout} fontSize="40" cursor="pointer" />
       </Container>
     </HeaderContainer>
   );
