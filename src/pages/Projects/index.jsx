@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
 
 import Card from "../../components/Card";
 import Layout from "../../components/Layout";
@@ -13,6 +14,7 @@ export default function Project() {
   const [projectNameToBeSearched, setProjectNameToBeSearched] = useState("");
   const [isActive, setIsActive] = useState("");
   const [desc, setDesc] = useState("");
+  const navigate = useNavigate();
 
   const filteredProjects = useMemo(
     () =>
@@ -45,6 +47,9 @@ export default function Project() {
   function handleChangeSearchProject(event) {
     setProjectNameToBeSearched(event.target.value);
   }
+  function navigateToProject(id) {
+    navigate(`/project/${id}`);
+  }
   return (
     <>
       <Layout>
@@ -59,7 +64,12 @@ export default function Project() {
         />
         <Container>
           {filteredProjects.map((project) => (
-            <Card key={project.id}>
+            <Card
+              key={project.id}
+              onClick={() => {
+                navigateToProject(project.id);
+              }}
+            >
               <div className="info">
                 <div className="name">{project.name}</div>
                 {project.endDate ? (
@@ -78,7 +88,7 @@ export default function Project() {
                   Sala: <span>{project.room}</span>
                 </div>
               </div>
-              <div>{project.endDate === null ? "🟢" : "🔴"}</div>
+              <div>{project.isActive ? "🟢" : "🔴"}</div>
             </Card>
           ))}
         </Container>

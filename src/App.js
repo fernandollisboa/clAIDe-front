@@ -7,6 +7,7 @@ import Teacher from "./pages/Teacher";
 import NewMember from "./pages/NewMember";
 import Members from "./pages/Members";
 import Member from "./pages/Member";
+import Project from "./pages/Project";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Route path="/" element={<Login />} />
         <Route path="/newProject" element={<NewProject />} />
         <Route path="/projects" element={<Projects />} />
+        <Route path="/project/:id" element={<Project />} />
         <Route path="/teachers" element={<Teacher />} />
         <Route path="/newMember" element={<NewMember />} />
         <Route path="/members" element={<Members />} />
