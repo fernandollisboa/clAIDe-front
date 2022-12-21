@@ -11,7 +11,7 @@ export default function Header() {
         <img src={logo} alt="logo lsd" />
         <NavBar>
           <Link to="/members">Membros</Link>
-          <Link to="/projects">Projetos</Link>
+          {/* <Link to="/teachers">Professores</Link> */}
         </NavBar>
         <img src={profile} alt="account" />
       </Container>

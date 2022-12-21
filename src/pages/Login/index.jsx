@@ -1,20 +1,54 @@
 import styled from "styled-components";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { IoEyeOff, IoEyeSharp, IoPerson } from "react-icons/io5";
 
 import LogoLsd from "../../assets/logo_lsd_cor.png";
 import Footer from "../../layouts/Footer";
+import LoginService from "../../services/LoginService";
+import { alertUser } from "../../utils/alertUser";
 
 export default function Login() {
-  const [isLoading, setIsLoading] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const navigate = useNavigate();
 
-  function sendData(e) {
+  useEffect(() => {
+    (async () => {
+      try {
+        const accessToken = window.localStorage.getItem("claideToken");
+        if (accessToken) {
+          localStorage.setItem("claideToken", accessToken);
+          alertUser({ text: "Bem-vindo(a)!", type: "success" });
+          navigate("/members");
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    })();
+  }, []);
+
+  async function sendData(e) {
     e.preventDefault();
     setIsLoading(true);
-    console.log({ username, password }); //TODO integrar com o backend
+    try {
+      const response = await LoginService.post({ username, password });
+      if (localStorage.getItem("claideToken")) {
+        localStorage.removeItem("claideToken");
+      }
+      localStorage.setItem("claideToken", response.data.token);
+      alertUser({ text: "Bem-vindo(a)!", type: "success" });
+      navigate("/members");
+    } catch (err) {
+      const { status } = err.response;
+
+      if (status === 404) alertUser({ text: "Usuário não encontrado" });
+      else if (status === 401 || status === 403) alertUser({ text: "Credenciais inválidas" });
+      else alertUser({ text: "Erro não mapeado" });
+    }
+    setIsLoading(false);
   }
 
   function togglePasswordVisibility() {
@@ -36,14 +70,14 @@ export default function Login() {
                   <LabelWrapper>
                     <label htmlFor="username">Usuário</label>
                   </LabelWrapper>
-                  <InputWrapper>
+                  <InputWrapper disabled={isLoading}>
                     <input
                       type="text"
                       required
                       value={username}
                       onChange={(e) => setUsername(e.target.value)}
                       id="username"
-                      placeholder="jhonasrodrigues"
+                      placeholder="nome.usuario"
                     />
                     <Icon>
                       <IoPerson />
@@ -54,14 +88,15 @@ export default function Login() {
                   <LabelWrapper>
                     <label htmlFor="password">Senha</label>
                   </LabelWrapper>
-                  <InputWrapper>
+                  <InputWrapper disabled={isLoading}>
                     <input
                       type={isPasswordVisible ? "text" : "password"}
                       required
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       id="password"
-                      placeholder="Senha"
+                      placeholder="senha"
+                      autoComplete="current-password"
                     />
                     <Icon onClick={togglePasswordVisibility}>
                       {isPasswordVisible ? <IoEyeSharp /> : <IoEyeOff />}
@@ -164,7 +199,8 @@ const LabelAndInputWrapper = styled.div`
 const LabelWrapper = styled.div`
   width: 60%;
   text-align: start;
-  margin-bottom: 2%;
+  margin-bottom: 0.5rem;
+  color: rgba(0, 0, 0, 0.823);
   label {
     font-size: 1.6rem;
   }
@@ -177,6 +213,9 @@ const InputWrapper = styled.div`
   text-align: start;
   display: flex;
   flex-wrap: nowrap;
+
+  background: ${({ disabled }) => (disabled ? "#9292b855" : "")};
+  border-radius: 5%;
 
   input {
     width: 90%;
@@ -207,7 +246,7 @@ const ButtonLogin = styled.button`
   font-size: 2rem;
   color: #ffffff;
 
-  background: #486fbd;
+  background: ${({ disabled }) => (disabled ? "#c8cdd8" : "#486fbd")};
   border-radius: 5%;
   border: none;
 `;
