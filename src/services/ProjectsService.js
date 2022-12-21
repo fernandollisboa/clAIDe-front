@@ -23,7 +23,7 @@ class ProjectsService {
     const body = { startDate, endDate };
     return api.post(`projects/${projectId}/members/${memberId}`, body, config);
   }
-  getAssociateProjectMemberId(memberId) {
+  getAssociateProjectByMemberId(memberId) {
     const config = createHeaders();
     return api.get(`projects/members/${memberId}`, config);
   }

@@ -69,25 +69,26 @@ export default function Project() {
               onClick={() => {
                 navigateToProject(project.id);
               }}
+              style={{ width: "300px" }}
             >
-              <div className="info">
-                <div className="name">{project.name}</div>
+              <Info>
+                <Name>{project.name}</Name>
                 {project.endDate ? (
-                  <div>
-                    Data de Fim: <span>{transformDate(project.endDate)}</span>
-                  </div>
+                  <Data>
+                    Data de Fim: <FontData>{transformDate(project.endDate)}</FontData>
+                  </Data>
                 ) : (
-                  <div>
-                    Data de início: <span>{transformDate(project.creationDate)}</span>
-                  </div>
+                  <Data>
+                    Data de início: <FontData>{transformDate(project.creationDate)}</FontData>
+                  </Data>
                 )}
-                <div>
-                  Prédio: <span>{project.building}</span>
-                </div>
-                <div>
-                  Sala: <span>{project.room}</span>
-                </div>
-              </div>
+                <Data>
+                  Prédio: <FontData>{project.building}</FontData>
+                </Data>
+                <Data>
+                  Sala: <FontData>{project.room}</FontData>
+                </Data>
+              </Info>
               <div>{project.isActive ? "🟢" : "🔴"}</div>
             </Card>
           ))}
@@ -105,4 +106,17 @@ const Container = styled.div`
   flex-wrap: wrap;
   gap: 2vh;
   margin-top: 1%;
+`;
+const Info = styled.div`
+  p {
+    margin-bottom: 4px;
+  }
+`;
+const Name = styled.p`
+  font-size: 1rem;
+  font-weight: 700;
+`;
+const Data = styled.p``;
+const FontData = styled.span`
+  color: #bcbcbc;
 `;
