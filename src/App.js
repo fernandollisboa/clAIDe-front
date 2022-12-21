@@ -9,6 +9,7 @@ import Members from "./pages/Members";
 import Member from "./pages/Member";
 import Activty from "./pages/Activity/index.jsx";
 import Project from "./pages/Project";
+import ProtectedRoute from "./routes/ProtectedRoute";
 
 function App() {
   return (
@@ -16,14 +17,17 @@ function App() {
       <GlobalStyle />
       <Routes>
         <Route path="/" element={<Login />} />
-        <Route path="/activity" element={<Activty />} />
-        <Route path="/newProject" element={<NewProject />} />
-        <Route path="/projects" element={<Projects />} />
-        <Route path="/project/:id" element={<Project />} />
-        <Route path="/teachers" element={<Teacher />} />
-        <Route path="/newMember" element={<NewMember />} />
-        <Route path="/members" element={<Members />} />
-        <Route path="/member/:id" element={<Member />} />
+        <Route path="/" element={<ProtectedRoute />}>
+          <Route path="/activity" element={<Activty />} />
+          <Route path="/newProject" element={<NewProject />} />
+          <Route path="/projects" element={<Projects />} />
+          <Route path="/project/:id" element={<Project />} />
+          <Route path="/teachers" element={<Teacher />} />
+          <Route path="/newMember" element={<NewMember />} />
+          <Route path="/members" element={<Members />} />
+          <Route path="/member/:id" element={<Member />} />
+        </Route>
+        <Route path="*" element={<Login />} />
       </Routes>
     </BrowserRouter>
   );
