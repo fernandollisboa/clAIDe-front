@@ -5,7 +5,7 @@ const GlobalStyle = createGlobalStyle`
     ${reset}
     body {
       background-color: #F6F5FC;
-      font-family: 'Century Gothic', sans-serif;
+      font-family: 'CircularStd-Medium', sans-serif;
       font-size: 12px;
       margin: 0px;
       caret-color: transparent;
@@ -16,7 +16,14 @@ const GlobalStyle = createGlobalStyle`
 
     input:-webkit-autofill,
     input:-webkit-autofill:focus {
-    transition: background-color 600000s 0s, color 600000s 0s;
+    transition: background-color 600000s 0s, black 600000s 0s;
+    }
+
+    @font-face {
+      font-family: 'CircularStd-Medium';
+      src: url("assets/fonts/CircularStd-Medium.otf") format("opentype")
+      font-weight: normal;
+      font-style: normal;
     }
   
 `;

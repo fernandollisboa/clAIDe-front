@@ -231,6 +231,7 @@ export default function MemberForm({ onSubmit, typeLabel, buttonLabel, formSent 
             <option value="EXTERNAL"> Externo </option>
             <option value="SUPPORT"> Suporte </option>
             <option value="ADMIN"> Administrador </option>
+            {/*TO-DO acho isso mockado é mto feio, melhor pegar da api os tipos*/}
           </Select>
         </FormGroup>
         <FormGroup error={getErrorMessageByFieldName("lattes")}>
@@ -260,7 +261,7 @@ export default function MemberForm({ onSubmit, typeLabel, buttonLabel, formSent 
 }
 MemberForm.propTypes = {
   buttonLabel: PropTypes.string.isRequired,
-  typeLabel: PropTypes.string.isRequired,
+  typeLabel: PropTypes.string.isRequired, // TO-DO que porra é typelabel?
   onSubmit: PropTypes.func.isRequired,
   formSent: PropTypes.bool.isRequired,
 };
