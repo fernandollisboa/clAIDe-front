@@ -14,8 +14,11 @@ class ProjectsService {
     const body = { startDate, endDate };
     return api.post(`projects/${projectId}/members/${memberId}`, body);
   }
-  getAssociateProjectMemberId(memberId) {
+  getAssociateProjectByMemberId(memberId) {
     return api.get(`projects/members/${memberId}`);
+  }
+  getAssociateProjectByProjectId(projectId) {
+    return api.get(`projects/${projectId}/members`);
   }
 }
 export default new ProjectsService();

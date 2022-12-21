@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 import Layout from "../../components/Layout";
 import Modal from "../../components/Modal";
+import arrowback from "../../assets/arrow-back.svg";
 
 import ProjectService from "../../services/ProjectsService";
 import MembersService from "../../services/MembersService";
@@ -24,12 +25,13 @@ export default function Member() {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const params = useParams();
+  const navigate = useNavigate();
 
   async function loadDashboardMember() {
     try {
       const memberId = params.id;
       const { data: member } = await MembersService.getById(memberId);
-      const { data: projects } = await ProjectService.getAssociateProjectMemberId(memberId);
+      const { data: projects } = await ProjectService.getAssociateProjectByMemberId(memberId);
 
       setMember(member);
       setActiveProjects(projects);
@@ -72,7 +74,9 @@ export default function Member() {
       setProjects([]);
     }
   }
-
+  function navigateToProject(id) {
+    navigate(`/project/${id}`);
+  }
   return (
     <>
       <Layout>
@@ -119,9 +123,14 @@ export default function Member() {
           </ModalContainer>
         </Modal>
         <Container>
-          <Title>Informações de Membro</Title>
+          <Header>
+            <Link to="/members">
+              <img src={arrowback} />
+            </Link>
+            <Title>Informações de Membro</Title>
+          </Header>
           <Dashboard>
-            <Header>
+            <HeaderDashboard>
               <Info status={member.status}>
                 <div className="member-info">
                   <div className="name">{member.name}</div>
@@ -140,7 +149,7 @@ export default function Member() {
                   <Button onClick={handleToggleAssociationProject}> Voltar</Button>
                 )}
               </Buttons>
-            </Header>
+            </HeaderDashboard>
             <Body>
               <ListInfo>
                 <div className="data">
@@ -195,7 +204,12 @@ export default function Member() {
                       )}
                     </ProjectTitle>
                     {activeProjects.map((projectAssociation) => (
-                      <CardProjectActive key={projectAssociation.id}>
+                      <CardProjectActive
+                        key={projectAssociation.id}
+                        onClick={() => {
+                          navigateToProject(projectAssociation.project.id);
+                        }}
+                      >
                         <div>
                           <span>
                             Nome: <p>{projectAssociation.project.name}</p>
@@ -303,8 +317,12 @@ const Title = styled.h1`
   font-size: 3rem;
   margin: 0 auto;
 `;
-const Dashboard = styled.div``;
 const Header = styled.div`
+  display: flex;
+`;
+
+const Dashboard = styled.div``;
+const HeaderDashboard = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -373,9 +391,7 @@ const ListInfo = styled.div`
   width: 50%;
   border-right: 2px solid #bcbcbc;
   padding-right: 2%;
-  span & span {
-    padding: 7px;
-  }
+
   span {
     padding: 7px;
     font-size: 1rem;
@@ -514,7 +530,7 @@ const CardProject = styled.div`
   .info {
     span {
       display: flex;
-      font-size: 1rem;
+
       font-weight: 700;
       p {
         font-size: 1rem;

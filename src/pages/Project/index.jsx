@@ -1,37 +1,52 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
 import Layout from "../../components/Layout";
+import arrowback from "../../assets/arrow-back.svg";
 
 import ProjectService from "../../services/ProjectsService";
+
 import { transformDate } from "../../utils/transformDate";
+import { alertUser } from "../../utils/alertUser";
 
 export default function Project() {
   const [project, setProject] = useState({});
+  const [members, setMembers] = useState([]);
+
   const params = useParams();
-  console.log(project);
+  const navigate = useNavigate();
   async function loadDashboardProject() {
     try {
       const projectId = params.id;
       const { data: project } = await ProjectService.getById(projectId);
-
+      const { data: members } = await ProjectService.getAssociateProjectByProjectId(projectId);
+      console.log(members);
+      setMembers(members);
       setProject(project);
     } catch (error) {
-      //   alertUser({ text: error.response.data.message, type: "error" });
+      alertUser({ text: error.response.data.message, type: "error" });
     }
   }
   useEffect(() => {
     loadDashboardProject();
   }, [params.id]);
-
+  function navigateToMember(id) {
+    navigate(`/member/${id}`);
+  }
   return (
     <>
       <Layout>
         <Container>
-          <Title>Informações do Projeto</Title>
+          <Header>
+            <Link to="/projects">
+              <img src={arrowback} />
+            </Link>
+            <Title>Informações do Projeto</Title>
+          </Header>
+
           <Dashboard>
-            <Header>
+            <HeaderDashboard>
               <Info status={project.isActive}>
                 <div className="project-info">
                   <div className="name">{project.name}</div>
@@ -43,7 +58,7 @@ export default function Project() {
               <Buttons>
                 <Button> Editar</Button>
               </Buttons>
-            </Header>
+            </HeaderDashboard>
             <Body>
               <ListInfo>
                 <div className="data">
@@ -67,17 +82,60 @@ export default function Project() {
                   </span>
                 </div>
                 <div className="list-teachers">
-                  <span>
-                    Professores: <p>Manel</p>
-                  </span>
+                  <span>Professores:</span>
+                  {members
+                    .filter(
+                      (associationMember) => associationMember.member.memberType === "PROFESSOR"
+                    )
+                    .map((associationMember) => (
+                      <Card
+                        key={associationMember.member.id}
+                        onClick={() => {
+                          navigateToMember(associationMember.member.id);
+                        }}
+                      >
+                        <div className="info">
+                          <span className="name">
+                            Nome: <p>{associationMember.member.name}</p>
+                          </span>
+                          <span>
+                            Sala: <p>{associationMember.member.roomName}</p>
+                          </span>
+                          <span>
+                            Email LSD: <p>{associationMember.member.lsdEmail}</p>
+                          </span>
+                        </div>
+                        <div>{associationMember.member.isActive ? "🟢" : "🔴"}</div>
+                      </Card>
+                    ))}
                 </div>
               </ListInfo>
-
-              <List>
-                <Members>
-                  <span>Alunos</span>
-                </Members>
-              </List>
+              <Members>
+                <span>Alunos:</span>
+                {members
+                  .filter((associationMember) => associationMember.member.memberType === "STUDENT")
+                  .map((associationMember) => (
+                    <Card
+                      key={associationMember.member.id}
+                      onClick={() => {
+                        navigateToMember(associationMember.member.id);
+                      }}
+                    >
+                      <div className="info">
+                        <span className="name">
+                          Nome: <p>{associationMember.member.name}</p>
+                        </span>
+                        <span>
+                          Sala: <p>{associationMember.member.roomName}</p>
+                        </span>
+                        <span>
+                          Email LSD: <p>{associationMember.member.lsdEmail}</p>
+                        </span>
+                      </div>
+                      <div>{associationMember.member.isActive ? "🟢" : "🔴"}</div>
+                    </Card>
+                  ))}
+              </Members>
             </Body>
           </Dashboard>
         </Container>
@@ -101,8 +159,11 @@ const Title = styled.h1`
   font-size: 3rem;
   margin: 0 auto;
 `;
-const Dashboard = styled.div``;
 const Header = styled.div`
+  display: flex;
+`;
+const Dashboard = styled.div``;
+const HeaderDashboard = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -156,9 +217,6 @@ const ListInfo = styled.div`
   width: 50%;
   border-right: 2px solid #bcbcbc;
   padding-right: 2%;
-  span & span {
-    padding: 7px;
-  }
   span {
     padding: 7px;
     font-size: 1rem;
@@ -175,17 +233,49 @@ const ListInfo = styled.div`
   .list-teachers {
     height: 200px;
     padding-top: 2%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-y: auto;
+    span {
+      padding: 0;
+    }
   }
 `;
-const List = styled.div`
+const Members = styled.div`
   width: 50%;
   padding: 0 2%;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  font-size: 1rem;
+  margin: 0 auto;
+  overflow-y: auto;
+  font-weight: 700;
 `;
-const Members = styled.div`
-  span {
-    font-size: 1.5rem;
-    font-weight: 700;
+const Card = styled.div`
+  display: flex;
+  width: 100%;
+  padding: 2%;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.08);
+  border-radius: 20px;
+  justify-content: space-between;
+  &:hover {
+    transition: all 200ms ease-in;
+    transform: scale(0.93);
+  }
+  & + & {
+    margin-bottom: 1%;
+  }
+  .info {
+    span {
+      display: flex;
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 3%;
+      p {
+        font-weight: 400;
+      }
+    }
   }
 `;
