@@ -7,6 +7,7 @@ import Teacher from "./pages/Teacher";
 import NewMember from "./pages/NewMember";
 import Members from "./pages/Members";
 import Member from "./pages/Member";
+import Activty from "./pages/Activity/index.jsx";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
       <GlobalStyle />
       <Routes>
         <Route path="/" element={<Login />} />
+        <Route path="/activity" element={<Activty />} />
         <Route path="/newProject" element={<NewProject />} />
         <Route path="/projects" element={<Projects />} />
         <Route path="/teachers" element={<Teacher />} />

@@ -27,5 +27,9 @@ class ProjectsService {
     const config = createHeaders();
     return api.get(`projects/members/${memberId}`, config);
   }
+  getActivity() {
+    const config = createHeaders();
+    return api.get(`activityRecords/`, config);
+  }
 }
 export default new ProjectsService();
