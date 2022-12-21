@@ -12,6 +12,7 @@ export default function Header() {
         <NavBar>
           <Link to="/members">Membros</Link>
           {/* <Link to="/teachers">Professores</Link> */}
+          <Link to="/projects">Projetos</Link>
         </NavBar>
         <img src={profile} alt="account" />
       </Container>

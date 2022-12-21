@@ -27,8 +27,13 @@ class ProjectsService {
     const config = createHeaders();
     return api.get(`projects/members/${memberId}`, config);
   }
+  getActivity() {
+    const config = createHeaders();
+    return api.get(`activityRecords/`, config);
+  }
   getAssociateProjectByProjectId(projectId) {
-    return api.get(`projects/${projectId}/members`);
+    const config = createHeaders();
+    return api.get(`projects/${projectId}/members`, config);
   }
 }
 export default new ProjectsService();
