@@ -62,27 +62,33 @@ export default function Project() {
             <Body>
               <ListInfo>
                 <div className="data">
-                  <span>
-                    Data de Criacao: <p>{transformDate(project.creationDate)}</p>
-                  </span>
-                  <span>
-                    Data de Termino: <p>{transformDate(project.endDate) || "Sem data"}</p>
-                  </span>
-                  <span>
-                    Predio: <p>{project.building || "Sem predio"}</p>
-                  </span>
-                  <span>
-                    Sala: <p>{project.room || "Sem sala"}</p>
-                  </span>
-                  <span>
-                    Codigo Embrapii: <p>{project.embrapiiCode || "Sem codigo"}</p>
-                  </span>
-                  <span>
-                    Financiador: <p>{project.financier || "Sem financiador"}</p>
-                  </span>
+                  <p>
+                    <span className="atribute-title">Data de Criação: </span>
+                    {transformDate(project.creationDate)}
+                  </p>
+                  <p>
+                    <span className="atribute-title">Data de Término: </span>
+                    {transformDate(project.endDate) || "Sem data"}
+                  </p>
+                  <p>
+                    <span className="atribute-title">Prédio: </span>
+                    {project.building || "Sem prédio"}
+                  </p>
+                  <p>
+                    <span className="atribute-title">Sala: </span>
+                    {project.room || "Sem sala"}
+                  </p>
+                  <p>
+                    <span className="atribute-title">Código Embrapii: </span>
+                    {project.embrapiiCode || "Sem código"}
+                  </p>
+                  <p>
+                    <span className="atribute-title">Financiador: </span>{" "}
+                    {project.financier || "Sem financiador"}
+                  </p>
                 </div>
                 <div className="list-teachers">
-                  <span>Professores:</span>
+                  <span>Professores</span>
                   {members
                     .filter(
                       (associationMember) => associationMember.member.memberType === "PROFESSOR"
@@ -111,7 +117,7 @@ export default function Project() {
                 </div>
               </ListInfo>
               <Members>
-                <span>Alunos:</span>
+                <span>Alunos</span>
                 {members
                   .filter((associationMember) => associationMember.member.memberType === "STUDENT")
                   .map((associationMember) => (
@@ -217,15 +223,15 @@ const ListInfo = styled.div`
   width: 50%;
   border-right: 2px solid #bcbcbc;
   padding-right: 2%;
-  span {
-    padding: 7px;
-    font-size: 1rem;
-    display: flex;
+  font-size: 1rem;
+  .atribute-title {
     font-weight: 700;
-    p {
-      font-weight: 400;
-    }
   }
+  p {
+    padding: 7px;
+    font-weight: 400;
+  }
+
   .data {
     height: 200px;
     border-bottom: 2px solid #bcbcbc;
@@ -273,7 +279,6 @@ const Card = styled.div`
       display: flex;
       font-size: 1rem;
       font-weight: 700;
-      margin-bottom: 3%;
       p {
         font-weight: 400;
       }

@@ -1,3 +1,3 @@
 export default function Teacher() {
-  return <h1>Pagina de listagem de Professores</h1>;
+  return <h1>Página de listagem de Professores</h1>;
 }
