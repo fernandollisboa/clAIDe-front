@@ -1,10 +1,16 @@
 import { Link } from "react-router-dom";
 import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
 
 import logo from "../../assets/foto_lsd.svg";
 import profile from "../../assets/profile.svg";
 
 export default function Header() {
+  const navigate = useNavigate();
+  function logout() {
+    window.localStorage.removeItem("claideToken");
+    navigate("/");
+  }
   return (
     <HeaderContainer>
       <Container>
@@ -14,7 +20,7 @@ export default function Header() {
           {/* <Link to="/teachers">Professores</Link> */}
           <Link to="/projects">Projetos</Link>
         </NavBar>
-        <img src={profile} alt="account" />
+        <img src={profile} alt="account" onClick={logout} />
       </Container>
     </HeaderContainer>
   );
