@@ -75,6 +75,7 @@ export default function MemberForm({
   } = memberData;
 
   function handleInputChange(event) {
+    console.log(event.target);
     const { id: field, name, value, required } = event.target;
 
     setMemberData((state) => {
@@ -101,12 +102,15 @@ export default function MemberForm({
 
   async function handleSubmit(event) {
     event.preventDefault();
+    console.log(memberData);
 
     await onSubmit({
       ...memberData,
       birthDate: transformDate(birthDate),
       cpf: removeChar(cpf),
       phone: removeChar(phone),
+      isBrazilian: !!isBrazilian,
+      hasKey: !!hasKey,
     });
 
     if (formSent) {
@@ -278,14 +282,14 @@ export default function MemberForm({
             onChange={handleInputChange}
             value={isBrazilian}
           >
-            <option value={true}> Brasileiro </option>
-            <option value={false}> Estrangeiro </option>
+            <option value={1}> Brasileiro </option>
+            <option value={0}> Estrangeiro </option>
           </Select>
         </FormGroup>
         <FormGroup>
           <Select id="hasKey" onChange={handleInputChange} value={hasKey}>
-            <option value={false}> Não tem a chave </option>
-            <option value={true}> Tem a chave </option>
+            <option value={0}> Não tem a chave </option>
+            <option value={1}> Tem a chave </option>
           </Select>
         </FormGroup>
         <Button type="submit" disabled={!isFormValid}>
