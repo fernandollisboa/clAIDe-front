@@ -13,7 +13,7 @@ import MembersService from "../../services/MembersService";
 
 import { alertUser } from "../../utils/alertUser";
 import maskCpf from "../../utils/maskCpf";
-import parseMemberTypeToPortuguese from "../../utils/MemberTypeToPortuguese";
+import parseMemberTypeToPortuguese from "../../utils/parseMemberTypeToPortuguese";
 import { transformDate } from "../../utils/transformDate";
 
 export default function Member() {
