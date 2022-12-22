@@ -11,7 +11,7 @@
     "ecmaVersion": 12,
     "sourceType": "module"
   },
-  "plugins": ["import", "react"],
+  "plugins": ["import", "react", "react-hooks"],
   "rules": {
     "eqeqeq": "warn",
     "no-console": "warn",
@@ -19,9 +19,11 @@
     "prefer-destructuring": ["warn", { "object": true, "array": false }],
     "import/newline-after-import": ["warn", { "count": 1 }],
     "react/react-in-jsx-scope": "off",
-    "prettier/prettier": "error",
     "react/prop-types": "warn",
-    "no-unused-vars": "warn"
+    "no-unused-vars": "warn",
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn",
+    "prettier/prettier": "error"
   },
   "settings": {
     "react": {
