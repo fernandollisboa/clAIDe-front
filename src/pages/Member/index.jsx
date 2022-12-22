@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
 
 import Layout from "../../components/Layout";
 import Modal from "../../components/Modal";
+import Card from "../../components/Card";
+import FormDate from "../../components/FormDate";
 import arrowback from "../../assets/arrow-back.svg";
 
 import ProjectService from "../../services/ProjectsService";
@@ -13,6 +13,7 @@ import MembersService from "../../services/MembersService";
 
 import { alertUser } from "../../utils/alertUser";
 import maskCpf from "../../utils/maskCpf";
+import parseMemberTypeToPortuguese from "../../utils/parseMemberTypeToPortuguese";
 import { transformDate } from "../../utils/transformDate";
 
 export default function Member() {
@@ -36,7 +37,10 @@ export default function Member() {
       setMember(member);
       setActiveProjects(projects);
     } catch (error) {
-      alertUser({ text: error.response.data.message, type: "error" });
+      if (error.response.status === 404) {
+        alertUser({ text: "Membro não encontrado", type: "error" });
+        navigate(`/members`);
+      }
     }
   }
   useEffect(() => {
@@ -56,7 +60,18 @@ export default function Member() {
       setModalOpen(false);
       alertUser({ text: "Projeto associado!", type: "success" });
     } catch (error) {
-      alertUser({ text: error.response.data.message, type: "error" });
+      if (error.response.status === 409) {
+        alertUser({
+          text: `${member.name} e ${selectedProject.name} já estão associados`,
+          type: "error",
+        });
+      }
+      if (error.response.status === 422) {
+        alertUser({
+          text: `Data de inicio não pode ser antes do projeto iniciar e data de fim não pode ser depois do projeto terminar `,
+          type: "error",
+        });
+      }
     }
   }
 
@@ -87,16 +102,15 @@ export default function Member() {
               <strong> {selectedProject.name}</strong>?
             </span>
             <InputsModal>
-              <DatePicker
-                placeholderText="Data de inicio"
+              <FormDate
+                placeholder="Data de início"
                 className="date"
-                required
                 onChange={setStartDate}
                 value={transformDate(startDate)}
               />
 
-              <DatePicker
-                placeholderText="Data de fim"
+              <FormDate
+                placeholder="Data de fim"
                 className="date"
                 onChange={setEndDate}
                 value={transformDate(endDate)}
@@ -134,7 +148,7 @@ export default function Member() {
               <Info status={member.status}>
                 <MemberInfo>
                   <Name>{member.name}</Name>
-                  <Type>{member.memberType}</Type>
+                  <Type>{parseMemberTypeToPortuguese(member.memberType)}</Type>
                   <Status>{(member.status && <p>Ativo</p>) || <p>Inativo</p>}</Status>
                 </MemberInfo>
                 <Username>{member.username}</Username>
@@ -169,10 +183,8 @@ export default function Member() {
                     Sala LSD: <FontData>{member.roomName}</FontData>
                   </FormatData>
                   <FormatData>
-                    Tem chave:
-                    {(member.hasKey && <FontData>Tem a chave</FontData>) || (
-                      <FontData>Tem a chave</FontData>
-                    )}
+                    Tem chave?:
+                    {(member.hasKey && <FontData> Sim</FontData>) || <FontData> Não</FontData>}
                   </FormatData>
                 </Data>
                 <PersonalData>
@@ -191,7 +203,7 @@ export default function Member() {
                     </FormatData>
                   )) || (
                     <FormatData>
-                      Passaporte: <FontData>Nao tem informacao</FontData>{" "}
+                      Passaporte: <FontData>Não tem informação</FontData>{" "}
                     </FormatData>
                   )}
                 </PersonalData>
@@ -207,27 +219,27 @@ export default function Member() {
                       )}
                     </ProjectTitle>
                     {activeProjects.map((projectAssociation) => (
-                      <CardProjectActive
+                      <Card
                         key={projectAssociation.id}
                         onClick={() => {
                           navigateToProject(projectAssociation.project.id);
                         }}
                       >
                         <div>
-                          <span>
+                          <FormatData>
                             Nome: <FontData>{projectAssociation.project.name}</FontData>
-                          </span>
-                          <span>
-                            Sala:{" "}
+                          </FormatData>
+                          <FormatData>
+                            Sala:
                             <FontData>{projectAssociation.project.room || "Sem sala"}</FontData>
-                          </span>
-                          <span>
-                            Data de inicio:{" "}
+                          </FormatData>
+                          <FormatData>
+                            Data de início:
                             <FontData>{transformDate(projectAssociation.startDate)}</FontData>
-                          </span>
+                          </FormatData>
                         </div>
                         <div>{projectAssociation.project.isActive ? "🟢" : "🔴"} </div>
-                      </CardProjectActive>
+                      </Card>
                     ))}
                   </Project>
 
@@ -248,31 +260,31 @@ export default function Member() {
                 </List>
               ) : (
                 <ListProjects>
-                  <p>Associar à Novo Projeto</p>
-                  <div className="card-body">
+                  <ProjectTitle>Associar à Novo Projeto</ProjectTitle>
+                  <ContainerAssociation>
                     {projects.map((project) => (
-                      <CardProject
+                      <Card
                         key={project.id}
                         onClick={() => {
                           setModalOpen(true);
                           setSelectedProject(project);
                         }}
                       >
-                        <div className="info">
-                          <span>
-                            Nome: <p>{project.name}</p>
-                          </span>
-                          <span>
-                            Sala: <p>{project.room || "Sem sala"}</p>
-                          </span>
-                          <span>
-                            Predio: <p>{project.building || "Sem predio"}</p>
-                          </span>
+                        <div>
+                          <FormatData>
+                            Nome: <FontData>{project.name}</FontData>
+                          </FormatData>
+                          <FormatData>
+                            Sala: <FontData>{project.room || "Sem sala"}</FontData>
+                          </FormatData>
+                          <FormatData>
+                            Prédio: <FontData>{project.building || "Sem prédio"}</FontData>
+                          </FormatData>
                         </div>
                         <div>{project.isActive ? "🟢" : "🔴"}</div>
-                      </CardProject>
+                      </Card>
                     ))}
-                  </div>
+                  </ContainerAssociation>
                 </ListProjects>
               )}
             </Body>
@@ -297,7 +309,7 @@ const ModalContainer = styled.div`
 const InputsModal = styled.div`
   display: flex;
   flex-direction: row;
-  justify-content: flex-end;
+  justify-content: space-around;
   .date {
     margin-right: 5%;
     border: 2px solid black;
@@ -405,13 +417,12 @@ const PersonalData = styled.div`
   height: 200px;
   padding-top: 2%;
 `;
-const FormatData = styled.span`
+const FormatData = styled.p`
   padding: 7px;
   font-size: 1rem;
-  display: flex;
   font-weight: 700;
 `;
-const FontData = styled.p`
+const FontData = styled.span`
   font-weight: 400;
 `;
 const List = styled.div`
@@ -431,21 +442,7 @@ const ProjectTitle = styled.div`
   line-height: 25px;
   padding: 3% 0;
 `;
-const CardProjectActive = styled.div`
-  margin: 0 auto;
-  width: 60%;
-  display: flex;
-  justify-content: space-between;
-  padding: 3%;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-  border-radius: 20px;
-  font-size: 1rem;
-  span {
-    display: flex;
-    font-weight: 700;
-    margin-bottom: 4%;
-  }
-`;
+
 const Services = styled.div`
   height: 200px;
   padding-top: 2%;
@@ -496,46 +493,8 @@ const ListProjects = styled.div`
   height: 400px;
   align-items: center;
   padding: 0 3%;
-  p {
-    font-weight: 700;
-    font-size: 1.4rem;
-    margin-bottom: 3%;
-  }
-  .card-body {
-    width: 100%;
-    overflow-y: auto;
-  }
-  .name {
-    font-weight: 700;
-    font-size: 1.4rem;
-    line-height: 30px;
-  }
 `;
-
-const CardProject = styled.div`
-  display: flex;
-  justify-content: space-between;
-  padding: 3%;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.08);
-  border-radius: 20px;
-  font-size: 1rem;
-
-  &:hover {
-    transition: all 200ms ease-in;
-    transform: scale(0.93);
-  }
-  & + & {
-    margin-bottom: 1%;
-  }
-  .info {
-    span {
-      display: flex;
-
-      font-weight: 700;
-      p {
-        font-size: 1rem;
-        font-weight: 400;
-      }
-    }
-  }
+const ContainerAssociation = styled.div`
+  width: 100%;
+  overflow-y: auto;
 `;

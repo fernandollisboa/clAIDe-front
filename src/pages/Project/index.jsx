@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
+import Card from "../../components/Card";
 import Layout from "../../components/Layout";
 import arrowback from "../../assets/arrow-back.svg";
 
@@ -21,7 +22,7 @@ export default function Project() {
       const projectId = params.id;
       const { data: project } = await ProjectService.getById(projectId);
       const { data: members } = await ProjectService.getAssociateProjectByProjectId(projectId);
-      console.log(members);
+
       setMembers(members);
       setProject(project);
     } catch (error) {
@@ -61,28 +62,29 @@ export default function Project() {
             </HeaderDashboard>
             <Body>
               <ListInfo>
-                <div className="data">
-                  <span>
-                    Data de Criacao: <p>{transformDate(project.creationDate)}</p>
-                  </span>
-                  <span>
-                    Data de Termino: <p>{transformDate(project.endDate) || "Sem data"}</p>
-                  </span>
-                  <span>
-                    Predio: <p>{project.building || "Sem predio"}</p>
-                  </span>
-                  <span>
-                    Sala: <p>{project.room || "Sem sala"}</p>
-                  </span>
-                  <span>
-                    Codigo Embrapii: <p>{project.embrapiiCode || "Sem codigo"}</p>
-                  </span>
-                  <span>
-                    Financiador: <p>{project.financier || "Sem financiador"}</p>
-                  </span>
-                </div>
-                <div className="list-teachers">
-                  <span>Professores:</span>
+                <Data>
+                  <FormatData>
+                    Data de Criacao: <FontData>{transformDate(project.creationDate)}</FontData>
+                  </FormatData>
+                  <FormatData>
+                    Data de Termino:{" "}
+                    <FontData>{transformDate(project.endDate) || "Sem data"}</FontData>
+                  </FormatData>
+                  <FormatData>
+                    Predio: <FontData>{project.building || "Sem predio"}</FontData>
+                  </FormatData>
+                  <FormatData>
+                    Sala: <FontData>{project.room || "Sem sala"}</FontData>
+                  </FormatData>
+                  <FormatData>
+                    Codigo Embrapii: <FontData>{project.embrapiiCode || "Sem codigo"}</FontData>
+                  </FormatData>
+                  <FormatData>
+                    Financiador: <FontData>{project.financier || "Sem financiador"}</FontData>
+                  </FormatData>
+                </Data>
+                <ListTeachers>
+                  <TitleTeacher>Professores:</TitleTeacher>
                   {members
                     .filter(
                       (associationMember) => associationMember.member.memberType === "PROFESSOR"
@@ -94,21 +96,21 @@ export default function Project() {
                           navigateToMember(associationMember.member.id);
                         }}
                       >
-                        <div className="info">
-                          <span className="name">
-                            Nome: <p>{associationMember.member.name}</p>
-                          </span>
-                          <span>
-                            Sala: <p>{associationMember.member.roomName}</p>
-                          </span>
-                          <span>
-                            Email LSD: <p>{associationMember.member.lsdEmail}</p>
-                          </span>
+                        <div>
+                          <FormatData>
+                            Nome: <FontData>{associationMember.member.name}</FontData>
+                          </FormatData>
+                          <FormatData>
+                            Sala: <FontData>{associationMember.member.roomName}</FontData>
+                          </FormatData>
+                          <FormatData>
+                            Email LSD: <FontData>{associationMember.member.lsdEmail}</FontData>
+                          </FormatData>
                         </div>
                         <div>{associationMember.member.isActive ? "🟢" : "🔴"}</div>
                       </Card>
                     ))}
-                </div>
+                </ListTeachers>
               </ListInfo>
               <Members>
                 <span>Alunos:</span>
@@ -121,16 +123,16 @@ export default function Project() {
                         navigateToMember(associationMember.member.id);
                       }}
                     >
-                      <div className="info">
-                        <span className="name">
-                          Nome: <p>{associationMember.member.name}</p>
-                        </span>
-                        <span>
-                          Sala: <p>{associationMember.member.roomName}</p>
-                        </span>
-                        <span>
-                          Email LSD: <p>{associationMember.member.lsdEmail}</p>
-                        </span>
+                      <div>
+                        <FormatData>
+                          Nome: <FontData>{associationMember.member.name}</FontData>
+                        </FormatData>
+                        <FormatData>
+                          Sala: <FontData>{associationMember.member.roomName}</FontData>
+                        </FormatData>
+                        <FormatData>
+                          Email LSD: <FontData>{associationMember.member.lsdEmail}</FontData>
+                        </FormatData>
                       </div>
                       <div>{associationMember.member.isActive ? "🟢" : "🔴"}</div>
                     </Card>
@@ -217,30 +219,30 @@ const ListInfo = styled.div`
   width: 50%;
   border-right: 2px solid #bcbcbc;
   padding-right: 2%;
-  span {
-    padding: 7px;
-    font-size: 1rem;
-    display: flex;
-    font-weight: 700;
-    p {
-      font-weight: 400;
-    }
-  }
-  .data {
-    height: 200px;
-    border-bottom: 2px solid #bcbcbc;
-  }
-  .list-teachers {
-    height: 200px;
-    padding-top: 2%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    overflow-y: auto;
-    span {
-      padding: 0;
-    }
-  }
+`;
+const Data = styled.div`
+  height: 200px;
+  border-bottom: 2px solid #bcbcbc;
+`;
+const FormatData = styled.p`
+  padding: 7px;
+  font-size: 1rem;
+  font-weight: 700;
+`;
+const FontData = styled.span`
+  font-weight: 400;
+`;
+const ListTeachers = styled.div`
+  height: 200px;
+  padding-top: 2%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow-y: auto;
+`;
+const TitleTeacher = styled.h1`
+  font-weight: 700;
+  font-size: 20px;
 `;
 const Members = styled.div`
   width: 50%;
@@ -252,30 +254,4 @@ const Members = styled.div`
   margin: 0 auto;
   overflow-y: auto;
   font-weight: 700;
-`;
-const Card = styled.div`
-  display: flex;
-  width: 100%;
-  padding: 2%;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.08);
-  border-radius: 20px;
-  justify-content: space-between;
-  &:hover {
-    transition: all 200ms ease-in;
-    transform: scale(0.93);
-  }
-  & + & {
-    margin-bottom: 1%;
-  }
-  .info {
-    span {
-      display: flex;
-      font-size: 1rem;
-      font-weight: 700;
-      margin-bottom: 3%;
-      p {
-        font-weight: 400;
-      }
-    }
-  }
 `;

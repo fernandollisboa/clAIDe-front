@@ -16,6 +16,7 @@ import maskCpf from "../../utils/maskCpf";
 import maskPhone from "../../utils/maskPhone";
 import removeChar from "../../utils/removeChar";
 import isEmailValid from "../../utils/isEmailValid";
+import isLsdEmailValid from "../../utils/isLsdEmailValid";
 import { transformDate } from "../../utils/transformDate";
 
 export default function MemberForm({ onSubmit, typeLabel, buttonLabel, formSent }) {
@@ -43,7 +44,6 @@ export default function MemberForm({ onSubmit, typeLabel, buttonLabel, formSent 
     phone &&
     emailLsd &&
     memberType &&
-    lattes &&
     email &&
     errors.length === 0;
 
@@ -85,7 +85,7 @@ export default function MemberForm({ onSubmit, typeLabel, buttonLabel, formSent 
   }
   function handleChangeEmailLsd(event) {
     setEmailLsd(event.target.value);
-    if (!event.target.value || !isEmailValid(event.target.value)) {
+    if (event.target.value && !isLsdEmailValid(event.target.value)) {
       setError({ field: "emailLsd", message: "Email LSD é invalido" });
     } else {
       removeError("emailLsd");
@@ -102,7 +102,7 @@ export default function MemberForm({ onSubmit, typeLabel, buttonLabel, formSent 
   function handleChangeSecondEmail(event) {
     setSecondEmail(event.target.value);
     if (event.target.value && !isEmailValid(event.target.value)) {
-      setError({ field: "secondEmail", message: "Email secundario é invalido" });
+      setError({ field: "secondEmail", message: "Email secundário é invalido" });
     } else {
       removeError("secondEmail");
     }
@@ -117,11 +117,6 @@ export default function MemberForm({ onSubmit, typeLabel, buttonLabel, formSent 
   }
   function handleChangeLattes(event) {
     setLattes(event.target.value);
-    if (!event.target.value) {
-      setError({ field: "lattes", message: "Lattes é obrigatório" });
-    } else {
-      removeError("lattes");
-    }
   }
   function handleChangeRoom(event) {
     setRoom(event.target.value);
@@ -211,14 +206,14 @@ export default function MemberForm({ onSubmit, typeLabel, buttonLabel, formSent 
           />
         </FormGroup>
         <FormGroup error={getErrorMessageByFieldName("emailLsd")}>
-          <Input placeholder="Email LSD *" value={emailLsd} onChange={handleChangeEmailLsd} />
+          <Input placeholder="Email LSD" value={emailLsd} onChange={handleChangeEmailLsd} />
         </FormGroup>
         <FormGroup error={getErrorMessageByFieldName("email")}>
           <Input placeholder="Email *" value={email} onChange={handleChangeEmail} />
         </FormGroup>
         <FormGroup error={getErrorMessageByFieldName("secondEmail")}>
           <Input
-            placeholder="Email secundario"
+            placeholder="Email secundário"
             value={secondEmail}
             onChange={handleChangeSecondEmail}
           />
@@ -233,8 +228,8 @@ export default function MemberForm({ onSubmit, typeLabel, buttonLabel, formSent 
             <option value="ADMIN"> Administrador </option>
           </Select>
         </FormGroup>
-        <FormGroup error={getErrorMessageByFieldName("lattes")}>
-          <Input placeholder="Lattes *" value={lattes} onChange={handleChangeLattes} />
+        <FormGroup>
+          <Input placeholder="Lattes" value={lattes} onChange={handleChangeLattes} />
         </FormGroup>
         <FormGroup>
           <Input placeholder="Sala" value={room} onChange={handleChangeRoom} />

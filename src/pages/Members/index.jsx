@@ -1,12 +1,13 @@
 import { useState, useEffect, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
 import Card from "../../components/Card";
 import Menu from "../../components/Menu";
 import Layout from "../../components/Layout";
 
+import maskPhone from "../../utils/maskPhone";
 import MembersService from "../../services/MembersService";
-import { useNavigate } from "react-router-dom";
 
 export default function Member() {
   const [members, setMembers] = useState([]);
@@ -49,6 +50,7 @@ export default function Member() {
   function navigateToMember(id) {
     navigate(`/member/${id}`);
   }
+  console.log(members);
   return (
     <>
       <Layout>
@@ -68,19 +70,27 @@ export default function Member() {
               onClick={() => {
                 navigateToMember(member.id);
               }}
+              style={{ width: "300px", height: "100px" }}
             >
-              <div className="info">
-                <div className="name">{member.name}</div>
-                <div>
-                  Projeto: <span>Falta colocar no obj</span>
-                </div>
-                <div>
-                  Sala: <span>{member.roomName}</span>
-                </div>
-                <div>
-                  Email LSD: <span>{member.lsdEmail}</span>
-                </div>
-              </div>
+              <Info>
+                <Name>{member.name}</Name>
+
+                <Data>
+                  Sala: <FontData>{member.roomName}</FontData>
+                </Data>
+                {member.lsdEmail ? (
+                  <Data>
+                    Email LSD: <FontData>{member.lsdEmail}</FontData>
+                  </Data>
+                ) : (
+                  <Data>
+                    Email: <FontData>{member.email}</FontData>
+                  </Data>
+                )}
+                <Data>
+                  Telefone: <FontData>{maskPhone(member.phone)}</FontData>
+                </Data>
+              </Info>
               <div>{member.isActive ? "🟢" : "🔴"}</div>
             </Card>
           ))}
@@ -97,4 +107,17 @@ const Container = styled.div`
   flex-wrap: wrap;
   gap: 2vh;
   margin-top: 1%;
+`;
+const Info = styled.div`
+  p {
+    margin-bottom: 4px;
+  }
+`;
+const Name = styled.p`
+  font-size: 1rem;
+  font-weight: 700;
+`;
+const Data = styled.p``;
+const FontData = styled.span`
+  color: #bcbcbc;
 `;
