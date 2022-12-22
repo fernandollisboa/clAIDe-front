@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
-// import DatePicker from "react-datepicker";
-// import "react-datepicker/dist/react-datepicker.css";
 
 import Layout from "../../components/Layout";
 import Modal from "../../components/Modal";
@@ -15,7 +13,7 @@ import MembersService from "../../services/MembersService";
 
 import { alertUser } from "../../utils/alertUser";
 import maskCpf from "../../utils/maskCpf";
-import MemberTypeToPortuguese from "../../utils/MemberTypeToPortuguese";
+import parseMemberTypeToPortuguese from "../../utils/MemberTypeToPortuguese";
 import { transformDate } from "../../utils/transformDate";
 
 export default function Member() {
@@ -74,7 +72,6 @@ export default function Member() {
           type: "error",
         });
       }
-      // alertUser({ text: error.response.data.message, type: "error" });
     }
   }
 
@@ -151,7 +148,7 @@ export default function Member() {
               <Info status={member.status}>
                 <MemberInfo>
                   <Name>{member.name}</Name>
-                  <Type>{MemberTypeToPortuguese(member.memberType)}</Type>
+                  <Type>{parseMemberTypeToPortuguese(member.memberType)}</Type>
                   <Status>{(member.status && <p>Ativo</p>) || <p>Inativo</p>}</Status>
                 </MemberInfo>
                 <Username>{member.username}</Username>
