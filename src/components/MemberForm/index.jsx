@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import styled from "styled-components";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 import arrow from "../../assets/arrow.svg";
@@ -15,161 +15,121 @@ import useErrors from "../../hooks/useErrors";
 import maskCpf from "../../utils/maskCpf";
 import maskPhone from "../../utils/maskPhone";
 import removeChar from "../../utils/removeChar";
-import isEmailValid from "../../utils/isEmailValid";
 import { transformDate } from "../../utils/transformDate";
 
-export default function MemberForm({ onSubmit, typeLabel, buttonLabel, formSent }) {
-  const [name, setName] = useState("");
-  const [birthDate, setBirthDate] = useState("");
-  const [username, setUsername] = useState("");
-  const [cpf, setCpf] = useState("");
-  const [rg, setRg] = useState("");
-  const [passport, setPassport] = useState("");
-  const [phone, setPhone] = useState("");
-  const [emailLsd, setEmailLsd] = useState("");
-  const [email, setEmail] = useState("");
-  const [secondEmail, setSecondEmail] = useState("");
-  const [memberType, setMemberType] = useState("");
-  const [lattes, setLattes] = useState("");
-  const [room, setRoom] = useState("");
-  const [hasKey, setHasKey] = useState(false);
-  const [isBrazilian, setIsBrazilian] = useState(true);
+MemberForm.propTypes = {
+  buttonLabel: PropTypes.string.isRequired,
+  typeLabel: PropTypes.string.isRequired,
+  onSubmit: PropTypes.func.isRequired,
+  formSent: PropTypes.bool.isRequired,
+  initialState: PropTypes.object,
+};
+export default function MemberForm({
+  onSubmit,
+  typeLabel,
+  buttonLabel,
+  formSent,
+  initialState = {},
+}) {
   const { setError, removeError, getErrorMessageByFieldName, errors } = useErrors();
+  const [memberData, setMemberData] = useState({
+    name: "",
+    birthDate: "",
+    username: "",
+    cpf: "",
+    rg: "",
+    passport: "",
+    phone: "",
+    emailLsd: "",
+    email: "",
+    secondEmail: "",
+    memberType: "",
+    lattes: "",
+    room: "",
+    hasKey: "",
+    isBrazilian: true,
+  });
+
+  useEffect(() => {
+    if (initialState) {
+      console.log(initialState);
+    }
+  }, []);
+
+  const {
+    name,
+    birthDate,
+    cpf,
+    rg,
+    passport,
+    email,
+    emailLsd,
+    secondEmail,
+    lattes,
+    isBrazilian,
+    username,
+    phone,
+    memberType,
+    room,
+    hasKey,
+  } = memberData;
+
+  function handleInputChange(event) {
+    const { id: field, name, value, required } = event.target;
+
+    setMemberData((state) => {
+      return { ...state, [field]: value };
+    });
+
+    if (required) {
+      if (!value) setError({ field, message: `${name} é obrigatório` });
+      else removeError(field);
+    }
+  }
+
+  function handleBirthDateInputChange(birthDate) {
+    setMemberData((state) => {
+      return { ...state, birthDate };
+    });
+
+    if (!birthDate) setError({ field: "birthDate", message: `Data de Aniversário é obrigatório` });
+    else removeError("birthDate");
+  }
 
   const isFormValid =
-    name &&
-    birthDate &&
-    username &&
-    phone &&
-    emailLsd &&
-    memberType &&
-    lattes &&
-    email &&
-    errors.length === 0;
+    name && birthDate && username && phone && memberType && email && !errors.length;
 
-  function handleChangeName(event) {
-    setName(event.target.value);
-
-    if (!event.target.value) {
-      setError({ field: "name", message: "Nome é obrigatório" });
-    } else {
-      removeError("name");
-    }
-  }
-
-  function handleChangeUsername(event) {
-    setUsername(event.target.value);
-
-    if (!event.target.value) {
-      setError({ field: "username", message: "Username é obrigatório" });
-    } else {
-      removeError("username");
-    }
-  }
-  function handleChangeCpf(event) {
-    setCpf(event.target.value);
-  }
-  function handleChangeRg(event) {
-    setRg(event.target.value);
-  }
-  function handleChangePassport(event) {
-    setPassport(event.target.value);
-  }
-  function handleChangePhone(event) {
-    setPhone(event.target.value);
-    if (!event.target.value) {
-      setError({ field: "phone", message: "Telefone é obrigatório" });
-    } else {
-      removeError("phone");
-    }
-  }
-  function handleChangeEmailLsd(event) {
-    setEmailLsd(event.target.value);
-    if (!event.target.value || !isEmailValid(event.target.value)) {
-      setError({ field: "emailLsd", message: "Email LSD é invalido" });
-    } else {
-      removeError("emailLsd");
-    }
-  }
-  function handleChangeEmail(event) {
-    setEmail(event.target.value);
-    if (!event.target.value || !isEmailValid(event.target.value)) {
-      setError({ field: "email", message: "Email é invalido" });
-    } else {
-      removeError("email");
-    }
-  }
-  function handleChangeSecondEmail(event) {
-    setSecondEmail(event.target.value);
-    if (event.target.value && !isEmailValid(event.target.value)) {
-      setError({ field: "secondEmail", message: "Email secundario é invalido" });
-    } else {
-      removeError("secondEmail");
-    }
-  }
-  function handleChangeMemberType(event) {
-    setMemberType(event.target.value);
-    if (!event.target.value) {
-      setError({ field: "memberType", message: "Tipo de membro é obrigatório" });
-    } else {
-      removeError("memberType");
-    }
-  }
-  function handleChangeLattes(event) {
-    setLattes(event.target.value);
-    if (!event.target.value) {
-      setError({ field: "lattes", message: "Lattes é obrigatório" });
-    } else {
-      removeError("lattes");
-    }
-  }
-  function handleChangeRoom(event) {
-    setRoom(event.target.value);
-  }
-  function handleChangeIsBrazilian(event) {
-    setIsBrazilian(event.target.value);
-  }
-  function handleChangeHasKey(event) {
-    setHasKey(event.target.value);
-  }
   async function handleSubmit(event) {
     event.preventDefault();
 
     await onSubmit({
-      name,
+      ...memberData,
       birthDate: transformDate(birthDate),
-      username,
       cpf: removeChar(cpf),
-      rg,
-      passport,
       phone: removeChar(phone),
-      emailLsd,
-      email,
-      secondEmail,
-      memberType,
-      lattes,
-      room,
-      isBrazilian,
-      hasKey,
     });
+
     if (formSent) {
-      setName("");
-      setBirthDate("");
-      setUsername("");
-      setCpf("");
-      setRg("");
-      setPassport("");
-      setPhone("");
-      setEmailLsd("");
-      setEmail("");
-      setSecondEmail("");
-      setMemberType("");
-      setLattes("");
-      setRoom("");
-      setIsBrazilian(true);
-      setHasKey(false);
+      setMemberData({
+        name: "",
+        birthDate: "",
+        username: "",
+        cpf: "",
+        rg: "",
+        passport: "",
+        phone: "",
+        emailLsd: "",
+        email: "",
+        secondEmail: "",
+        memberType: "",
+        lattes: "",
+        room: "",
+        hasKey: "",
+        isBrazilian: true,
+      });
     }
   }
+
   return (
     <Container>
       <Form onSubmit={handleSubmit}>
@@ -181,73 +141,149 @@ export default function MemberForm({ onSubmit, typeLabel, buttonLabel, formSent 
           <h1>{typeLabel}</h1>
         </Title>
         <FormGroup error={getErrorMessageByFieldName("name")}>
-          <Input placeholder="Nome *" value={name} onChange={handleChangeName} />
+          <Input
+            required
+            placeholder="Nome *"
+            name="Nome"
+            id="name"
+            value={name}
+            onChange={handleInputChange}
+          />
         </FormGroup>
         <FormGroup>
           <FormDate
+            required
+            name="Data de nascimento"
+            id="birthDate"
             placeholder="Data de nascimento *"
-            onChange={(date) => setBirthDate(date)}
+            onChange={handleBirthDateInputChange}
             value={birthDate}
           />
         </FormGroup>
         <FormGroup error={getErrorMessageByFieldName("username")}>
-          <Input placeholder="Username *" value={username} onChange={handleChangeUsername} />
+          <Input
+            required
+            name="Username"
+            id="username"
+            placeholder="Username *"
+            value={username}
+            onChange={handleInputChange}
+          />
         </FormGroup>
         <FormGroup>
-          <Input placeholder="CPF" value={maskCpf(cpf)} onChange={handleChangeCpf} maxLength={14} />
+          <Input
+            placeholder="CPF"
+            name="CPF"
+            id="cpf"
+            value={maskCpf(cpf)}
+            onChange={handleInputChange}
+            maxLength={14}
+          />
         </FormGroup>
         <FormGroup>
-          <Input placeholder="RG" value={rg} onChange={handleChangeRg} />
+          <Input name="rg" id="rg" placeholder="RG" value={rg} onChange={handleInputChange} />
         </FormGroup>
         <FormGroup>
-          <Input placeholder="Passaporte" value={passport} onChange={handleChangePassport} />
+          <Input
+            name="Passaporte"
+            id="passport"
+            placeholder="Passaporte"
+            value={passport}
+            onChange={handleInputChange}
+          />
         </FormGroup>
         <FormGroup error={getErrorMessageByFieldName("phone")}>
           <Input
+            required
+            name="Telefone"
+            id="phone"
             placeholder="Telefone *"
             value={maskPhone(phone)}
-            onChange={handleChangePhone}
+            onChange={handleInputChange}
             maxLength={15}
           />
         </FormGroup>
         <FormGroup error={getErrorMessageByFieldName("emailLsd")}>
-          <Input placeholder="Email LSD *" value={emailLsd} onChange={handleChangeEmailLsd} />
+          <Input
+            required
+            name="Email LSD"
+            id="emailLsd"
+            placeholder="Email LSD *"
+            type="email"
+            value={emailLsd}
+            onChange={handleInputChange}
+          />
         </FormGroup>
         <FormGroup error={getErrorMessageByFieldName("email")}>
-          <Input placeholder="Email *" value={email} onChange={handleChangeEmail} />
+          <Input
+            required
+            name="Email"
+            id="email"
+            placeholder="Email *"
+            value={email}
+            type="email"
+            onChange={handleInputChange}
+          />
         </FormGroup>
         <FormGroup error={getErrorMessageByFieldName("secondEmail")}>
           <Input
-            placeholder="Email secundario"
+            required
+            name="Email secundário"
+            id="secondEmail"
+            placeholder="Email secundário"
             value={secondEmail}
-            onChange={handleChangeSecondEmail}
+            type="email"
+            onChange={handleInputChange}
           />
         </FormGroup>
         <FormGroup error={getErrorMessageByFieldName("memberType")}>
-          <Select onChange={handleChangeMemberType} value={memberType}>
+          <Select
+            required
+            name="Tipo de Membro"
+            id="memberType"
+            onChange={handleInputChange}
+            value={memberType}
+          >
             <option value=""> Sem tipo </option>
             <option value="STUDENT"> Estudante </option>
             <option value="PROFESSOR"> Professor </option>
             <option value="EXTERNAL"> Externo </option>
             <option value="SUPPORT"> Suporte </option>
             <option value="ADMIN"> Administrador </option>
-            {/*TO-DO acho isso mockado é mto feio, melhor pegar da api os tipos*/}
           </Select>
         </FormGroup>
         <FormGroup error={getErrorMessageByFieldName("lattes")}>
-          <Input placeholder="Lattes *" value={lattes} onChange={handleChangeLattes} />
+          <Input
+            id="lattes"
+            name="Lattes"
+            placeholder="Lattes"
+            value={lattes}
+            onChange={handleInputChange}
+          />
         </FormGroup>
         <FormGroup>
-          <Input placeholder="Sala" value={room} onChange={handleChangeRoom} />
+          <Input
+            id="room"
+            name="Sala"
+            placeholder="Sala"
+            value={room}
+            onChange={handleInputChange}
+          />
         </FormGroup>
         <FormGroup>
-          <Select onChange={handleChangeIsBrazilian} value={isBrazilian}>
+          <Select
+            required
+            name="Nacionalidade"
+            id="isBrazilian"
+            onChange={handleInputChange}
+            value={isBrazilian}
+          >
             <option value={true}> Brasileiro </option>
             <option value={false}> Estrangeiro </option>
           </Select>
         </FormGroup>
         <FormGroup>
-          <Select onChange={handleChangeHasKey} value={hasKey}>
+          <Select id="hasKey" onChange={handleInputChange} value={hasKey}>
             <option value={false}> Não tem a chave </option>
             <option value={true}> Tem a chave </option>
           </Select>
@@ -259,12 +295,7 @@ export default function MemberForm({ onSubmit, typeLabel, buttonLabel, formSent 
     </Container>
   );
 }
-MemberForm.propTypes = {
-  buttonLabel: PropTypes.string.isRequired,
-  typeLabel: PropTypes.string.isRequired, // TO-DO que porra é typelabel?
-  onSubmit: PropTypes.func.isRequired,
-  formSent: PropTypes.bool.isRequired,
-};
+
 const Container = styled.div`
   width: 100%;
   display: block;

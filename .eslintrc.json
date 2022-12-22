@@ -19,7 +19,9 @@
     "prefer-destructuring": ["warn", { "object": true, "array": false }],
     "import/newline-after-import": ["warn", { "count": 1 }],
     "react/react-in-jsx-scope": "off",
-    "prettier/prettier": "error"
+    "prettier/prettier": "error",
+    "react/prop-types": "warn",
+    "no-unused-vars": "warn"
   },
   "settings": {
     "react": {
