@@ -47,7 +47,7 @@ export default function MemberForm({
     hasKey: "",
     isBrazilian: true,
   });
-  
+
   useEffect(() => {
     if (initialState) setMemberData({ ...initialState });
   }, [initialState]);
@@ -251,6 +251,5 @@ export default function MemberForm({
         {...rest}
       />
     </>
-
   );
 }

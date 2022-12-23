@@ -119,7 +119,7 @@ export default function Project() {
                         <div>{associationMember.member.isActive ? "🟢" : "🔴"}</div>
                       </Card>
                     ))}
-                </ListTeachers>
+                </div>
               </ListInfo>
               <Members>
                 <span>Alunos</span>
@@ -154,6 +154,15 @@ export default function Project() {
     </>
   );
 }
+
+const FormatData = styled.p`
+  padding: 7px;
+  font-size: 1rem;
+  font-weight: 700;
+`;
+const FontData = styled.span`
+  font-weight: 400;
+`;
 
 const Container = styled.div`
   display: flex;
@@ -263,30 +272,4 @@ const Members = styled.div`
   margin: 0 auto;
   overflow-y: auto;
   font-weight: 700;
-`;
-const Card = styled.div`
-  display: flex;
-  width: 100%;
-  padding: 2%;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.08);
-  border-radius: 20px;
-  cursor: pointer;
-  justify-content: space-between;
-  &:hover {
-    transition: all 200ms ease-in;
-    transform: scale(0.93);
-  }
-  & + & {
-    margin-bottom: 1%;
-  }
-  .info {
-    span {
-      display: flex;
-      font-size: 1rem;
-      font-weight: 700;
-      p {
-        font-weight: 400;
-      }
-    }
-  }
 `;
