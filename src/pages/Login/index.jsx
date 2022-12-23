@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { IoEyeOff, IoEyeSharp, IoPerson } from "react-icons/io5";
 
-import LogoLsd from "../../assets/logo_lsd_cor.png";
+import LogoLsdWhite from "../../assets/logo_lsd_branco.png";
 import Footer from "../../layouts/Footer";
 import LoginService from "../../services/LoginService";
 import { alertUser } from "../../utils/alertUser";
@@ -18,10 +18,9 @@ export default function Login() {
   useEffect(() => {
     (async () => {
       try {
-        const accessToken = window.localStorage.getItem("claideToken");
+        const accessToken = localStorage.getItem("claideToken");
         if (accessToken) {
           localStorage.setItem("claideToken", accessToken);
-          alertUser({ text: "Bem-vindo(a)!", type: "success" });
           navigate("/members");
         }
       } catch (err) {
@@ -35,9 +34,8 @@ export default function Login() {
     setIsLoading(true);
     try {
       const response = await LoginService.post({ username, password });
-      if (localStorage.getItem("claideToken")) {
-        localStorage.removeItem("claideToken");
-      }
+      if (localStorage.getItem("claideToken")) localStorage.removeItem("claideToken");
+
       localStorage.setItem("claideToken", response.data.token);
       alertUser({ text: "Bem-vindo(a)!", type: "success" });
       navigate("/members");
@@ -112,7 +110,7 @@ export default function Login() {
         </LoginSection>
         <LogoSection>
           <LogoWrapper>
-            <img src={LogoLsd} width="100%" alt="LSD Logo" />
+            <img src={LogoLsdWhite} width="100%" alt="LSD Logo" />
           </LogoWrapper>
         </LogoSection>
         <Footer gridColumnStart="1" gridColumnEnd="3" />
@@ -127,6 +125,11 @@ const PageGrid = styled.div`
   grid-template-rows: 9fr 1fr;
   grid-template-areas: "l l" "f f";
   height: 100%;
+
+  @media screen and (max-width: 1200px) {
+    grid-template-columns: 4fr 1fr; // TO-DO isso aqui tá horrivel
+    grid-template-areas: "l l" "f f";
+  }
 `;
 
 const LoginSection = styled.div`
@@ -146,8 +149,17 @@ const LogoSection = styled.div`
 const LogoWrapper = styled.div`
   background-color: #486fbd;
   border-radius: 5%;
-  width: 70%;
   align-items: center;
+
+  img {
+    width: 420px;
+    height: 420px;
+    object-fit: none;
+    @media screen and (max-width: 1200px) {
+      display: none;
+      width: 0;
+    }
+  }
 `;
 
 const LoginFormWrapper = styled.section`
@@ -169,9 +181,8 @@ const TitleAndSubtitleWrapper = styled.div`
 `;
 
 const Title = styled.h1`
-  font-style: italic;
   color: rgba(0, 0, 0, 0.65);
-  font-weight: 500;
+  font-weight: 700;
   font-size: 3rem;
   padding-top: 2%;
   padding-bottom: 8%;
@@ -179,7 +190,7 @@ const Title = styled.h1`
 
 const Subtitle = styled.h2`
   font-weight: 400;
-  font-size: 1.4rem;
+  font-size: 1.2rem;
   padding-bottom: 2%;
 `;
 

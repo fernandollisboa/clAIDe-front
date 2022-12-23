@@ -1,22 +1,20 @@
 import api from "./api";
+import { createHeaders, createQueryString } from "./requestBuilders";
 
-function createHeaders() {
-  const token = window.localStorage.getItem("claideToken");
-  const config = { headers: { Authorization: `Bearer ${token}` } };
-  return config;
-}
 class ProjectsService {
   create(body) {
     const config = createHeaders();
     return api.post("projects/", body, config);
   }
-  getAll(isActive, desc) {
+  getAll(isActive, desc = false) {
     const config = createHeaders();
-    return api.get(`projects/?isActive=${isActive}&desc=${desc}`, config);
+    const query = createQueryString({ isActive, desc });
+    console.log({ query, config });
+    return api.get(`projects/${query}`, config);
   }
-  async getById(id) {
+  getById(id) {
     const config = createHeaders();
-    return await api.get(`projects/${id}`, config);
+    return api.get(`projects/${id}`, config);
   }
   associateMemberWithProject(memberId, projectId, startDate, endDate) {
     const config = createHeaders();

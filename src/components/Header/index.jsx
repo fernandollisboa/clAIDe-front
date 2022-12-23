@@ -4,7 +4,6 @@ import { IoLogOutOutline } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 
 import logo from "../../assets/foto_lsd.svg";
-// import profile from "../../assets/profile.svg";
 
 export default function Header() {
   const navigate = useNavigate();
@@ -15,38 +14,50 @@ export default function Header() {
   return (
     <HeaderContainer>
       <Container>
-        <img src={logo} alt="logo lsd" />
+        <img src={logo} alt="logo lsd" onClick={() => navigate("/members")} />
         <NavBar>
           <Link to="/members">Membros</Link>
           {/* <Link to="/teachers">Professores</Link> */}
           <Link to="/projects">Projetos</Link>
         </NavBar>
-        {/* <img src={profile} alt="account" /> */}
-        <IoLogOutOutline onClick={logout} fontSize="40" cursor="pointer" />
+        <LogoutIcon onClick={logout} fontSize="5rem" />
       </Container>
     </HeaderContainer>
   );
 }
+
+const LogoutIcon = styled(IoLogOutOutline)`
+  width: 20%;
+  cursor: pointer;
+  padding-left: 10%;
+`;
 
 const HeaderContainer = styled.div`
   position: absolute;
   top: 0;
   left: 0%;
   width: 100vw;
+  z-index: 1;
+  height: 10%;
 `;
 
 const Container = styled.div`
   display: flex;
-  max-width: 100%;
   align-items: center;
   justify-content: space-between;
   background: #fff;
   border: none;
   border: 2px solid #fff;
+  font-size: 1.5rem;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.04);
   border-radius: 10px;
   padding: 0 1%;
+  img {
+    cursor: pointer;
+    width: 20%;
+  }
 `;
+
 const NavBar = styled.nav`
   display: flex;
   flex-direction: row;
@@ -56,7 +67,6 @@ const NavBar = styled.nav`
   a {
     font-style: normal;
     font-weight: 700;
-    font-size: 1rem;
     font-style: bold;
     text-decoration: none;
     color: #131313;

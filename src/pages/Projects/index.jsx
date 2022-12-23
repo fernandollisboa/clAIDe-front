@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 
@@ -12,8 +12,8 @@ import ProjectsService from "../../services/ProjectsService";
 export default function Project() {
   const [projects, setProjects] = useState([]);
   const [projectNameToBeSearched, setProjectNameToBeSearched] = useState("");
-  const [isActive, setIsActive] = useState("");
-  const [desc, setDesc] = useState("");
+  const [isActive, setIsActive] = useState(true);
+  const [desc, setDesc] = useState(false);
   const navigate = useNavigate();
 
   const filteredProjects = useMemo(
@@ -24,7 +24,7 @@ export default function Project() {
     [projects, projectNameToBeSearched]
   );
 
-  async function loadProjects() {
+  const loadProjects = useCallback(async () => {
     try {
       const projectsList = await ProjectsService.getAll(isActive, desc);
 
@@ -32,11 +32,9 @@ export default function Project() {
     } catch (err) {
       alert(err);
     }
-  }
-
-  useEffect(() => {
-    loadProjects();
   }, [isActive, desc]);
+
+  useEffect(loadProjects, [loadProjects]);
 
   function handleToggleIsActive(event) {
     setIsActive(event.target.value);
@@ -57,9 +55,9 @@ export default function Project() {
           type="Projetos"
           desc={desc}
           handleToggleDesc={handleToggleDesc}
+          handleToggleIsActive={handleToggleIsActive}
           nameToBeSearched={projectNameToBeSearched}
           handleChangeSearch={handleChangeSearchProject}
-          handleToggleIsActive={handleToggleIsActive}
           url="/newProject"
         />
         <Container>

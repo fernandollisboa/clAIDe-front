@@ -5,7 +5,8 @@ export default styled.div`
   background: #ffffff;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.04);
   border-radius: 20px;
-  padding: 15px;
+  padding: 1.2%;
+  cursor: pointer;
   justify-content: space-between;
   &:hover {
     transition: all 200ms ease-in;

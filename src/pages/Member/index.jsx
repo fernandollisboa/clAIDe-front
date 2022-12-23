@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
@@ -11,41 +11,55 @@ import arrowback from "../../assets/arrow-back.svg";
 import ProjectService from "../../services/ProjectsService";
 import MembersService from "../../services/MembersService";
 
-import { alertUser } from "../../utils/alertUser";
+import { alertUnmappedError, alertUser } from "../../utils/alertUser";
 import maskCpf from "../../utils/maskCpf";
 import parseMemberTypeToPortuguese from "../../utils/parseMemberTypeToPortuguese";
 import { transformDate } from "../../utils/transformDate";
+import { setSession } from "contexts/AuthContext";
+import EditMemberModal from "pages/EditMember";
 
 export default function Member() {
   const [member, setMember] = useState({});
   const [viewProjectButton, setviewProjectButton] = useState(true);
   const [activeProjects, setActiveProjects] = useState([]);
   const [projects, setProjects] = useState([]);
-  const [modalOpen, setModalOpen] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  // const [modalOpen, setModalOpen] = useState(false);
   const [selectedProject, setSelectedProject] = useState({});
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const params = useParams();
+  const { id: memberId } = params;
   const navigate = useNavigate();
 
-  async function loadDashboardMember() {
+  const loadDashboardMember = useCallback(async () => {
     try {
-      const memberId = params.id;
-      const { data: member } = await MembersService.getById(memberId);
-      const { data: projects } = await ProjectService.getAssociateProjectByMemberId(memberId);
+      const { data: memberData } = await MembersService.getById(memberId);
+      const { data: memberProjectsData } = await ProjectService.getAssociateProjectByMemberId(
+        memberId
+      );
 
-      setMember(member);
-      setActiveProjects(projects);
+      setMember(memberData);
+      setActiveProjects(memberProjectsData);
     } catch (error) {
-      if (error.response.status === 404) {
-        alertUser({ text: "Membro não encontrado", type: "error" });
-        navigate(`/members`);
+      const { status } = error.response;
+
+      if (status === 404) {
+        alertUser({ text: "Membro não encontrado" });
+        navigate("/members");
       }
+      if (status === 401) {
+        setSession(null);
+        alertUser({ text: "Token expirado, por favor logue novamente", type: "warning" });
+        navigate("/");
+      } else alertUnmappedError(error);
     }
-  }
+  }, [memberId, projects]);
+
   useEffect(() => {
     loadDashboardMember();
-  }, [params.id, projects]);
+  }, [loadDashboardMember]);
 
   async function associateStudentWithProject() {
     try {
@@ -57,7 +71,7 @@ export default function Member() {
       );
       setStartDate(null);
       setEndDate(null);
-      setModalOpen(false);
+      // setModalOpen(false);
       alertUser({ text: "Projeto associado!", type: "success" });
     } catch (error) {
       if (error.response.status === 409) {
@@ -95,7 +109,7 @@ export default function Member() {
   return (
     <>
       <Layout>
-        <Modal modalOpen={modalOpen}>
+        {/* <Modal modalOpen={modalOpen}>
           <ModalContainer>
             <span>
               Tem certeza que deseja associar o aluno <strong> {member.name} </strong> ao projeto
@@ -135,10 +149,20 @@ export default function Member() {
               </Button>
             </InputsModal>
           </ModalContainer>
-        </Modal>
+        </Modal> */}
+
+        <EditMemberModal
+          initialState={member}
+          showModal={showEditModal}
+          setShowModal={setShowEditModal}
+        />
         <Container>
           <Header>
-            <Link to="/members">
+            <Link
+              onClick={() => {
+                navigate(-1);
+              }}
+            >
               <img src={arrowback} />
             </Link>
             <Title>Informações de Membro</Title>
@@ -156,7 +180,7 @@ export default function Member() {
               <Buttons>
                 {viewProjectButton ? (
                   <>
-                    <Button> Editar</Button>
+                    <Button onClick={() => setShowEditModal((state) => !state)}> Editar</Button>
                     <Button onClick={handleToggleAssociationProject}>Gerenciar projetos</Button>
                   </>
                 ) : (
@@ -266,7 +290,7 @@ export default function Member() {
                       <Card
                         key={project.id}
                         onClick={() => {
-                          setModalOpen(true);
+                          // setModalOpen(true);
                           setSelectedProject(project);
                         }}
                       >
@@ -442,7 +466,6 @@ const ProjectTitle = styled.div`
   line-height: 25px;
   padding: 3% 0;
 `;
-
 const Services = styled.div`
   height: 200px;
   padding-top: 2%;

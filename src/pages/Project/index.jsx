@@ -40,7 +40,11 @@ export default function Project() {
       <Layout>
         <Container>
           <Header>
-            <Link to="/projects">
+            <Link
+              onClick={() => {
+                navigate(-1);
+              }}
+            >
               <img src={arrowback} />
             </Link>
             <Title>Informações do Projeto</Title>
@@ -62,29 +66,34 @@ export default function Project() {
             </HeaderDashboard>
             <Body>
               <ListInfo>
-                <Data>
-                  <FormatData>
-                    Data de Criacao: <FontData>{transformDate(project.creationDate)}</FontData>
-                  </FormatData>
-                  <FormatData>
-                    Data de Termino:{" "}
-                    <FontData>{transformDate(project.endDate) || "Sem data"}</FontData>
-                  </FormatData>
-                  <FormatData>
-                    Predio: <FontData>{project.building || "Sem predio"}</FontData>
-                  </FormatData>
-                  <FormatData>
-                    Sala: <FontData>{project.room || "Sem sala"}</FontData>
-                  </FormatData>
-                  <FormatData>
-                    Codigo Embrapii: <FontData>{project.embrapiiCode || "Sem codigo"}</FontData>
-                  </FormatData>
-                  <FormatData>
-                    Financiador: <FontData>{project.financier || "Sem financiador"}</FontData>
-                  </FormatData>
-                </Data>
-                <ListTeachers>
-                  <TitleTeacher>Professores:</TitleTeacher>
+                <div className="data">
+                  <p>
+                    <span className="atribute-title">Data de Criação: </span>
+                    {transformDate(project.creationDate)}
+                  </p>
+                  <p>
+                    <span className="atribute-title">Data de Término: </span>
+                    {transformDate(project.endDate) || "Sem data"}
+                  </p>
+                  <p>
+                    <span className="atribute-title">Prédio: </span>
+                    {project.building || "Sem prédio"}
+                  </p>
+                  <p>
+                    <span className="atribute-title">Sala: </span>
+                    {project.room || "Sem sala"}
+                  </p>
+                  <p>
+                    <span className="atribute-title">Código Embrapii: </span>
+                    {project.embrapiiCode || "Sem código"}
+                  </p>
+                  <p>
+                    <span className="atribute-title">Financiador: </span>{" "}
+                    {project.financier || "Sem financiador"}
+                  </p>
+                </div>
+                <div className="list-teachers">
+                  <span>Professores</span>
                   {members
                     .filter(
                       (associationMember) => associationMember.member.memberType === "PROFESSOR"
@@ -110,10 +119,10 @@ export default function Project() {
                         <div>{associationMember.member.isActive ? "🟢" : "🔴"}</div>
                       </Card>
                     ))}
-                </ListTeachers>
+                </div>
               </ListInfo>
               <Members>
-                <span>Alunos:</span>
+                <span>Alunos</span>
                 {members
                   .filter((associationMember) => associationMember.member.memberType === "STUDENT")
                   .map((associationMember) => (
@@ -145,6 +154,15 @@ export default function Project() {
     </>
   );
 }
+
+const FormatData = styled.p`
+  padding: 7px;
+  font-size: 1rem;
+  font-weight: 700;
+`;
+const FontData = styled.span`
+  font-weight: 400;
+`;
 
 const Container = styled.div`
   display: flex;
@@ -219,30 +237,30 @@ const ListInfo = styled.div`
   width: 50%;
   border-right: 2px solid #bcbcbc;
   padding-right: 2%;
-`;
-const Data = styled.div`
-  height: 200px;
-  border-bottom: 2px solid #bcbcbc;
-`;
-const FormatData = styled.p`
-  padding: 7px;
   font-size: 1rem;
-  font-weight: 700;
-`;
-const FontData = styled.span`
-  font-weight: 400;
-`;
-const ListTeachers = styled.div`
-  height: 200px;
-  padding-top: 2%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  overflow-y: auto;
-`;
-const TitleTeacher = styled.h1`
-  font-weight: 700;
-  font-size: 20px;
+  .atribute-title {
+    font-weight: 700;
+  }
+  p {
+    padding: 7px;
+    font-weight: 400;
+  }
+
+  .data {
+    height: 200px;
+    border-bottom: 2px solid #bcbcbc;
+  }
+  .list-teachers {
+    height: 200px;
+    padding-top: 2%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-y: auto;
+    span {
+      padding: 0;
+    }
+  }
 `;
 const Members = styled.div`
   width: 50%;
