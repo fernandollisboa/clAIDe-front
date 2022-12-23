@@ -37,7 +37,7 @@ export default function EditMember({ showModal, setShowModal, initialState }) {
     setShowModal((state) => !state);
   }
   return (
-    <Modal modalOpen={showModal} height="80%" width="80%">
+    <Modal modalOpen={showModal} height="96%" width="80%">
       <MemberForm
         onSubmit={handleSubmit}
         typeLabel="Editar Membro"

@@ -12,14 +12,15 @@ export default function NewProject() {
 
   async function handleSubmit(formData) {
     try {
+      const { name, creationDate, endDate, room, building, embrapiiCode, financier } = formData;
       const project = {
-        name: formData.name,
-        creationDate: formData.creationDate,
-        endDate: formData.endDate || null,
-        room: formData.room,
-        building: formData.building,
-        embrapii_code: formData.embrapiiCode,
-        financier: formData.financier,
+        name,
+        creationDate,
+        endDate: endDate || null,
+        room,
+        building,
+        embrapii_code: embrapiiCode,
+        financier,
       };
 
       await ProjectsService.create(project);
