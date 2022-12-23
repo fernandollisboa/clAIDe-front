@@ -16,7 +16,7 @@ import maskCpf from "../../utils/maskCpf";
 import parseMemberTypeToPortuguese from "../../utils/parseMemberTypeToPortuguese";
 import { transformDate } from "../../utils/transformDate";
 import { setSession } from "contexts/AuthContext";
-import EditMemberModal from "pages/EditMember";
+import EditMember from "pages/EditMember";
 
 export default function Member() {
   const [member, setMember] = useState({});
@@ -150,7 +150,7 @@ export default function Member() {
           </ModalContainer>
         </Modal>
 
-        <EditMemberModal
+        <EditMember
           initialState={member}
           showModal={showEditModal}
           setShowModal={setShowEditModal}

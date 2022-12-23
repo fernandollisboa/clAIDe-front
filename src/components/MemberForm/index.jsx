@@ -208,6 +208,7 @@ export default function MemberForm({
       placeholder: "Sala",
       value: room,
     },
+
     {
       inputType: "select",
       required: true,

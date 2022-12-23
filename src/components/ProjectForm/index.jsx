@@ -102,6 +102,12 @@ export default function ProjectForm({
     },
     { name: "Sala", id: "room", placeholder: "Sala", value: room },
     {
+      id: "building",
+      name: "Prédio",
+      placeholder: "Prédio",
+      value: building,
+    },
+    {
       name: "Código Embrapii",
       id: "embrapiiCode",
       placeholder: "Codigo Embrapii ",
