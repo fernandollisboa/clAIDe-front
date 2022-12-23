@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
+import Card from "../../components/Card";
 import Layout from "../../components/Layout";
 import arrowback from "../../assets/arrow-back.svg";
 
@@ -21,7 +22,7 @@ export default function Project() {
       const projectId = params.id;
       const { data: project } = await ProjectService.getById(projectId);
       const { data: members } = await ProjectService.getAssociateProjectByProjectId(projectId);
-      console.log(members);
+
       setMembers(members);
       setProject(project);
     } catch (error) {
@@ -104,21 +105,21 @@ export default function Project() {
                           navigateToMember(associationMember.member.id);
                         }}
                       >
-                        <div className="info">
-                          <span className="name">
-                            Nome: <p>{associationMember.member.name}</p>
-                          </span>
-                          <span>
-                            Sala: <p>{associationMember.member.roomName}</p>
-                          </span>
-                          <span>
-                            Email LSD: <p>{associationMember.member.lsdEmail}</p>
-                          </span>
+                        <div>
+                          <FormatData>
+                            Nome: <FontData>{associationMember.member.name}</FontData>
+                          </FormatData>
+                          <FormatData>
+                            Sala: <FontData>{associationMember.member.roomName}</FontData>
+                          </FormatData>
+                          <FormatData>
+                            Email LSD: <FontData>{associationMember.member.lsdEmail}</FontData>
+                          </FormatData>
                         </div>
                         <div>{associationMember.member.isActive ? "🟢" : "🔴"}</div>
                       </Card>
                     ))}
-                </div>
+                </ListTeachers>
               </ListInfo>
               <Members>
                 <span>Alunos</span>
@@ -131,16 +132,16 @@ export default function Project() {
                         navigateToMember(associationMember.member.id);
                       }}
                     >
-                      <div className="info">
-                        <span className="name">
-                          Nome: <p>{associationMember.member.name}</p>
-                        </span>
-                        <span>
-                          Sala: <p>{associationMember.member.roomName}</p>
-                        </span>
-                        <span>
-                          Email LSD: <p>{associationMember.member.lsdEmail}</p>
-                        </span>
+                      <div>
+                        <FormatData>
+                          Nome: <FontData>{associationMember.member.name}</FontData>
+                        </FormatData>
+                        <FormatData>
+                          Sala: <FontData>{associationMember.member.roomName}</FontData>
+                        </FormatData>
+                        <FormatData>
+                          Email LSD: <FontData>{associationMember.member.lsdEmail}</FontData>
+                        </FormatData>
                       </div>
                       <div>{associationMember.member.isActive ? "🟢" : "🔴"}</div>
                     </Card>

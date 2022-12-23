@@ -6,6 +6,9 @@ import useErrors from "../../hooks/useErrors";
 import maskCpf from "../../utils/maskCpf";
 import maskPhone from "../../utils/maskPhone";
 import removeChar from "../../utils/removeChar";
+import isEmailValid from "../../utils/isEmailValid";
+import isLsdEmailValid from "../../utils/isLsdEmailValid";
+
 import { transformDate } from "../../utils/transformDate";
 import StyledForm from "components/Form";
 
@@ -44,7 +47,7 @@ export default function MemberForm({
     hasKey: "",
     isBrazilian: true,
   });
-
+  
   useEffect(() => {
     if (initialState) setMemberData({ ...initialState });
   }, [initialState]);
@@ -248,5 +251,6 @@ export default function MemberForm({
         {...rest}
       />
     </>
+
   );
 }
