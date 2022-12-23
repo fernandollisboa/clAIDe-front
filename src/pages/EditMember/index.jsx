@@ -17,7 +17,6 @@ export default function EditMember({ showModal, setShowModal, initialState }) {
   const [formSent, setFormSent] = useState(false);
 
   async function handleSubmit(formData) {
-    console.log({ formData });
     const { emailLsd: lsdEmail, secondEmail: secondaryEmail, room: roomName } = formData;
 
     try {

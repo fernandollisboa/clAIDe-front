@@ -23,9 +23,8 @@ export default function Member() {
   const [viewProjectButton, setviewProjectButton] = useState(true);
   const [activeProjects, setActiveProjects] = useState([]);
   const [projects, setProjects] = useState([]);
-  const [showModal, setShowModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
-  // const [modalOpen, setModalOpen] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
   const [selectedProject, setSelectedProject] = useState({});
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
@@ -71,7 +70,7 @@ export default function Member() {
       );
       setStartDate(null);
       setEndDate(null);
-      // setModalOpen(false);
+      setModalOpen(false);
       alertUser({ text: "Projeto associado!", type: "success" });
     } catch (error) {
       if (error.response.status === 409) {
@@ -109,7 +108,7 @@ export default function Member() {
   return (
     <>
       <Layout>
-        {/* <Modal modalOpen={modalOpen}>
+        <Modal modalOpen={modalOpen}>
           <ModalContainer>
             <span>
               Tem certeza que deseja associar o aluno <strong> {member.name} </strong> ao projeto
@@ -149,7 +148,7 @@ export default function Member() {
               </Button>
             </InputsModal>
           </ModalContainer>
-        </Modal> */}
+        </Modal>
 
         <EditMemberModal
           initialState={member}
