@@ -28,7 +28,7 @@ export default function Menu({
       />
       <Filters>
         <span>Filtrar por: </span>
-        <select style={{ height: "40px" }} onClick={handleToggleIsActive}>
+        <select name="filter" style={{ height: "40px" }} onClick={handleToggleIsActive}>
           <option value={""}>Todos</option>
           <option value={true}>Ativos</option>
           <option value={false}>Inativos</option>
@@ -85,7 +85,7 @@ const FilterButton = styled.button`
   }
   img {
     cursor: pointer;
-    transform: ${({ desc }) => (desc ? "rotate(-180deg)" : "rotate(0deg)")};
+    transform: ${({ desc }) => (!desc ? "rotate(-180deg)" : "rotate(0deg)")};
     transition: transform 0.2s ease-in;
   }
 `;

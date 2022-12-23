@@ -4,7 +4,7 @@ import styled from "styled-components";
 import PropTypes from "prop-types";
 import { transformDate } from "../../utils/transformDate";
 
-export default function FormDate({ placeholder, onChange, value }) {
+export default function FormDate({ placeholder, onChange, value, minDate, maxDate }) {
   return (
     <Container>
       <DatePicker
@@ -14,6 +14,8 @@ export default function FormDate({ placeholder, onChange, value }) {
         placeholderText={placeholder}
         className="date"
         onChange={onChange}
+        minDate={minDate}
+        maxDate={maxDate}
         value={transformDate(value)}
       />
     </Container>

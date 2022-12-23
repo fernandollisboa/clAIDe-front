@@ -125,6 +125,11 @@ const PageGrid = styled.div`
   grid-template-rows: 9fr 1fr;
   grid-template-areas: "l l" "f f";
   height: 100%;
+
+  @media screen and (max-width: 1200px) {
+    grid-template-columns: 4fr 1fr; // TO-DO isso aqui tá horrivel
+    grid-template-areas: "l l" "f f";
+  }
 `;
 
 const LoginSection = styled.div`
@@ -150,6 +155,10 @@ const LogoWrapper = styled.div`
     width: 420px;
     height: 420px;
     object-fit: none;
+    @media screen and (max-width: 1200px) {
+      display: none;
+      width: 0;
+    }
   }
 `;
 

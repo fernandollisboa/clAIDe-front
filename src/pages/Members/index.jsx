@@ -41,7 +41,7 @@ export default function Member() {
     setIsActive(event.target.value);
   }
   function handleToggleDesc() {
-    setDesc((prevState) => (prevState ? false : true));
+    setDesc((prevState) => !prevState);
   }
   function handleChangeSearchMember(event) {
     setMembersNameToBeSearched(event.target.value);

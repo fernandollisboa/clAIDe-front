@@ -21,9 +21,7 @@ FormGroup.defaultProps = {
   error: null,
 };
 const Container = styled.div`
-  & + & {
-    margin-top: 4%;
-  }
+  margin: 0 4% 4% 0;
   small {
     color: #fc5050;
     font-size: 1rem;

@@ -39,7 +39,11 @@ export default function Project() {
       <Layout>
         <Container>
           <Header>
-            <Link to="/projects">
+            <Link
+              onClick={() => {
+                navigate(-1);
+              }}
+            >
               <img src={arrowback} />
             </Link>
             <Title>Informações do Projeto</Title>
