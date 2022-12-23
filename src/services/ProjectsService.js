@@ -21,6 +21,11 @@ class ProjectsService {
     const body = { startDate, endDate };
     return api.put(`projects/${projectId}/members/${memberId}`, body, config);
   }
+  createAssociateMemberWithProject(memberId, projectId, startDate, endDate) {
+    const config = createHeaders();
+    const body = { startDate, endDate };
+    return api.post(`projects/${projectId}/members/${memberId}`, body, config);
+  }
   getAssociateProjectByMemberId(memberId) {
     const config = createHeaders();
     return api.get(`projects/members/${memberId}`, config);

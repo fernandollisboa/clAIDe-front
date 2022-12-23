@@ -16,7 +16,7 @@ export default function FormDate({ placeholder, onChange, value, minDate, maxDat
         onChange={onChange}
         minDate={minDate}
         maxDate={maxDate}
-        value={transformDate(value)}
+        value={value}
       />
     </Container>
   );

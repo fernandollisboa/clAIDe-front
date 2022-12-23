@@ -7,6 +7,8 @@ import Modal from "../../components/Modal";
 import Card from "../../components/Card";
 import FormDate from "../../components/FormDate";
 import arrowback from "../../assets/arrow-back.svg";
+import EditMemberModal from "pages/EditMember";
+import AssociationMemberProjectModal from "pages/AssociationMemberProjec";
 
 import ProjectService from "../../services/ProjectsService";
 import MembersService from "../../services/MembersService";
@@ -16,17 +18,15 @@ import maskCpf from "../../utils/maskCpf";
 import parseMemberTypeToPortuguese from "../../utils/parseMemberTypeToPortuguese";
 import { transformDate } from "../../utils/transformDate";
 import { setSession } from "contexts/AuthContext";
-import EditMemberModal from "pages/EditMember";
 
 export default function Member() {
   const [member, setMember] = useState({});
   const [viewProjectAssociation, setViewProjectAssociation] = useState(true);
   const [memberProjects, setMemberProjects] = useState([]);
   const [projects, setProjects] = useState([]);
-  const [showModal, setShowModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
-  // const [modalOpen, setModalOpen] = useState(false);
-  const [modalAssociationOpen, setModalAssociationOpen] = useState(false);
+  const [modalEditAssociationOpen, setModalEditAssociationOpen] = useState(false);
+  const [modalCreateAssociationOpen, setModalCreateAssociationOpen] = useState(false);
   const [selectedProject, setSelectedProject] = useState({});
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
@@ -60,7 +60,7 @@ export default function Member() {
     loadDashboardMember();
   }, [loadDashboardMember]);
 
-  async function associateStudentWithProject() {
+  async function updateAssociateStudentWithProject() {
     try {
       await ProjectService.updateAssociateMemberWithProject(
         member.id,
@@ -70,7 +70,7 @@ export default function Member() {
       );
       setStartDate(null);
       setEndDate(null);
-      setModalAssociationOpen(false);
+      setModalEditAssociationOpen(false);
       alertUser({ text: "Projeto atualizado!", type: "success" });
     } catch (error) {
       if (error.response.status === 404) {
@@ -101,14 +101,17 @@ export default function Member() {
       setProjects([]);
     }
   }
+  function handleToggleSetModalCreateAssociationOpen() {
+    setModalCreateAssociationOpen((state) => !state);
+  }
   function navigateToProject(id) {
     navigate(`/project/${id}`);
   }
-  console.log(startDate);
+
   return (
     <>
       <Layout>
-        <Modal modalOpen={modalAssociationOpen}>
+        <Modal modalOpen={modalEditAssociationOpen} projects={projects}>
           <ModalContainer>
             <span>
               Tem certeza que deseja editar o aluno <strong> {member.name} </strong> ao projeto
@@ -119,20 +122,20 @@ export default function Member() {
                 placeholder="Data de início"
                 className="date"
                 onChange={setStartDate}
-                value={startDate}
+                value={transformDate(startDate)}
               />
 
               <FormDate
                 placeholder="Data de fim"
                 className="date"
                 onChange={setEndDate}
-                value={endDate}
+                value={transformDate(endDate)}
               />
 
               <Button
                 style={{ padding: "1%", height: "52px" }}
                 onClick={() => {
-                  setModalAssociationOpen(false);
+                  setModalEditAssociationOpen(false);
                   setSelectedProject({});
                   setStartDate("");
                   setEndDate("");
@@ -142,14 +145,19 @@ export default function Member() {
               </Button>
               <Button
                 style={{ border: "2px solid red", color: "red", padding: "1%", height: "52px" }}
-                onClick={associateStudentWithProject}
+                onClick={updateAssociateStudentWithProject}
               >
                 Confirmar
               </Button>
             </InputsModal>
           </ModalContainer>
         </Modal>
-
+        <AssociationMemberProjectModal
+          projects={projects}
+          showModal={modalCreateAssociationOpen}
+          setShowModal={handleToggleSetModalCreateAssociationOpen}
+          member={member}
+        />
         <EditMemberModal
           initialState={member}
           showModal={showEditModal}
@@ -187,10 +195,9 @@ export default function Member() {
                     <Button onClick={handleToggleAssociationProject}> Voltar</Button>
                     <Button
                       onClick={() => {
-                        setModalAssociationOpen(true);
+                        setModalCreateAssociationOpen((state) => !state);
                       }}
                     >
-                      {" "}
                       Associar projeto
                     </Button>
                   </>
@@ -295,13 +302,19 @@ export default function Member() {
                 </List>
               ) : (
                 <ListProjects>
-                  <ProjectTitle>Editar Projetos associados</ProjectTitle>
+                  <ProjectTitle>
+                    {memberProjects.length > 0 ? (
+                      <h1>Editar Projetos associados</h1>
+                    ) : (
+                      <h1>Nenhum projeto associado</h1>
+                    )}
+                  </ProjectTitle>
                   <ContainerAssociation>
                     {memberProjects.map(({ project, startDate, endDate }) => (
                       <Card
                         key={project.id}
                         onClick={() => {
-                          setModalAssociationOpen(true);
+                          setModalEditAssociationOpen(true);
                           setSelectedProject(project);
                           setStartDate(startDate);
                           setEndDate(endDate);
