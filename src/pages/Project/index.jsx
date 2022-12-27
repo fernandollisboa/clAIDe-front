@@ -10,21 +10,23 @@ import ProjectService from "../../services/ProjectsService";
 
 import { transformDate } from "../../utils/transformDate";
 import { alertUser } from "../../utils/alertUser";
+import EditProject from "pages/EditProject";
 
 export default function Project() {
   const [project, setProject] = useState({});
   const [members, setMembers] = useState([]);
+  const [showEditModal, setShowEditModal] = useState(false);
 
   const params = useParams();
   const navigate = useNavigate();
+  const { id } = params;
   async function loadDashboardProject() {
     try {
-      const projectId = params.id;
-      const { data: project } = await ProjectService.getById(projectId);
-      const { data: members } = await ProjectService.getAssociateProjectByProjectId(projectId);
+      const { data: project } = await ProjectService.getById(id);
+      const { data: members } = await ProjectService.getAssociateProjectByProjectId(id);
 
       setMembers(members);
-      setProject(project);
+      setProject({ ...project, id });
     } catch (error) {
       alertUser({ text: error.response.data.message, type: "error" });
     }
@@ -49,6 +51,12 @@ export default function Project() {
             </Link>
             <Title>Informações do Projeto</Title>
           </Header>
+          <EditProject
+            initialState={project}
+            showModal={showEditModal}
+            setShowModal={setShowEditModal}
+            projectId={id}
+          />
 
           <Dashboard>
             <HeaderDashboard>
@@ -61,7 +69,7 @@ export default function Project() {
                 </div>
               </Info>
               <Buttons>
-                <Button> Editar</Button>
+                <Button onClick={() => setShowEditModal((state) => !state)}> Editar</Button>
               </Buttons>
             </HeaderDashboard>
             <Body>

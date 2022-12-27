@@ -17,11 +17,8 @@ export default function EditMember({ showModal, setShowModal, initialState }) {
   const [formSent, setFormSent] = useState(false);
 
   async function handleSubmit(formData) {
-    console.log({ formData });
-    const { emailLsd: lsdEmail, secondEmail: secondaryEmail, room: roomName } = formData;
-
     try {
-      const member = { ...formData, lsdEmail, secondaryEmail, roomName };
+      const member = { ...formData };
 
       await MembersService.update(member);
 
@@ -37,7 +34,7 @@ export default function EditMember({ showModal, setShowModal, initialState }) {
     setShowModal((state) => !state);
   }
   return (
-    <Modal modalOpen={showModal} height="80%" width="80%">
+    <Modal modalOpen={showModal} height="96%" width="80%">
       <MemberForm
         onSubmit={handleSubmit}
         typeLabel="Editar Membro"

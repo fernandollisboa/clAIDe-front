@@ -1,16 +1,14 @@
 import { string, func, bool, object } from "prop-types";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { MINIMUM_REQUIRED_AGE, getTodaySubtractYears } from "utils/dateUtil";
 
 import useErrors from "../../hooks/useErrors";
 import maskCpf from "../../utils/maskCpf";
 import maskPhone from "../../utils/maskPhone";
 import removeChar from "../../utils/removeChar";
-import isEmailValid from "../../utils/isEmailValid";
-import isLsdEmailValid from "../../utils/isLsdEmailValid";
 
 import { transformDate } from "../../utils/transformDate";
-import StyledForm from "components/Form";
+import Form from "components/Form";
 
 MemberForm.propTypes = {
   buttonLabel: string.isRequired,
@@ -38,7 +36,7 @@ export default function MemberForm({
     rg: "",
     passport: "",
     phone: "",
-    emailLsd: "",
+    lsdEmail: "",
     email: "",
     secondEmail: "",
     memberType: "",
@@ -46,11 +44,8 @@ export default function MemberForm({
     room: "",
     hasKey: "",
     isBrazilian: true,
+    ...initialState,
   });
-
-  useEffect(() => {
-    if (initialState) setMemberData({ ...initialState });
-  }, [initialState]);
 
   const {
     name,
@@ -59,8 +54,8 @@ export default function MemberForm({
     rg,
     passport,
     email,
-    emailLsd,
-    secondEmail,
+    lsdEmail,
+    secondaryEmail,
     lattes,
     isBrazilian,
     username,
@@ -85,8 +80,6 @@ export default function MemberForm({
   async function handleSubmit(event) {
     event.preventDefault();
 
-    console.log(event);
-
     await onSubmit({
       ...memberData,
       birthDate: transformDate(birthDate),
@@ -105,9 +98,9 @@ export default function MemberForm({
         rg: "",
         passport: "",
         phone: "",
-        emailLsd: "",
+        lsdEmail: "",
         email: "",
-        secondEmail: "",
+        secondaryEmail: "",
         memberType: "",
         lattes: "",
         room: "",
@@ -167,10 +160,10 @@ export default function MemberForm({
     {
       required: false,
       name: "Email LSD",
-      id: "emailLsd",
+      id: "lsdEmail",
       placeholder: "Email LSD",
       type: "email",
-      value: emailLsd,
+      value: lsdEmail,
     },
     {
       required: true,
@@ -182,9 +175,9 @@ export default function MemberForm({
     },
     {
       name: "Email secundário",
-      id: "secondEmail",
+      id: "secondaryEmail",
       placeholder: "Email secundário",
-      value: secondEmail,
+      value: secondaryEmail,
       type: "email",
     },
     {
@@ -215,12 +208,13 @@ export default function MemberForm({
       placeholder: "Sala",
       value: room,
     },
+
     {
       inputType: "select",
       required: true,
       name: "Possui a chave da sala?",
       id: "hasKey",
-      value: { hasKey },
+      value: hasKey,
       options: [
         { value: 1, label: " Tem a chave da sala " },
         { value: 0, label: " Não tem a chave da sala" },
@@ -240,7 +234,7 @@ export default function MemberForm({
   ];
   return (
     <>
-      <StyledForm
+      <Form
         isFormValid={isFormValid}
         handleSubmit={handleSubmit}
         inputs={inputs}

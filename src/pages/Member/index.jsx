@@ -18,6 +18,7 @@ import maskCpf from "../../utils/maskCpf";
 import parseMemberTypeToPortuguese from "../../utils/parseMemberTypeToPortuguese";
 import { transformDate } from "../../utils/transformDate";
 import { setSession } from "contexts/AuthContext";
+import EditMember from "pages/EditMember";
 
 export default function Member() {
   const [member, setMember] = useState({});
@@ -152,17 +153,18 @@ export default function Member() {
             </InputsModal>
           </ModalContainer>
         </Modal>
+        <EditMember
+          initialState={member}
+          showModal={showEditModal}
+          setShowModal={setShowEditModal}
+        />
         <AssociationMemberProjectModal
           projects={projects}
           showModal={modalCreateAssociationOpen}
           setShowModal={handleToggleSetModalCreateAssociationOpen}
           member={member}
         />
-        <EditMemberModal
-          initialState={member}
-          showModal={showEditModal}
-          setShowModal={setShowEditModal}
-        />
+
         <Container>
           <Header>
             <Link
