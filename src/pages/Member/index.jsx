@@ -7,6 +7,8 @@ import Modal from "../../components/Modal";
 import Card from "../../components/Card";
 import FormDate from "../../components/FormDate";
 import arrowback from "../../assets/arrow-back.svg";
+import EditMemberModal from "pages/EditMember";
+import AssociationMemberProjectModal from "pages/AssociationMemberProjec";
 
 import ProjectService from "../../services/ProjectsService";
 import MembersService from "../../services/MembersService";
@@ -16,16 +18,15 @@ import maskCpf from "../../utils/maskCpf";
 import parseMemberTypeToPortuguese from "../../utils/parseMemberTypeToPortuguese";
 import { transformDate } from "../../utils/transformDate";
 import { setSession } from "contexts/AuthContext";
-import EditMemberModal from "pages/EditMember";
 
 export default function Member() {
   const [member, setMember] = useState({});
-  const [viewProjectButton, setviewProjectButton] = useState(true);
-  const [activeProjects, setActiveProjects] = useState([]);
+  const [viewProjectAssociation, setViewProjectAssociation] = useState(true);
+  const [memberProjects, setMemberProjects] = useState([]);
   const [projects, setProjects] = useState([]);
-  const [showModal, setShowModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
-  // const [modalOpen, setModalOpen] = useState(false);
+  const [modalEditAssociationOpen, setModalEditAssociationOpen] = useState(false);
+  const [modalCreateAssociationOpen, setModalCreateAssociationOpen] = useState(false);
   const [selectedProject, setSelectedProject] = useState({});
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
@@ -35,13 +36,11 @@ export default function Member() {
 
   const loadDashboardMember = useCallback(async () => {
     try {
-      const { data: memberData } = await MembersService.getById(memberId);
-      const { data: memberProjectsData } = await ProjectService.getAssociateProjectByMemberId(
-        memberId
-      );
-
-      setMember(memberData);
-      setActiveProjects(memberProjectsData);
+      const memberId = params.id;
+      const { data: member } = await MembersService.getById(memberId);
+      const { data: projects } = await ProjectService.getAssociateProjectByMemberId(memberId);
+      setMember(member);
+      setMemberProjects(projects);
     } catch (error) {
       const { status } = error.response;
 
@@ -61,9 +60,9 @@ export default function Member() {
     loadDashboardMember();
   }, [loadDashboardMember]);
 
-  async function associateStudentWithProject() {
+  async function updateAssociateStudentWithProject() {
     try {
-      await ProjectService.associateMemberWithProject(
+      await ProjectService.updateAssociateMemberWithProject(
         member.id,
         selectedProject.id,
         transformDate(startDate),
@@ -71,12 +70,12 @@ export default function Member() {
       );
       setStartDate(null);
       setEndDate(null);
-      // setModalOpen(false);
-      alertUser({ text: "Projeto associado!", type: "success" });
+      setModalEditAssociationOpen(false);
+      alertUser({ text: "Projeto atualizado!", type: "success" });
     } catch (error) {
-      if (error.response.status === 409) {
+      if (error.response.status === 404) {
         alertUser({
-          text: `${member.name} e ${selectedProject.name} já estão associados`,
+          text: `${member.name} e ${selectedProject.name} não encontrados`,
           type: "error",
         });
       }
@@ -88,10 +87,9 @@ export default function Member() {
       }
     }
   }
-
   async function handleToggleAssociationProject() {
-    setviewProjectButton((prevState) => (prevState ? false : true));
-    if (viewProjectButton) {
+    setViewProjectAssociation((prevState) => (prevState ? false : true));
+    if (viewProjectAssociation) {
       try {
         const { data } = await ProjectService.getAll(true);
 
@@ -103,16 +101,20 @@ export default function Member() {
       setProjects([]);
     }
   }
+  function handleToggleSetModalCreateAssociationOpen() {
+    setModalCreateAssociationOpen((state) => !state);
+  }
   function navigateToProject(id) {
     navigate(`/project/${id}`);
   }
+
   return (
     <>
       <Layout>
-        {/* <Modal modalOpen={modalOpen}>
+        <Modal modalOpen={modalEditAssociationOpen} projects={projects}>
           <ModalContainer>
             <span>
-              Tem certeza que deseja associar o aluno <strong> {member.name} </strong> ao projeto
+              Tem certeza que deseja editar o aluno <strong> {member.name} </strong> ao projeto
               <strong> {selectedProject.name}</strong>?
             </span>
             <InputsModal>
@@ -133,7 +135,7 @@ export default function Member() {
               <Button
                 style={{ padding: "1%", height: "52px" }}
                 onClick={() => {
-                  setModalOpen(false);
+                  setModalEditAssociationOpen(false);
                   setSelectedProject({});
                   setStartDate("");
                   setEndDate("");
@@ -143,14 +145,19 @@ export default function Member() {
               </Button>
               <Button
                 style={{ border: "2px solid red", color: "red", padding: "1%", height: "52px" }}
-                onClick={associateStudentWithProject}
+                onClick={updateAssociateStudentWithProject}
               >
                 Confirmar
               </Button>
             </InputsModal>
           </ModalContainer>
-        </Modal> */}
-
+        </Modal>
+        <AssociationMemberProjectModal
+          projects={projects}
+          showModal={modalCreateAssociationOpen}
+          setShowModal={handleToggleSetModalCreateAssociationOpen}
+          member={member}
+        />
         <EditMemberModal
           initialState={member}
           showModal={showEditModal}
@@ -173,18 +180,27 @@ export default function Member() {
                 <MemberInfo>
                   <Name>{member.name}</Name>
                   <Type>{parseMemberTypeToPortuguese(member.memberType)}</Type>
-                  <Status>{(member.status && <p>Ativo</p>) || <p>Inativo</p>}</Status>
+                  <Status>{member.status ? <p>Ativo</p> : <p>Inativo</p>}</Status>
                 </MemberInfo>
                 <Username>{member.username}</Username>
               </Info>
               <Buttons>
-                {viewProjectButton ? (
+                {viewProjectAssociation ? (
                   <>
                     <Button onClick={() => setShowEditModal((state) => !state)}> Editar</Button>
                     <Button onClick={handleToggleAssociationProject}>Gerenciar projetos</Button>
                   </>
                 ) : (
-                  <Button onClick={handleToggleAssociationProject}> Voltar</Button>
+                  <>
+                    <Button onClick={handleToggleAssociationProject}> Voltar</Button>
+                    <Button
+                      onClick={() => {
+                        setModalCreateAssociationOpen((state) => !state);
+                      }}
+                    >
+                      Associar projeto
+                    </Button>
+                  </>
                 )}
               </Buttons>
             </HeaderDashboard>
@@ -232,39 +248,41 @@ export default function Member() {
                   )}
                 </PersonalData>
               </ListInfo>
-              {viewProjectButton ? (
+              {viewProjectAssociation ? (
                 <List>
                   <Project>
                     <ProjectTitle>
-                      {activeProjects.length > 1 ? (
+                      {memberProjects.filter(({ endDate }) => !endDate).length > 0 ? (
                         <h1>Projetos Atuais</h1>
                       ) : (
-                        <h1>Projeto Atual</h1>
+                        <h1>Nenhum projeto associado</h1>
                       )}
                     </ProjectTitle>
-                    {activeProjects.map((projectAssociation) => (
-                      <Card
-                        key={projectAssociation.id}
-                        onClick={() => {
-                          navigateToProject(projectAssociation.project.id);
-                        }}
-                      >
-                        <div>
-                          <FormatData>
-                            Nome: <FontData>{projectAssociation.project.name}</FontData>
-                          </FormatData>
-                          <FormatData>
-                            Sala:
-                            <FontData>{projectAssociation.project.room || "Sem sala"}</FontData>
-                          </FormatData>
-                          <FormatData>
-                            Data de início:
-                            <FontData>{transformDate(projectAssociation.startDate)}</FontData>
-                          </FormatData>
-                        </div>
-                        <div>{projectAssociation.project.isActive ? "🟢" : "🔴"} </div>
-                      </Card>
-                    ))}
+                    {memberProjects
+                      .filter(({ endDate }) => !endDate)
+                      .map(({ project, startDate }) => (
+                        <Card
+                          key={project.id}
+                          onClick={() => {
+                            navigateToProject(project.id);
+                          }}
+                        >
+                          <div>
+                            <FormatData>
+                              Nome: <FontData>{project.name}</FontData>
+                            </FormatData>
+                            <FormatData>
+                              Sala:
+                              <FontData> {project.room || " Sem sala"}</FontData>
+                            </FormatData>
+                            <FormatData>
+                              Data que entrou:
+                              <FontData> {transformDate(startDate)}</FontData>
+                            </FormatData>
+                          </div>
+                          <div>{project.isActive ? "🟢" : "🔴"} </div>
+                        </Card>
+                      ))}
                   </Project>
 
                   <Services>
@@ -284,14 +302,22 @@ export default function Member() {
                 </List>
               ) : (
                 <ListProjects>
-                  <ProjectTitle>Associar à Novo Projeto</ProjectTitle>
+                  <ProjectTitle>
+                    {memberProjects.length > 0 ? (
+                      <h1>Editar Projetos associados</h1>
+                    ) : (
+                      <h1>Nenhum projeto associado</h1>
+                    )}
+                  </ProjectTitle>
                   <ContainerAssociation>
-                    {projects.map((project) => (
+                    {memberProjects.map(({ project, startDate, endDate }) => (
                       <Card
                         key={project.id}
                         onClick={() => {
-                          // setModalOpen(true);
+                          setModalEditAssociationOpen(true);
                           setSelectedProject(project);
+                          setStartDate(startDate);
+                          setEndDate(endDate);
                         }}
                       >
                         <div>
@@ -299,13 +325,15 @@ export default function Member() {
                             Nome: <FontData>{project.name}</FontData>
                           </FormatData>
                           <FormatData>
-                            Sala: <FontData>{project.room || "Sem sala"}</FontData>
+                            Data de início:
+                            <FontData>{transformDate(startDate)}</FontData>
                           </FormatData>
                           <FormatData>
-                            Prédio: <FontData>{project.building || "Sem prédio"}</FontData>
+                            Data de término:
+                            <FontData>{transformDate(endDate) || "Não terminou"}</FontData>
                           </FormatData>
                         </div>
-                        <div>{project.isActive ? "🟢" : "🔴"}</div>
+                        <div>{!endDate ? "🟢" : "🔴"}</div>
                       </Card>
                     ))}
                   </ContainerAssociation>
@@ -333,7 +361,7 @@ const ModalContainer = styled.div`
 const InputsModal = styled.div`
   display: flex;
   flex-direction: row;
-  justify-content: space-around;
+  justify-content: space-between;
   .date {
     margin-right: 5%;
     border: 2px solid black;
@@ -361,7 +389,6 @@ const Title = styled.h1`
 const Header = styled.div`
   display: flex;
 `;
-
 const Dashboard = styled.div``;
 const HeaderDashboard = styled.div`
   display: flex;
@@ -422,7 +449,6 @@ const Button = styled.button`
   margin-right: 5%;
   cursor: pointer;
 `;
-
 const Body = styled.div`
   display: flex;
   justify-content: space-between;
