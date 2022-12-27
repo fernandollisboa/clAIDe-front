@@ -266,6 +266,7 @@ const ListInfo = styled.div`
     align-items: center;
     overflow-y: auto;
     span {
+      font-weight: 700;
       padding: 0;
     }
   }

@@ -91,7 +91,7 @@ export default function Member() {
                   Telefone: <FontData>{maskPhone(member.phone)}</FontData>
                 </Data>
               </Info>
-              <div>{member.isActive ? "🟢" : "🔴"}</div>
+              <div>{member.status ? "🟢" : "🔴"}</div>
             </Card>
           ))}
         </Container>
