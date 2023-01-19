@@ -28,7 +28,7 @@ export default function NewProject() {
       setFormSent(true);
     } catch (error) {
       setFormSent(false);
-      alertUser({ text: error.response.data.message, type: "error" });
+      alertUser({ text: error.response.data, type: "error" });
     }
   }
   return (

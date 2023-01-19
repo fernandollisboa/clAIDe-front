@@ -24,7 +24,7 @@ export default function Login() {
           navigate("/members");
         }
       } catch (err) {
-        console.log(err);
+        // console.log(err);
       }
     })();
   }, []);

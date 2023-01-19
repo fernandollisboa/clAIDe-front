@@ -50,7 +50,6 @@ export default function Member() {
   function navigateToMember(id) {
     navigate(`/member/${id}`);
   }
-  console.log(members);
   return (
     <>
       <Layout>
@@ -91,7 +90,7 @@ export default function Member() {
                   Telefone: <FontData>{maskPhone(member.phone)}</FontData>
                 </Data>
               </Info>
-              <div>{member.status ? "🟢" : "🔴"}</div>
+              <div>{member.isActive ? "🟢" : "🔴"}</div>
             </Card>
           ))}
         </Container>

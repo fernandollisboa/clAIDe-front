@@ -19,7 +19,6 @@ export default function Activty() {
   useEffect(() => {
     load();
   }, []);
-  console.log(activity);
 
   return (
     <>
