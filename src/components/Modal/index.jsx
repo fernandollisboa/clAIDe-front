@@ -26,4 +26,6 @@ function getStyleModal({ height, width }) {
 Modal.propTypes = {
   modalOpen: PropTypes.bool.isRequired,
   children: PropTypes.node.isRequired,
+  height: PropTypes.string,
+  width: PropTypes.string,
 };
