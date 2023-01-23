@@ -29,7 +29,6 @@ export default function MemberForm({
 }) {
   const { setError, removeError, errors } = useErrors();
   const [memberData, setMemberData] = useState({
-    ...initialState,
     name: "",
     birthDate: "",
     username: "",
@@ -45,6 +44,7 @@ export default function MemberForm({
     room: "",
     hasKey: "",
     isBrazilian: true,
+    ...initialState,
   });
 
   const {
@@ -76,7 +76,6 @@ export default function MemberForm({
 
   const isFormValid =
     name && birthDate && username && phone && memberType && email && !errors.length;
-
   async function handleSubmit(event) {
     event.preventDefault();
 
@@ -85,8 +84,8 @@ export default function MemberForm({
       birthDate: transformDate(birthDate),
       cpf: removeChar(cpf),
       phone: removeChar(phone),
-      isBrazilian: !!isBrazilian,
-      hasKey: !!hasKey,
+      isBrazilian: !!Number(isBrazilian),
+      hasKey: !!Number(hasKey),
     });
 
     if (formSent) {
