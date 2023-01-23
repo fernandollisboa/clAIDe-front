@@ -25,6 +25,7 @@ export default function ProjectForm({
 }) {
   const { setError, removeError, errors } = useErrors();
   const [projectData, setProjectData] = useState({
+    ...initialState,
     name: "",
     creationDate: "",
     endDate: "",
@@ -32,7 +33,6 @@ export default function ProjectForm({
     building: "",
     embrapiiCode: "",
     financier: "",
-    ...initialState,
   });
   const { name, creationDate, endDate, room, building, embrapiiCode, financier } = projectData;
 

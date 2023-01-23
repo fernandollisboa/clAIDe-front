@@ -29,6 +29,7 @@ export default function MemberForm({
 }) {
   const { setError, removeError, errors } = useErrors();
   const [memberData, setMemberData] = useState({
+    ...initialState,
     name: "",
     birthDate: "",
     username: "",
@@ -44,7 +45,6 @@ export default function MemberForm({
     room: "",
     hasKey: "",
     isBrazilian: true,
-    ...initialState,
   });
 
   const {
