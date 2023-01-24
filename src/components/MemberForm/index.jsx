@@ -76,7 +76,6 @@ export default function MemberForm({
 
   const isFormValid =
     name && birthDate && username && phone && memberType && email && !errors.length;
-
   async function handleSubmit(event) {
     event.preventDefault();
 
@@ -85,8 +84,8 @@ export default function MemberForm({
       birthDate: transformDate(birthDate),
       cpf: removeChar(cpf),
       phone: removeChar(phone),
-      isBrazilian: !!isBrazilian,
-      hasKey: !!hasKey,
+      isBrazilian: !!Number(isBrazilian),
+      hasKey: !!Number(hasKey),
     });
 
     if (formSent) {
@@ -125,7 +124,7 @@ export default function MemberForm({
       id: "birthDate",
       placeholder: "Data de nascimento *",
       onChange: handleBirthDateInputChange,
-      value: birthDate,
+      value: transformDate(birthDate),
       endDate: getTodaySubtractYears(MINIMUM_REQUIRED_AGE),
     },
     {

@@ -9,7 +9,6 @@ class ProjectsService {
   getAll(isActive, desc = false) {
     const config = createHeaders();
     const query = createQueryString({ isActive, desc });
-    console.log({ query, config });
     return api.get(`projects/${query}`, config);
   }
   getById(id) {

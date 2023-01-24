@@ -14,7 +14,6 @@ export function alertUser({ text, type = "error" }) {
 }
 
 export function alertUnmappedError(err) {
-  console.log(err);
   const text = "Erro não mapeado";
   alertUser({ text });
 }

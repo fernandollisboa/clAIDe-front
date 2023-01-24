@@ -13,13 +13,14 @@ export default function NewProject() {
   async function handleSubmit(formData) {
     try {
       const { name, creationDate, endDate, room, building, embrapiiCode, financier } = formData;
+
       const project = {
         name,
         creationDate,
-        endDate: endDate || null,
+        endDate,
         room,
         building,
-        embrapii_code: embrapiiCode,
+        embrapiiCode,
         financier,
       };
 
@@ -28,7 +29,7 @@ export default function NewProject() {
       setFormSent(true);
     } catch (error) {
       setFormSent(false);
-      alertUser({ text: error.response.data.message, type: "error" });
+      alertUser({ text: error.response.data, type: "error" });
     }
   }
   return (

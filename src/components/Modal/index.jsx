@@ -3,7 +3,7 @@ import ReactModal from "react-modal";
 
 export default function Modal({ modalOpen, children, height, width }) {
   return (
-    <ReactModal isOpen={modalOpen} style={getStyleModal({ height, width })}>
+    <ReactModal isOpen={modalOpen} style={getStyleModal({ height, width })} ariaHideApp={false}>
       {children}
     </ReactModal>
   );
@@ -26,4 +26,6 @@ function getStyleModal({ height, width }) {
 Modal.propTypes = {
   modalOpen: PropTypes.bool.isRequired,
   children: PropTypes.node.isRequired,
+  height: PropTypes.string,
+  width: PropTypes.string,
 };

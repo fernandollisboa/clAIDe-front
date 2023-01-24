@@ -2,9 +2,15 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import styled from "styled-components";
 import PropTypes from "prop-types";
-import { transformDate } from "../../utils/transformDate";
+import { transformDate } from "utils/transformDate";
 
-export default function FormDate({ placeholder, onChange, value, minDate, maxDate }) {
+export default function FormDate({
+  placeholder,
+  onChange,
+  value,
+  minDate = new Date("02-01-1920"),
+  maxDate,
+}) {
   return (
     <Container>
       <DatePicker
@@ -25,7 +31,7 @@ export default function FormDate({ placeholder, onChange, value, minDate, maxDat
 FormDate.propTypes = {
   placeholder: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
-  value: PropTypes.node.isRequired,
+  value: PropTypes.node,
 };
 
 export const Container = styled.div`

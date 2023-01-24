@@ -23,7 +23,7 @@ export default function NewMember() {
       alertUser({ text: "Formulario enviado", type: "success" });
       setFormSent(true);
     } catch (error) {
-      alertUser({ text: error.response.data, type: "error" }); // TO-DO trocar pra receber os erros como error.response.message
+      alertUser({ text: error.response.data.message, type: "error" });
       setFormSent(false);
     }
   }
