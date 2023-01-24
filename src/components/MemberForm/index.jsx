@@ -124,7 +124,7 @@ export default function MemberForm({
       id: "birthDate",
       placeholder: "Data de nascimento *",
       onChange: handleBirthDateInputChange,
-      value: birthDate,
+      value: transformDate(birthDate),
       endDate: getTodaySubtractYears(MINIMUM_REQUIRED_AGE),
     },
     {
