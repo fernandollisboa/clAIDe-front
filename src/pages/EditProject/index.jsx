@@ -15,20 +15,22 @@ EditProject.defaultProps = {
 };
 export default function EditProject({ showModal, setShowModal, initialState, projectId }) {
   const [formSent, setFormSent] = useState(false);
+
   async function handleSubmit(formData) {
     try {
       const { room, building, endDate, embrapiiCode } = formData;
       delete formData.embrapiiCode;
       const project = {
         id: projectId,
+        room: room,
+        building: building,
+        endDate: endDate,
+        embrapii_code: embrapiiCode,
         ...formData,
-        room: room || null,
-        building: building || null,
-        endDate: endDate || null,
-        embrapii_code: embrapiiCode || null,
       };
 
       await ProjectsService.update(project);
+
       alertUser({ text: "Formulario enviado", type: "success" });
       setFormSent(true);
     } catch (error) {

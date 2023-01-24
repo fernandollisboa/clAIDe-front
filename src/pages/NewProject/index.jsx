@@ -13,13 +13,14 @@ export default function NewProject() {
   async function handleSubmit(formData) {
     try {
       const { name, creationDate, endDate, room, building, embrapiiCode, financier } = formData;
+
       const project = {
         name,
         creationDate,
-        endDate: endDate || null,
+        endDate,
         room,
         building,
-        embrapii_code: embrapiiCode,
+        embrapiiCode,
         financier,
       };
 

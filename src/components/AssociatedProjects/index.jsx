@@ -24,7 +24,8 @@ export default function AssociatedProjects({ title, projects, editShowModal, sel
           <Card
             key={project.id}
             onClick={() => {
-              toggleShowModal(), selectedProject({ project, startDate, endDate });
+              selectedProject({ startDate, endDate });
+              toggleShowModal();
             }}
           >
             <div>

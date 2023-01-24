@@ -9,6 +9,7 @@ import ProjectService from "services/ProjectsService";
 
 import { alertUser } from "utils/alertUser";
 import { transformDate } from "utils/transformDate";
+import Form from "components/Form";
 
 UpdateAssociationModal.propTypes = {
   projectAssociated: PropTypes.object,
@@ -22,25 +23,47 @@ export default function UpdateAssociationModal({
   showModal,
   editShowModal,
 }) {
-  // iniciar com os dados do projeto associado
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
+  const [projectInfo, setProjectInfo] = useState({
+    startDate: projectAssociated.startDate,
+    endDate: projectAssociated.endDate,
+    // ...projectAssociated,
+  });
+  console.log(projectAssociated);
+  console.log({ projectInfo });
+
+  const { startDate, endDate } = projectInfo;
+
+  function handleStartDateInputChange(startDate) {
+    setProjectInfo((state) => {
+      return { ...state, startDate };
+    });
+  }
+  function handleEndDateInputChange(endDate) {
+    setProjectInfo((state) => {
+      return { ...state, endDate };
+    });
+  }
 
   async function updateAssociateStudentWithProject() {
     try {
       await ProjectService.updateAssociateMemberWithProject(
         member.id,
         projectAssociated.project.id,
-        transformDate(startDate),
-        transformDate(endDate)
+        transformDate(projectInfo.startDate),
+        transformDate(projectInfo.endDate)
       );
-      setStartDate("");
-      setEndDate("");
+      setProjectInfo({
+        startDate: "",
+        endDate: "",
+      });
+
       editShowModal(false);
       alertUser({ text: "Projeto atualizado!", type: "success" });
     } catch (error) {
-      setStartDate("");
-      setEndDate("");
+      setProjectInfo({
+        startDate: "",
+        endDate: "",
+      });
       if (error.response.status === 404) {
         alertUser({
           text: `${member?.name} e ${projectAssociated?.project?.name} não encontrados`,
@@ -55,49 +78,36 @@ export default function UpdateAssociationModal({
       }
     }
   }
+  const inputs = [
+    {
+      inputType: "date",
+      name: "Data de início",
+      id: "startDate",
+      placeholder: "Data de início",
+      onChange: handleStartDateInputChange,
+      value: startDate,
+    },
+    {
+      inputType: "date",
+      name: "Data de término",
+      id: "endDate",
+      onChange: handleEndDateInputChange,
+      placeholder: "Data de término *",
+      value: endDate,
+    },
+  ];
 
   return (
-    <Modal modalOpen={showModal} width="90vh">
-      <Container>
-        <span>
-          Tem certeza que deseja editar o aluno <strong> {member?.name} </strong> ao projeto
-          <strong> {projectAssociated?.project?.name}</strong>?
-        </span>
-        <InputsModal>
-          <FormDate
-            placeholder="Data de início"
-            className="date"
-            onChange={setStartDate}
-            value={transformDate(startDate)}
-          />
-
-          <FormDate
-            placeholder="Data de fim"
-            className="date"
-            onChange={setEndDate}
-            value={transformDate(endDate)}
-          />
-
-          <Button
-            style={{ padding: "1%", height: "52px" }}
-            onClick={() => {
-              editShowModal(false);
-              setStartDate("");
-              setEndDate("");
-            }}
-          >
-            Cancelar
-          </Button>
-          <Button
-            style={{ border: "2px solid red", color: "red", padding: "1%", height: "52px" }}
-            onClick={() => {
-              updateAssociateStudentWithProject(), editShowModal(false);
-            }}
-          >
-            Confirmar
-          </Button>
-        </InputsModal>
-      </Container>
+    <Modal modalOpen={showModal} width="80vh" height="50vh">
+      <Form
+        isFormValid={true}
+        inputs={inputs}
+        onSubmit={updateAssociateStudentWithProject}
+        typeLabel="Editar Projeto associado"
+        buttonLabel="Editar"
+        isModal={true}
+        height={"200px"}
+      />
     </Modal>
   );
 }

@@ -3,7 +3,7 @@ import ReactModal from "react-modal";
 
 export default function Modal({ modalOpen, children, height, width }) {
   return (
-    <ReactModal isOpen={modalOpen} style={getStyleModal({ height, width })}>
+    <ReactModal isOpen={modalOpen} style={getStyleModal({ height, width })} ariaHideApp={false}>
       {children}
     </ReactModal>
   );

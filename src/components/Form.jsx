@@ -9,6 +9,7 @@ import Input from "components/Input";
 import Button from "components/Button";
 import useErrors from "hooks/useErrors";
 import Select from "components/Select";
+import { transformDate } from "utils/transformDate";
 
 export default function Form({
   isFormValid,
@@ -19,6 +20,7 @@ export default function Form({
   typeLabel,
   onReturnNavigate,
   maxWidth,
+  height,
 }) {
   const { setError, removeError, getErrorMessageByFieldName } = useErrors();
 
@@ -52,7 +54,7 @@ export default function Form({
           </Link>
           <h1>{typeLabel}</h1>
         </Title>
-        <InputsContainer>
+        <InputsContainer height={height}>
           {inputs.map(
             ({
               required = false,
@@ -87,7 +89,7 @@ export default function Form({
                     <FormDate
                       placeholder={placeholder}
                       onChange={onChange}
-                      value={value}
+                      value={transformDate(value)}
                       minDate={startDate}
                       maxDate={endDate}
                     />
@@ -123,7 +125,7 @@ export default function Form({
 const InputsContainer = styled.div`
   display: flex;
   flex-direction: column;
-  height: 700px;
+  height: ${({ height }) => height || "700px"};
   flex-wrap: wrap;
 `;
 const FormWrapper = styled.form`
