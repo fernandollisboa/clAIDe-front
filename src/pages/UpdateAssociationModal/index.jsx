@@ -9,7 +9,6 @@ import ProjectService from "services/ProjectsService";
 
 import { alertUser } from "utils/alertUser";
 import { transformDate } from "utils/transformDate";
-import Form from "components/Form";
 
 UpdateAssociationModal.propTypes = {
   projectAssociated: PropTypes.object,
@@ -23,14 +22,12 @@ export default function UpdateAssociationModal({
   showModal,
   editShowModal,
 }) {
+  // iniciar com os dados do projeto associado
   const [projectInfo, setProjectInfo] = useState({
-    startDate: projectAssociated.startDate,
-    endDate: projectAssociated.endDate,
-    // ...projectAssociated,
+    ...projectAssociated,
+    startDate: "",
+    endDate: "oioi",
   });
-  console.log(projectAssociated);
-  console.log({ projectInfo });
-
   const { startDate, endDate } = projectInfo;
 
   function handleStartDateInputChange(startDate) {
@@ -43,20 +40,20 @@ export default function UpdateAssociationModal({
       return { ...state, endDate };
     });
   }
-
+  console.log(projectInfo);
+  // console.log({ startDate, endDate });
   async function updateAssociateStudentWithProject() {
     try {
       await ProjectService.updateAssociateMemberWithProject(
         member.id,
         projectAssociated.project.id,
-        transformDate(projectInfo.startDate),
-        transformDate(projectInfo.endDate)
+        transformDate(startDate),
+        transformDate(endDate)
       );
       setProjectInfo({
         startDate: "",
         endDate: "",
       });
-
       editShowModal(false);
       alertUser({ text: "Projeto atualizado!", type: "success" });
     } catch (error) {
@@ -78,36 +75,51 @@ export default function UpdateAssociationModal({
       }
     }
   }
-  const inputs = [
-    {
-      inputType: "date",
-      name: "Data de início",
-      id: "startDate",
-      placeholder: "Data de início",
-      onChange: handleStartDateInputChange,
-      value: startDate,
-    },
-    {
-      inputType: "date",
-      name: "Data de término",
-      id: "endDate",
-      onChange: handleEndDateInputChange,
-      placeholder: "Data de término *",
-      value: endDate,
-    },
-  ];
 
   return (
-    <Modal modalOpen={showModal} width="80vh" height="50vh">
-      <Form
-        isFormValid={true}
-        inputs={inputs}
-        onSubmit={updateAssociateStudentWithProject}
-        typeLabel="Editar Projeto associado"
-        buttonLabel="Editar"
-        isModal={true}
-        height={"200px"}
-      />
+    <Modal modalOpen={showModal} width="90vh">
+      <Container>
+        <span>
+          Tem certeza que deseja editar o aluno <strong> {member?.name} </strong> ao projeto
+          <strong> {projectAssociated?.project?.name}</strong>?
+        </span>
+        <InputsModal>
+          <FormDate
+            placeholder="Data de início"
+            className="date"
+            onChange={handleStartDateInputChange}
+            value={transformDate(startDate)}
+          />
+
+          <FormDate
+            placeholder="Data de fim"
+            className="date"
+            onChange={handleEndDateInputChange}
+            value={transformDate(endDate)}
+          />
+
+          <Button
+            style={{ padding: "1%", height: "52px" }}
+            onClick={() => {
+              editShowModal(false);
+              setProjectInfo({
+                startDate: "",
+                endDate: "",
+              });
+            }}
+          >
+            Cancelar
+          </Button>
+          <Button
+            style={{ border: "2px solid red", color: "red", padding: "1%", height: "52px" }}
+            onClick={() => {
+              updateAssociateStudentWithProject(), editShowModal(false);
+            }}
+          >
+            Confirmar
+          </Button>
+        </InputsModal>
+      </Container>
     </Modal>
   );
 }
