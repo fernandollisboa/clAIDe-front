@@ -17,10 +17,18 @@ export default function useErrors() {
   function getErrorMessageByFieldName(fieldName) {
     return errors.find((error) => error.field === fieldName)?.message;
   }
+  function isErrorActive(fieldName) {
+    return errors.some((error) => error.field === fieldName);
+  }
+  function clearAllErrors() {
+    setErrors([]);
+  }
   return {
     setError,
     removeError,
     getErrorMessageByFieldName,
     errors,
+    isErrorActive,
+    clearAllErrors,
   };
 }

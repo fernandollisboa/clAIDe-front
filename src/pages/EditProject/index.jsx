@@ -5,6 +5,7 @@ import ProjectsService from "services/ProjectsService";
 import { alertUser } from "../../utils/alertUser";
 import Modal from "components/Modal";
 import ProjectForm from "components/ProjectForm";
+import maskDate from "utils/maskDate";
 
 EditProject.propTypes = {
   showModal: bool,
@@ -15,17 +16,12 @@ EditProject.defaultProps = {
 };
 export default function EditProject({ showModal, setShowModal, initialState, projectId }) {
   const [formSent, setFormSent] = useState(false);
+  const [errors, setErrors] = useState(null);
 
   async function handleSubmit(formData) {
     try {
-      const { room, building, endDate, embrapiiCode } = formData;
-      delete formData.embrapiiCode;
       const project = {
         id: projectId,
-        room: room,
-        building: building,
-        endDate: endDate,
-        embrapii_code: embrapiiCode,
         ...formData,
       };
 
@@ -33,9 +29,25 @@ export default function EditProject({ showModal, setShowModal, initialState, pro
 
       alertUser({ text: "Formulario enviado", type: "success" });
       setFormSent(true);
+      setShowModal(false);
     } catch (error) {
+      const { status } = error.response;
+
+      if (status === 422) {
+        alertUser({ text: "Verifique os campos em destaque", type: "error" });
+        const { errorLabels } = error.response.data;
+        setErrors([...errorLabels]);
+      } else if (status === 409) {
+        const { errorLabels } = error.response.data;
+        alertUser({
+          text: `${errorLabels[0]} já cadastrado, por favor insira um diferente`,
+          type: "error",
+        });
+        setErrors([...errorLabels]);
+      } else {
+        alertUser({ text: "Erro não mapeado, favor contactar a equipe", type: "error" });
+      }
       setFormSent(false);
-      alertUser({ text: error.response.data.message, type: "error" });
     }
   }
 
@@ -44,7 +56,7 @@ export default function EditProject({ showModal, setShowModal, initialState, pro
   }
 
   return (
-    <Modal modalOpen={showModal} height="90%" width="60%">
+    <Modal modalOpen={showModal} height="75vh">
       <ProjectForm
         onSubmit={handleSubmit}
         typeLabel="Editar Projeto"
@@ -52,8 +64,14 @@ export default function EditProject({ showModal, setShowModal, initialState, pro
         formSent={formSent}
         isModal={true}
         onReturnNavigate={toggleShowModal}
-        initialState={initialState}
+        isEditingActiveProject={true}
+        initialState={{
+          ...initialState,
+          creationDate: maskDate(initialState?.creationDate),
+          endDate: maskDate(initialState?.endDate),
+        }}
         maxWidth="90%"
+        incomingErrors={errors}
       />
     </Modal>
   );

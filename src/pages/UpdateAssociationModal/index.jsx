@@ -8,7 +8,8 @@ import FormDate from "components/FormDate";
 import ProjectService from "services/ProjectsService";
 
 import { alertUser } from "utils/alertUser";
-import { transformDate } from "utils/transformDate";
+//TODO maskdate
+import maskDate from "utils/maskDate";
 
 UpdateAssociationModal.propTypes = {
   projectAssociated: PropTypes.object,
@@ -47,8 +48,8 @@ export default function UpdateAssociationModal({
       await ProjectService.updateAssociateMemberWithProject(
         member.id,
         projectAssociated.project.id,
-        transformDate(startDate),
-        transformDate(endDate)
+        maskDate(startDate),
+        maskDate(endDate)
       );
       setProjectInfo({
         startDate: "",
@@ -88,14 +89,14 @@ export default function UpdateAssociationModal({
             placeholder="Data de início"
             className="date"
             onChange={handleStartDateInputChange}
-            value={transformDate(startDate)}
+            value={maskDate(startDate)}
           />
 
           <FormDate
             placeholder="Data de fim"
             className="date"
             onChange={handleEndDateInputChange}
-            value={transformDate(endDate)}
+            value={maskDate(endDate)}
           />
 
           <Button

@@ -27,7 +27,7 @@ class ProjectsService {
   }
   getAssociateProjectByMemberId(memberId) {
     const config = createHeaders();
-    return api.get(`projects/members/${memberId}`, config);
+    return api.get(`/members/${memberId}/projects`, config);
   }
   getActivity() {
     const config = createHeaders();
