@@ -8,7 +8,7 @@ import arrowback from "../../assets/arrow-back.svg";
 
 import ProjectService from "../../services/ProjectsService";
 
-import { transformDate } from "../../utils/transformDate";
+import maskDate from "../../utils/maskDate";
 import { alertUser } from "../../utils/alertUser";
 import EditProject from "pages/EditProject";
 
@@ -33,7 +33,7 @@ export default function Project() {
   }
   useEffect(() => {
     loadDashboardProject();
-  }, [params.id]);
+  }, [params.id, showEditModal]);
   function navigateToMember(id) {
     navigate(`/member/${id}`);
   }
@@ -77,11 +77,11 @@ export default function Project() {
                 <div className="data">
                   <p>
                     <span className="atribute-title">Data de Criação: </span>
-                    {transformDate(project.creationDate)}
+                    {maskDate(project.creationDate)}
                   </p>
                   <p>
                     <span className="atribute-title">Data de Término: </span>
-                    {transformDate(project.endDate) || "Sem data"}
+                    {maskDate(project.endDate) || "Sem data"}
                   </p>
                   <p>
                     <span className="atribute-title">Prédio: </span>

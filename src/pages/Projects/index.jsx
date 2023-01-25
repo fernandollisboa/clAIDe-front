@@ -6,7 +6,7 @@ import Card from "../../components/Card";
 import Layout from "../../components/Layout";
 import Menu from "../../components/Menu";
 
-import { transformDate } from "../../utils/transformDate";
+import maskDate from "../../utils/maskDate";
 import ProjectsService from "../../services/ProjectsService";
 
 export default function Project() {
@@ -67,17 +67,17 @@ export default function Project() {
               onClick={() => {
                 navigateToProject(project.id);
               }}
-              style={{ width: "300px" }}
+              style={{ width: "30%", height: "20%" }}
             >
               <Info>
                 <Name>{project.name}</Name>
                 {project.endDate ? (
                   <Data>
-                    Data de Fim: <FontData>{transformDate(project.endDate)}</FontData>
+                    Data de Fim: <FontData>{maskDate(project.endDate)}</FontData>
                   </Data>
                 ) : (
                   <Data>
-                    Data de início: <FontData>{transformDate(project.creationDate)}</FontData>
+                    Data de início: <FontData>{maskDate(project.creationDate)}</FontData>
                   </Data>
                 )}
                 <Data>
@@ -99,7 +99,7 @@ export default function Project() {
 const Container = styled.div`
   display: flex;
   align-items: center;
-  max-width: 68%;
+  max-width: 90%;
   margin: 0 auto;
   flex-wrap: wrap;
   gap: 2vh;
@@ -116,5 +116,5 @@ const Name = styled.p`
 `;
 const Data = styled.p``;
 const FontData = styled.span`
-  color: #bcbcbc;
+  color: #2e2d2d;
 `;

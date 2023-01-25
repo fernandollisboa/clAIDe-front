@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 import arrow from "../assets/arrow.svg";
 import FormGroup from "components/FormGroup";
@@ -9,7 +10,7 @@ import Input from "components/Input";
 import Button from "components/Button";
 import useErrors from "hooks/useErrors";
 import Select from "components/Select";
-import { transformDate } from "utils/transformDate";
+import maskDateRaw from "utils/maskDateRaw";
 
 export default function Form({
   isFormValid,
@@ -19,10 +20,20 @@ export default function Form({
   buttonLabel,
   typeLabel,
   onReturnNavigate,
+  incomingErrors = null,
   maxWidth,
   height,
 }) {
-  const { setError, removeError, getErrorMessageByFieldName } = useErrors();
+  const { setError, removeError, getErrorMessageByFieldName, isErrorActive, errors } = useErrors();
+
+  useEffect(() => {
+    if (incomingErrors) {
+      console.log({ incomingErrors });
+      incomingErrors?.forEach((error) =>
+        setError({ field: error, message: `Verifique o campo acima (${error})` })
+      );
+    }
+  }, [incomingErrors]);
 
   function handleInputChange(event) {
     const { id, name, value, required } = event.target;
@@ -30,6 +41,8 @@ export default function Form({
     setInputValues((state) => {
       return { ...state, [id]: value };
     });
+
+    if (isErrorActive(id)) removeError(id);
 
     if (required) {
       if (!value) setError({ field: id, message: `${name} é obrigatório` });
@@ -66,16 +79,18 @@ export default function Form({
               inputType,
               onChange = handleInputChange,
               maxLength,
+              minLength,
+              disabled = false,
               ...rest
             }) => {
               if (inputType === "select") {
                 const { options } = { ...rest };
-
+                const { selected } = options;
                 return (
                   <FormGroup key={id} error={getErrorMessageByFieldName(id)}>
-                    <Select id={id} onChange={onChange} value={value}>
+                    <Select id={id} data-cy={`input-${id}`} onChange={onChange} value={value}>
                       {options.map(({ value, label }) => (
-                        <option key={value} value={value}>
+                        <option key={value} value={value} selected={selected}>
                           {label}
                         </option>
                       ))}
@@ -83,16 +98,27 @@ export default function Form({
                   </FormGroup>
                 );
               } else if (inputType === "date") {
-                const { startDate, endDate } = { ...rest };
+                const { minDate, maxDate } = { ...rest };
                 return (
                   <FormGroup key={id} error={getErrorMessageByFieldName(id)}>
-                    <FormDate
-                      placeholder={placeholder}
-                      onChange={onChange}
-                      value={transformDate(value)}
-                      minDate={startDate}
-                      maxDate={endDate}
-                    />
+                    <div style={{ display: "flex" }}>
+                      <Input
+                        id={id}
+                        type="text"
+                        placeholder={placeholder}
+                        maxLength={10}
+                        data-cy={`input-${id}`}
+                        value={maskDateRaw(value)}
+                        onChange={handleInputChange}
+                      />
+                      <FormDate
+                        id={id}
+                        placeholder={placeholder}
+                        onChange={onChange}
+                        minDate={minDate}
+                        maxDate={maxDate}
+                      />
+                    </div>
                   </FormGroup>
                 );
               } else {
@@ -103,10 +129,13 @@ export default function Form({
                       placeholder={placeholder}
                       name={name}
                       id={id}
+                      disabled={disabled}
                       value={value}
                       onChange={onChange}
+                      minLength={minLength}
                       maxLength={maxLength}
                       type={type}
+                      data-cy={`input-${id}`}
                     />
                   </FormGroup>
                 );
@@ -125,7 +154,7 @@ export default function Form({
 const InputsContainer = styled.div`
   display: flex;
   flex-direction: column;
-  height: ${({ height }) => height || "700px"};
+  height: ${({ height }) => height || "50vh"};
   flex-wrap: wrap;
 `;
 const FormWrapper = styled.form`

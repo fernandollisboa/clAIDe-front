@@ -7,7 +7,8 @@ import FormDate from "components/FormDate";
 
 import ProjectsService from "services/ProjectsService";
 
-import { transformDate } from "utils/transformDate";
+//TODO maskdate ver se esse maskdate funciona mermo
+import maskDate from "utils/maskDate";
 import { alertUser } from "utils/alertUser";
 
 CreationAssociationModal.propTypes = {
@@ -25,8 +26,8 @@ export default function CreationAssociationModal({ project, member, showModal, e
       await ProjectsService.createAssociateMemberWithProject(
         member?.id,
         project?.id,
-        transformDate(startDate),
-        transformDate(endDate)
+        maskDate(startDate),
+        maskDate(endDate)
       );
       setStartDate("");
       setEndDate("");
@@ -65,14 +66,14 @@ export default function CreationAssociationModal({ project, member, showModal, e
             placeholder="Data de início"
             className="date"
             onChange={setStartDate}
-            value={transformDate(startDate)}
+            value={maskDate(startDate)}
           />
 
           <FormDate
             placeholder="Data de fim"
             className="date"
             onChange={setEndDate}
-            value={transformDate(endDate)}
+            value={maskDate(endDate)}
           />
 
           <Button

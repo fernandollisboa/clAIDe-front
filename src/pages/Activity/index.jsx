@@ -3,7 +3,7 @@ import Layout from "../../components/Layout";
 import ProjectsService from "../../services/ProjectsService";
 import styled from "styled-components";
 import Card from "../../components/Card";
-import { transformDate } from "../../utils/transformDate";
+import maskDate from "../../utils/maskDate";
 
 export default function Activty() {
   const [activity, setActivity] = useState([]);
@@ -31,7 +31,7 @@ export default function Activty() {
                 <div>Operacao: {a.operation}</div>
                 <div>Tipo: {a.entity}</div>
                 <div>User: {a.user}</div>
-                <div>Data da operacao: {transformDate(a.date)}</div>
+                <div>Data da operacao: {maskDate(a.date)}</div>
               </Card>
             </li>
           ))}

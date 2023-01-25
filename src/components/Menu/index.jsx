@@ -16,16 +16,16 @@ export default function Menu({
   return (
     <Container>
       <Title>{type} cadastrados</Title>
+      <InputSearch
+        value={nameToBeSearched}
+        placeholder="Pesquisar por nome..."
+        type="text"
+        onChange={handleChangeSearch}
+      />
       <FilterButton onClick={handleToggleDesc} desc={desc}>
         <span>Nome</span>
         <img src={arrow} alt="Arrow" />
       </FilterButton>
-      <InputSearch
-        value={nameToBeSearched}
-        placeholder="Pesquisar por nome ..."
-        type="text"
-        onChange={handleChangeSearch}
-      />
       <Filters>
         <span>Filtrar por: </span>
         <select name="filter" style={{ height: "40px" }} onClick={handleToggleIsActive}>

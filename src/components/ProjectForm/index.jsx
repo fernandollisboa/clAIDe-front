@@ -1,18 +1,9 @@
 import PropTypes from "prop-types";
-import styled from "styled-components";
 import { useState } from "react";
-import { Link } from "react-router-dom";
 
-import arrow from "../../assets/arrow.svg";
-
-import Input from "../Input";
-import Button from "../Button";
-import FormGroup from "../FormGroup";
-import FormDate from "../FormDate";
 import Form from "components/Form";
-
 import useErrors from "../../hooks/useErrors";
-import { transformDate } from "../../utils/transformDate";
+import maskDate from "utils/maskDate";
 
 export default function ProjectForm({
   onSubmit,
@@ -21,6 +12,8 @@ export default function ProjectForm({
   formSent,
   maxWidth,
   initialState = {},
+  incomingErrors = false,
+  isEditingActiveProject = false,
   ...rest
 }) {
   const { setError, removeError, errors } = useErrors();
@@ -36,15 +29,13 @@ export default function ProjectForm({
   });
   const { name, creationDate, endDate, room, building, embrapiiCode, financier } = projectData;
 
-  const isFormValid = name && creationDate && !errors.length;
-
   async function handleSubmit(event) {
     event.preventDefault();
 
     await onSubmit({
       name,
-      creationDate: transformDate(creationDate),
-      endDate: transformDate(endDate),
+      creationDate,
+      endDate,
       room,
       building,
       embrapiiCode,
@@ -65,16 +56,16 @@ export default function ProjectForm({
   }
   function handleCreationDateInputChange(creationDate) {
     setProjectData((state) => {
-      return { ...state, creationDate };
+      return { ...state, creationDate: maskDate(creationDate) };
     });
 
     if (!creationDate)
-      setError({ field: "creationDate", message: `Data de Criação é obrigatório` });
+      setError({ field: "creationDate", message: `Data de Criação é obrigatória` });
     else removeError("creationDate");
   }
   function handleEndDateInputChange(endDate) {
     setProjectData((state) => {
-      return { ...state, endDate };
+      return { ...state, endDate: maskDate(endDate) };
     });
 
     if (!endDate) setError({ field: "endDate", message: `Data de Término é obrigatório` });
@@ -90,20 +81,20 @@ export default function ProjectForm({
       placeholder: "Data de Criação *",
       onChange: handleCreationDateInputChange,
       value: creationDate,
+      maxDate: endDate || "",
+    },
+
+    {
+      required: isEditingActiveProject,
+      name: isEditingActiveProject ? "Sala *" : "Sala",
+      id: "room",
+      placeholder: "Sala",
+      value: room,
     },
     {
-      inputType: "date",
-      name: "Data de Término",
-      id: "endDate",
-      required: true,
-      onChange: handleEndDateInputChange,
-      placeholder: "Data de Término *",
-      value: endDate,
-    },
-    { name: "Sala", id: "room", placeholder: "Sala", value: room },
-    {
+      required: isEditingActiveProject,
       id: "building",
-      name: "Prédio",
+      name: isEditingActiveProject ? "Prédio *" : "Prédio",
       placeholder: "Prédio",
       value: building,
     },
@@ -114,7 +105,20 @@ export default function ProjectForm({
       value: embrapiiCode,
     },
     { name: "Financiador", id: "financier", placeholder: "Financiador", value: financier },
+    {
+      required: isEditingActiveProject,
+      inputType: "date",
+      name: isEditingActiveProject ? "Data de Término *" : "Data de Término",
+      id: "endDate",
+      onChange: handleEndDateInputChange,
+      placeholder: "Data de Término",
+      value: endDate,
+      minDate: creationDate || "",
+    },
   ];
+  const isFormValid =
+    inputs.filter(({ required }) => required).every(({ value }) => value) && !errors.length;
+
   return (
     <>
       <Form
@@ -125,6 +129,7 @@ export default function ProjectForm({
         buttonLabel={buttonLabel}
         typeLabel={typeLabel}
         maxWidth={maxWidth}
+        incomingErrors={incomingErrors}
         {...rest}
       />
     </>

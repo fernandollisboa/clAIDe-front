@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 export default styled.input`
-  width: 100%;
+  width: ${(props) => (props.width ? props.width : "100%")};
   background: #fff;
   border: none;
   border: 2px solid #fff;

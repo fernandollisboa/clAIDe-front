@@ -18,7 +18,7 @@ import MembersService from "../../services/MembersService";
 import { alertUnmappedError, alertUser } from "../../utils/alertUser";
 import maskCpf from "../../utils/maskCpf";
 import parseMemberTypeToPortuguese from "../../utils/parseMemberTypeToPortuguese";
-import { transformDate } from "../../utils/transformDate";
+import maskDate from "../../utils/maskDate";
 import { setSession } from "contexts/AuthContext";
 
 export default function Member() {
@@ -58,7 +58,7 @@ export default function Member() {
         navigate("/");
       } else alertUnmappedError(error);
     }
-  }, [memberId, projects]);
+  }, [memberId, projects, showEditModal]);
 
   useEffect(() => {
     loadDashboardMember();
@@ -162,7 +162,7 @@ export default function Member() {
                     </Data>
                     <PersonalData>
                       <FormatData>
-                        Data de nascimento: <FontData>{member.birthDate}</FontData>
+                        Data de nascimento: <FontData>{maskDate(member.birthDate)}</FontData>
                       </FormatData>
                       <FormatData>
                         CPF: <FontData>{maskCpf(member.cpf)}</FontData>
@@ -206,11 +206,11 @@ export default function Member() {
                               </FormatData>
                               <FormatData>
                                 Sala:
-                                <FontData> {project.room || " Sem sala"}</FontData>
+                                <FontData> {project.roomName || " Sem sala"}</FontData>
                               </FormatData>
                               <FormatData>
                                 Data que entrou:
-                                <FontData> {transformDate(startDate)}</FontData>
+                                <FontData> {maskDate(startDate)}</FontData>
                               </FormatData>
                             </div>
                             <div>{project.isActive ? "🟢" : "🔴"} </div>

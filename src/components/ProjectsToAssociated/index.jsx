@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 
 import Card from "components/Card";
 
-import { transformDate } from "utils/transformDate";
+import maskDate from "utils/maskDate";
 
 ProjectsToAssociated.propTypes = {
   projects: PropTypes.array,
@@ -32,11 +32,11 @@ export default function ProjectsToAssociated({ title, projects, editShowModal, s
               </FormatData>
               <FormatData>
                 Data de início:
-                <FontData>{transformDate(project.creationDate)}</FontData>
+                <FontData>{maskDate(project.creationDate)}</FontData>
               </FormatData>
               <FormatData>
                 Data de término:
-                <FontData>{transformDate(project.endDate) || "Não terminou"}</FontData>
+                <FontData>{maskDate(project.endDate) || "Não terminou"}</FontData>
               </FormatData>
             </div>
             <div>{!project.endDate ? "🟢" : "🔴"}</div>

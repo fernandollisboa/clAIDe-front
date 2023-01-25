@@ -69,7 +69,7 @@ export default function Member() {
               onClick={() => {
                 navigateToMember(member.id);
               }}
-              style={{ width: "300px", height: "100px" }}
+              style={{ width: "30%", height: "15%" }}
             >
               <Info>
                 <Name>{member.name}</Name>
@@ -79,16 +79,16 @@ export default function Member() {
                 </Data>
                 {member.lsdEmail ? (
                   <Data>
-                    Email LSD: <FontData>{member.lsdEmail}</FontData>
+                    Email: <FontData>{member.lsdEmail}</FontData>
                   </Data>
                 ) : (
                   <Data>
                     Email: <FontData>{member.email}</FontData>
                   </Data>
                 )}
-                <Data>
+                {/* <Data>
                   Telefone: <FontData>{maskPhone(member.phone)}</FontData>
-                </Data>
+                </Data> */}
               </Info>
               <div>{member.isActive ? "🟢" : "🔴"}</div>
             </Card>
@@ -101,7 +101,7 @@ export default function Member() {
 const Container = styled.div`
   display: flex;
   align-items: center;
-  max-width: 68%;
+  max-width: 90%;
   margin: 0 auto;
   flex-wrap: wrap;
   gap: 2vh;
@@ -118,5 +118,5 @@ const Name = styled.p`
 `;
 const Data = styled.p``;
 const FontData = styled.span`
-  color: #bcbcbc;
+  color: #2e2d2d;
 `;

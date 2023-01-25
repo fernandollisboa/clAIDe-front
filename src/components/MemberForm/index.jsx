@@ -1,13 +1,13 @@
 import { string, func, bool, object } from "prop-types";
-import { useState } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { MINIMUM_REQUIRED_AGE, getTodaySubtractYears } from "utils/dateUtil";
 
 import useErrors from "../../hooks/useErrors";
 import maskCpf from "../../utils/maskCpf";
 import maskPhone from "../../utils/maskPhone";
 import removeChar from "../../utils/removeChar";
+import maskDate from "utils/maskDate";
 
-import { transformDate } from "../../utils/transformDate";
 import Form from "components/Form";
 
 MemberForm.propTypes = {
@@ -24,7 +24,24 @@ export default function MemberForm({
   buttonLabel,
   formSent,
   maxWidth,
-  initialState = {},
+  incomingErrors = false,
+  initialState = {
+    name: "fernando",
+    birthDate: "28/05/1999",
+    username: "fernando.costa",
+    cpf: "",
+    rg: "",
+    passport: "fv212163",
+    phone: "79999037407",
+    lsdEmail: "",
+    email: "fernando@email.com",
+    memberType: "STUDENT",
+    lattes: "lattes 2",
+    roomName: "sala 2",
+    hasKey: true,
+    isBrazilian: false,
+    secondaryEmail: "",
+  },
   ...rest
 }) {
   const { setError, removeError, errors } = useErrors();
@@ -41,9 +58,9 @@ export default function MemberForm({
     secondEmail: "",
     memberType: "",
     lattes: "",
-    room: "",
-    hasKey: "",
-    isBrazilian: true,
+    roomName: "",
+    hasKey: 1,
+    isBrazilian: 1,
     ...initialState,
   });
 
@@ -61,27 +78,28 @@ export default function MemberForm({
     username,
     phone,
     memberType,
-    room,
+    roomName,
     hasKey,
   } = memberData;
 
   function handleBirthDateInputChange(birthDate) {
-    setMemberData((state) => {
-      return { ...state, birthDate };
-    });
+    setMemberData((state) => ({ ...state, birthDate: maskDate(birthDate) }));
+    console.log({ birthDate });
 
     if (!birthDate) setError({ field: "birthDate", message: `Data de Aniversário é obrigatório` });
     else removeError("birthDate");
   }
 
-  const isFormValid =
-    name && birthDate && username && phone && memberType && email && !errors.length;
+  const getIsBrazilian = useCallback(() => {
+    return !!Number(isBrazilian);
+  }, [isBrazilian]);
+
   async function handleSubmit(event) {
     event.preventDefault();
 
     await onSubmit({
       ...memberData,
-      birthDate: transformDate(birthDate),
+      birthDate: birthDate,
       cpf: removeChar(cpf),
       phone: removeChar(phone),
       isBrazilian: !!Number(isBrazilian),
@@ -102,8 +120,8 @@ export default function MemberForm({
         secondaryEmail: "",
         memberType: "",
         lattes: "",
-        room: "",
-        hasKey: "",
+        roomName: "",
+        hasKey: false,
         isBrazilian: true,
       });
     }
@@ -124,8 +142,8 @@ export default function MemberForm({
       id: "birthDate",
       placeholder: "Data de nascimento *",
       onChange: handleBirthDateInputChange,
-      value: transformDate(birthDate),
-      endDate: getTodaySubtractYears(MINIMUM_REQUIRED_AGE),
+      value: birthDate,
+      maxDate: getTodaySubtractYears(MINIMUM_REQUIRED_AGE),
     },
     {
       required: true,
@@ -133,36 +151,6 @@ export default function MemberForm({
       id: "username",
       placeholder: "Username *",
       value: username,
-    },
-    {
-      placeholder: "CPF",
-      name: "CPF",
-      id: "cpf",
-      value: maskCpf(cpf),
-      maxLength: 14,
-    },
-    { name: "rg", id: "rg", placeholder: "RG", value: rg },
-    {
-      name: "Passaporte",
-      id: "passport",
-      placeholder: "Passaporte",
-      value: passport,
-    },
-    {
-      required: true,
-      name: "Telefone",
-      id: "phone",
-      placeholder: "Telefone *",
-      value: maskPhone(phone),
-      maxLength: 15,
-    },
-    {
-      required: false,
-      name: "Email LSD",
-      id: "lsdEmail",
-      placeholder: "Email LSD",
-      type: "email",
-      value: lsdEmail,
     },
     {
       required: true,
@@ -173,11 +161,12 @@ export default function MemberForm({
       type: "email",
     },
     {
-      name: "Email secundário",
-      id: "secondaryEmail",
-      placeholder: "Email secundário",
-      value: secondaryEmail,
-      type: "email",
+      required: true,
+      name: "Telefone",
+      id: "phone",
+      placeholder: "Telefone *",
+      value: maskPhone(phone),
+      maxLength: 15,
     },
     {
       inputType: "select",
@@ -186,42 +175,48 @@ export default function MemberForm({
       id: "memberType",
       value: memberType,
       options: [
-        { value: "", label: " Sem tipo " },
-        { value: "STUDENT", label: " Estudante " },
-        { value: "PROFESSOR", label: " Professor " },
-        { value: "EXTERNAL", label: " Externo " },
-        { value: "SUPPORT", label: " Suporte " },
-        { value: "ADMIN", label: " Administrador " },
+        { value: "", label: "Tipo de Membro" },
+        { value: "STUDENT", label: "Estudante" },
+        { value: "PROFESSOR", label: "Professor" },
+        { value: "EXTERNAL", label: "Externo" },
+        { value: "SUPPORT", label: "Suporte" },
+        { value: "ADMIN", label: "Administrador" },
       ],
     },
     {
-      required: false,
+      required: true,
       id: "lattes",
       name: "Lattes",
-      placeholder: "Lattes",
+      placeholder: "Lattes *",
       value: lattes,
     },
     {
-      id: "room",
+      required: true,
+      id: "roomName",
       name: "Sala",
-      placeholder: "Sala",
-      value: room,
+      placeholder: "Sala *",
+      value: roomName,
     },
-
     {
       inputType: "select",
-      required: true,
       name: "Possui a chave da sala?",
       id: "hasKey",
       value: hasKey,
       options: [
-        { value: 1, label: " Tem a chave da sala " },
         { value: 0, label: " Não tem a chave da sala" },
+        { value: 1, label: " Tem a chave da sala ", selected: true },
       ],
     },
     {
+      required: false,
+      name: "Email LSD",
+      id: "lsdEmail",
+      placeholder: "Email LSD",
+      type: "email",
+      value: lsdEmail,
+    },
+    {
       inputType: "select",
-      required: true,
       name: "Nacionalidade",
       id: "isBrazilian",
       value: isBrazilian,
@@ -230,7 +225,45 @@ export default function MemberForm({
         { value: 0, label: " Estrangeiro " },
       ],
     },
+    {
+      required: getIsBrazilian(),
+      placeholder: getIsBrazilian() ? "CPF * " : "CPF",
+      name: "CPF",
+      id: "cpf",
+      value: maskCpf(cpf),
+      maxLength: 14,
+      minLength: 14,
+    },
+    {
+      required: getIsBrazilian(),
+      name: "RG",
+      id: "rg",
+      placeholder: getIsBrazilian() ? "RG * " : "RG",
+      value: rg,
+    },
+    {
+      required: !getIsBrazilian(),
+      name: "Passaporte",
+      id: "passport",
+      placeholder: !getIsBrazilian() ? "Passaporte *" : "Passaporte",
+      value: passport,
+    },
+    {
+      name: "Email secundário",
+      id: "secondaryEmail",
+      placeholder: "Email Secundário",
+      value: secondaryEmail,
+      type: "email",
+    },
   ];
+
+  useEffect(() => {
+    ["passport", "rg", "cpf"].forEach(removeError);
+  }, [isBrazilian]);
+
+  const isFormValid =
+    inputs.filter(({ required }) => required).every(({ value }) => value) && !errors.length;
+
   return (
     <>
       <Form
@@ -241,6 +274,8 @@ export default function MemberForm({
         buttonLabel={buttonLabel}
         typeLabel={typeLabel}
         maxWidth={maxWidth}
+        isBrazilian={isBrazilian}
+        incomingErrors={incomingErrors}
         {...rest}
       />
     </>
