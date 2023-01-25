@@ -32,7 +32,6 @@ export default function Activty() {
   function handleChangeSearchActivity(event) {
     setActivityUserNameToBeSearched(event.target.value);
   }
-  console.log(filteredActivity);
   return (
     <>
       <Layout>
@@ -63,7 +62,7 @@ export default function Activty() {
                 </FormatData>
                 <Log key={activity.newValue.id} style={{ border: "none" }}>
                   <FormatData>
-                    Valor novo:{" "}
+                    Valor novo:
                     {Object.keys(activity.newValue).map((key, index) => (
                       <div key={index}>
                         <span>{key}</span>: <FontData>{activity.newValue[key]}</FontData>

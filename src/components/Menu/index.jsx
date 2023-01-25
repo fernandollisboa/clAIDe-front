@@ -29,9 +29,9 @@ export default function Menu({
       <Filters>
         <span>Filtrar por: </span>
         <select name="filter" style={{ height: "40px" }} onClick={handleToggleIsActive}>
-          <option value={""}>Todos</option>
           <option value={true}>Ativos</option>
           <option value={false}>Inativos</option>
+          <option value={""}>Todos</option>
         </select>
       </Filters>
 
