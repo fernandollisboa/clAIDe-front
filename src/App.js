@@ -6,7 +6,7 @@ import Projects from "./pages/Projects";
 import NewMember from "./pages/NewMember";
 import Members from "./pages/Members";
 import Member from "./pages/Member";
-import Activty from "./pages/Activity/index.jsx";
+import Activty from "./pages/Activity";
 import Project from "./pages/Project";
 import ProtectedRoute from "./routes/ProtectedRoute";
 

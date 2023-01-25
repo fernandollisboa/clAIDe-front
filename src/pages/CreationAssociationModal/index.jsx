@@ -26,8 +26,8 @@ export default function CreationAssociationModal({ project, member, showModal, e
       await ProjectsService.createAssociateMemberWithProject(
         member?.id,
         project?.id,
-        maskDate(startDate),
-        maskDate(endDate)
+        startDate,
+        endDate
       );
       setStartDate("");
       setEndDate("");
