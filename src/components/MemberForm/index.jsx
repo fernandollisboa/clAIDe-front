@@ -25,23 +25,7 @@ export default function MemberForm({
   formSent,
   maxWidth,
   incomingErrors = false,
-  initialState = {
-    name: "fernando",
-    birthDate: "28/05/1999",
-    username: "fernando.costa",
-    cpf: "",
-    rg: "",
-    passport: "fv212163",
-    phone: "79999037407",
-    lsdEmail: "",
-    email: "fernando@email.com",
-    memberType: "STUDENT",
-    lattes: "lattes 2",
-    roomName: "sala 2",
-    hasKey: true,
-    isBrazilian: false,
-    secondaryEmail: "",
-  },
+  initialState = {},
   ...rest
 }) {
   const { setError, removeError, errors } = useErrors();
