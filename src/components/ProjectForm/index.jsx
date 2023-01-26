@@ -4,6 +4,7 @@ import { useState } from "react";
 import Form from "components/Form";
 import useErrors from "../../hooks/useErrors";
 import maskDate from "utils/maskDate";
+import parseDateBrToISO from "utils/parseDateBrToISO";
 
 export default function ProjectForm({
   onSubmit,
@@ -34,8 +35,8 @@ export default function ProjectForm({
 
     await onSubmit({
       name,
-      creationDate,
-      endDate,
+      creationDate: parseDateBrToISO(creationDate),
+      endDate: parseDateBrToISO(endDate),
       room,
       building,
       embrapiiCode,
@@ -116,8 +117,13 @@ export default function ProjectForm({
       minDate: creationDate || "",
     },
   ];
+
+  //TODO refatorar formvalid como função
   const isFormValid =
-    inputs.filter(({ required }) => required).every(({ value }) => value) && !errors.length;
+    inputs.filter(({ required }) => required).every(({ value }) => value) &&
+    parseDateBrToISO(creationDate) &&
+    parseDateBrToISO(endDate) &&
+    !errors.length;
 
   return (
     <>

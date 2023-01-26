@@ -1,14 +1,16 @@
 import { string, func, bool, object } from "prop-types";
-import { useState, useCallback, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { MINIMUM_REQUIRED_AGE, getTodaySubtractYears } from "utils/dateUtil";
 
 import useErrors from "../../hooks/useErrors";
 import maskCpf from "../../utils/maskCpf";
 import maskPhone from "../../utils/maskPhone";
 import removeChar from "../../utils/removeChar";
-import maskDate from "utils/maskDate";
 
 import Form from "components/Form";
+import maskDate from "utils/maskDate";
+
+import parseDateBrToISO from "utils/parseDateBrToISO";
 
 MemberForm.propTypes = {
   buttonLabel: string.isRequired,
@@ -31,7 +33,6 @@ export default function MemberForm({
   const { setError, removeError, errors } = useErrors();
   const [memberData, setMemberData] = useState({
     name: "",
-    birthDate: "",
     username: "",
     cpf: "",
     rg: "",
@@ -43,9 +44,11 @@ export default function MemberForm({
     memberType: "",
     lattes: "",
     roomName: "",
-    hasKey: 1,
-    isBrazilian: 1,
+
     ...initialState,
+    birthDate: maskDate(initialState?.birthDate),
+    isBrazilian: initialState?.isBrazilian ?? 1,
+    hasKey: initialState?.hasKey ?? 0,
   });
 
   const {
@@ -65,16 +68,14 @@ export default function MemberForm({
     roomName,
     hasKey,
   } = memberData;
-
   function handleBirthDateInputChange(birthDate) {
     setMemberData((state) => ({ ...state, birthDate: maskDate(birthDate) }));
-    console.log({ birthDate });
 
     if (!birthDate) setError({ field: "birthDate", message: `Data de Aniversário é obrigatório` });
     else removeError("birthDate");
   }
 
-  const getIsBrazilian = useCallback(() => {
+  const getIsBrazilian = useMemo(() => {
     return !!Number(isBrazilian);
   }, [isBrazilian]);
 
@@ -83,7 +84,7 @@ export default function MemberForm({
 
     await onSubmit({
       ...memberData,
-      birthDate: birthDate,
+      birthDate: parseDateBrToISO(birthDate),
       cpf: removeChar(cpf),
       phone: removeChar(phone),
       isBrazilian: !!Number(isBrazilian),
@@ -168,17 +169,15 @@ export default function MemberForm({
       ],
     },
     {
-      required: true,
       id: "lattes",
       name: "Lattes",
-      placeholder: "Lattes *",
+      placeholder: "Lattes",
       value: lattes,
     },
     {
-      required: true,
       id: "roomName",
       name: "Sala",
-      placeholder: "Sala *",
+      placeholder: "Sala",
       value: roomName,
     },
     {
@@ -203,15 +202,15 @@ export default function MemberForm({
       inputType: "select",
       name: "Nacionalidade",
       id: "isBrazilian",
-      value: isBrazilian,
+      value: getIsBrazilian ? 1 : 0,
       options: [
         { value: 1, label: " Brasileiro " },
         { value: 0, label: " Estrangeiro " },
       ],
     },
     {
-      required: getIsBrazilian(),
-      placeholder: getIsBrazilian() ? "CPF * " : "CPF",
+      required: getIsBrazilian,
+      placeholder: getIsBrazilian ? "CPF * " : "CPF",
       name: "CPF",
       id: "cpf",
       value: maskCpf(cpf),
@@ -219,17 +218,17 @@ export default function MemberForm({
       minLength: 14,
     },
     {
-      required: getIsBrazilian(),
+      required: getIsBrazilian,
       name: "RG",
       id: "rg",
-      placeholder: getIsBrazilian() ? "RG * " : "RG",
+      placeholder: getIsBrazilian ? "RG * " : "RG",
       value: rg,
     },
     {
-      required: !getIsBrazilian(),
+      required: !getIsBrazilian,
       name: "Passaporte",
       id: "passport",
-      placeholder: !getIsBrazilian() ? "Passaporte *" : "Passaporte",
+      placeholder: !getIsBrazilian ? "Passaporte *" : "Passaporte",
       value: passport,
     },
     {
@@ -246,7 +245,9 @@ export default function MemberForm({
   }, [isBrazilian]);
 
   const isFormValid =
-    inputs.filter(({ required }) => required).every(({ value }) => value) && !errors.length;
+    inputs.filter(({ required }) => required).every(({ value }) => value) &&
+    parseDateBrToISO(birthDate) &&
+    !errors.length;
 
   return (
     <>

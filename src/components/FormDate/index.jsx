@@ -1,11 +1,13 @@
 import { useState } from "react";
 import DatePicker from "react-datepicker";
+import maskDate from "utils/maskDate";
+import dayjs from "dayjs";
 import "react-datepicker/dist/react-datepicker.css";
 import styled from "styled-components";
 import PropTypes from "prop-types";
 import { IoCalendarOutline } from "react-icons/io5";
 
-export default function FormDate({ onChange, minDate = new Date("02-01-1920"), maxDate }) {
+export default function FormDate({ onChange, minDate = new Date("02-01-1920"), maxDate, value }) {
   const [isOpen, setIsOpen] = useState(false);
 
   function toggleCalendarVisibility() {
@@ -14,18 +16,21 @@ export default function FormDate({ onChange, minDate = new Date("02-01-1920"), m
   return (
     <DatePickerWrapper>
       <Img onClick={toggleCalendarVisibility}></Img>
-      <Frenando>
+      <HiddenDatePickerWrapper>
         <DatePicker
+          peekNextMonth
           showYearDropdown
-          scrollableYearDropdown
-          yearDropdownItemNumber={1000}
+          showMonthDropdown
+          yearDropdownItemNumber={20}
           className="date"
           onChange={onChange}
+          tabIndex={-1}
           minDate={minDate}
           maxDate={maxDate}
-          tabIndex={-1}
+          value={value}
+          dateFormat="dd/MM/yyyy"
         ></DatePicker>
-      </Frenando>
+      </HiddenDatePickerWrapper>
     </DatePickerWrapper>
   );
 }
@@ -36,7 +41,7 @@ FormDate.propTypes = {
   value: PropTypes.node,
 };
 
-const Frenando = styled.div`
+const HiddenDatePickerWrapper = styled.div`
   .date {
     flex: wrap;
     border-radius: 2px;
@@ -46,7 +51,8 @@ const Frenando = styled.div`
     font-size: 1rem;
     height: 50px;
     width: 100%;
-    z-index: 10;
+    cursor: pointer;
+    z-index: 1;
   }
 `;
 
