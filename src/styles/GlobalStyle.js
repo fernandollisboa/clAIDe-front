@@ -8,7 +8,6 @@ const GlobalStyle = createGlobalStyle`
       font-family: 'CircularStd-Medium', sans-serif;
       font-size: 12px;
       margin: 0px;
-      caret-color: transparent;
     }
     *{
       box-sizing: border-box;

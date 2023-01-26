@@ -24,11 +24,10 @@ export default function Form({
   maxWidth,
   height,
 }) {
-  const { setError, removeError, getErrorMessageByFieldName, isErrorActive, errors } = useErrors();
+  const { setError, removeError, getErrorMessageByFieldName, isErrorActive } = useErrors();
 
   useEffect(() => {
     if (incomingErrors) {
-      console.log({ incomingErrors });
       incomingErrors?.forEach((error) =>
         setError({ field: error, message: `Verifique o campo acima (${error})` })
       );
@@ -85,15 +84,16 @@ export default function Form({
             }) => {
               if (inputType === "select") {
                 const { options } = { ...rest };
-                const { selected } = options;
                 return (
                   <FormGroup key={id} error={getErrorMessageByFieldName(id)}>
                     <Select id={id} data-cy={`input-${id}`} onChange={onChange} value={value}>
-                      {options.map(({ value, label }) => (
-                        <option key={value} value={value} selected={selected}>
-                          {label}
-                        </option>
-                      ))}
+                      {options.map(({ value, label, selected }) => {
+                        return (
+                          <option key={value} value={value} selected={selected}>
+                            {label}
+                          </option>
+                        );
+                      })}
                     </Select>
                   </FormGroup>
                 );
@@ -107,6 +107,7 @@ export default function Form({
                         type="text"
                         placeholder={placeholder}
                         maxLength={10}
+                        minLength={10}
                         data-cy={`input-${id}`}
                         value={maskDateRaw(value)}
                         onChange={handleInputChange}
@@ -117,6 +118,7 @@ export default function Form({
                         onChange={onChange}
                         minDate={minDate}
                         maxDate={maxDate}
+                        value={value}
                       />
                     </div>
                   </FormGroup>

@@ -5,7 +5,8 @@ import styled from "styled-components";
 import Card from "../../components/Card";
 import Menu from "../../components/Menu";
 import Layout from "../../components/Layout";
-
+import { setSession } from "contexts/AuthContext";
+import { alertUser } from "utils/alertUser";
 import maskPhone from "../../utils/maskPhone";
 import MembersService from "../../services/MembersService";
 
@@ -30,6 +31,12 @@ export default function Member() {
 
       setMembers(membersList.data);
     } catch (err) {
+      const { status } = err.response;
+      if (status === 401) {
+        setSession(null);
+        alertUser({ text: "Token expirado, por favor logue novamente", type: "warning" });
+        navigate("/");
+      }
       alert(err);
     }
   }

@@ -41,8 +41,6 @@ export default function UpdateAssociationModal({
       return { ...state, endDate };
     });
   }
-  console.log(projectInfo);
-  // console.log({ startDate, endDate });
   async function updateAssociateStudentWithProject() {
     try {
       await ProjectService.updateAssociateMemberWithProject(

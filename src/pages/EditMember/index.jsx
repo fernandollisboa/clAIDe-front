@@ -60,10 +60,7 @@ export default function EditMember({ showModal, setShowModal, initialState }) {
         formSent={formSent}
         isModal={true}
         onReturnNavigate={toggleShowModal}
-        initialState={{
-          ...initialState,
-          birthDate: maskDate(initialState.birthDate),
-        }}
+        initialState={initialState}
         maxWidth="90%"
         incomingErrors={errors}
       />
