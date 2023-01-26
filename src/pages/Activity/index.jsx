@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import Layout from "../../components/Layout";
 import ProjectsService from "../../services/ProjectsService";
 import styled from "styled-components";
@@ -6,27 +6,48 @@ import Card from "../../components/Card";
 import maskDate from "../../utils/maskDate";
 
 export default function Activty() {
-  const [activity, setActivity] = useState([]);
-  async function load() {
+  const [activitys, setActivitys] = useState([]);
+  const [activityUserNameToBeSearched, setActivityUserNameToBeSearched] = useState("");
+
+  const filteredActivity = useMemo(
+    () =>
+      activitys.filter(({ user }) =>
+        user?.toLowerCase().includes(activityUserNameToBeSearched.toLowerCase())
+      ),
+    [activitys, activityUserNameToBeSearched]
+  );
+  async function loadActivity() {
     try {
       const { data } = await ProjectsService.getActivity();
 
-      setActivity(data);
+      setActivitys(data);
     } catch (error) {
       //   alertUser({ text: error.response.data.message, type: "error" });
     }
   }
   useEffect(() => {
-    load();
+    loadActivity();
   }, []);
-  console.log(activity);
+
+  function handleChangeSearchActivity(event) {
+    setActivityUserNameToBeSearched(event.target.value);
+  }
+  console.log(filteredActivity);
   return (
     <>
       <Layout>
         <Container>
           <Title>Log de atividades</Title>
+          <Filters>
+            <InputSearch
+              value={activityUserNameToBeSearched}
+              placeholder="Pesquisar por nome..."
+              type="text"
+              onChange={handleChangeSearchActivity}
+            />
+          </Filters>
           <ListActivities>
-            {activity.map((activity) => (
+            {filteredActivity.map((activity) => (
               <Log key={activity.id} style={{ flexDirection: "column" }}>
                 <FormatData>
                   Usuário: <FontData>{activity.user}</FontData>
@@ -42,11 +63,21 @@ export default function Activty() {
                 </FormatData>
                 <Log key={activity.newValue.id} style={{ border: "none" }}>
                   <FormatData>
-                    Valor novo: <FontData>{JSON.stringify(activity.newValue)}</FontData>
+                    Valor novo:{" "}
+                    {Object.keys(activity.newValue).map((key, index) => (
+                      <div key={index}>
+                        <span>{key}</span>: <FontData>{activity.newValue[key]}</FontData>
+                      </div>
+                    ))}
                   </FormatData>
                   {activity.oldValue && (
                     <FormatData>
-                      Valor antigo: <FontData>{JSON.stringify(activity.oldValue)}</FontData>
+                      Valor antigo:
+                      {Object.keys(activity.oldValue).map((key, index) => (
+                        <div key={index}>
+                          <span>{key}</span>: <FontData>{activity.oldValue[key]}</FontData>
+                        </div>
+                      ))}
                     </FormatData>
                   )}
                 </Log>
@@ -63,7 +94,7 @@ const Container = styled.div`
   flex-direction: column;
   align-items: center;
   margin: 1% auto;
-  max-width: 68%;
+  max-width: 50%;
 `;
 const Title = styled.h1`
   justify-content: center;
@@ -74,10 +105,26 @@ const Title = styled.h1`
   padding-top: 2%;
   padding-bottom: 8%;
 `;
+const Filters = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 3%;
+`;
+const InputSearch = styled.input`
+  width: 30%;
+  background: #fff;
+  border: 2px solid #fff;
+  height: 50px;
+  border-radius: 25px;
+  font-size: 1rem;
+  justify-content: center;
+  padding: 0 2%;
+`;
 const ListActivities = styled.div`
   display: flex;
   flex-wrap: wrap;
-  gap: 2vh;
+  gap: 3vh;
 `;
 const Log = styled.div`
   padding: 1%;
@@ -87,9 +134,8 @@ const Log = styled.div`
   & + & {
     margin-bottom: 10px;
   }
-  /* border: 1px solid black; */
 `;
-const FormatData = styled.p`
+const FormatData = styled.span`
   padding: 7px;
   font-size: 1rem;
   font-weight: 700;
