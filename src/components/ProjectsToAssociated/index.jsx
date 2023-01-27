@@ -9,9 +9,14 @@ ProjectsToAssociated.propTypes = {
   projects: PropTypes.array,
   title: PropTypes.string,
   editShowModal: PropTypes.func,
-  selectedProject: PropTypes.object,
+  setProjectAssociation: PropTypes.func,
 };
-export default function ProjectsToAssociated({ title, projects, editShowModal, selectedProject }) {
+export default function ProjectsToAssociated({
+  title,
+  projects,
+  editShowModal,
+  setProjectAssociation,
+}) {
   function toggleShowModal() {
     editShowModal((state) => !state);
   }
@@ -19,27 +24,27 @@ export default function ProjectsToAssociated({ title, projects, editShowModal, s
     <>
       <Title>{title}</Title>
       <Container>
-        {projects.map((project) => (
+        {projects.map(({ name, creationDate, endDate, id: projectId }) => (
           <Card
-            key={project.id}
+            key={projectId}
             onClick={() => {
-              toggleShowModal(), selectedProject(project);
+              toggleShowModal(), setProjectAssociation({ projectId });
             }}
           >
             <div>
               <FormatData>
-                Nome: <FontData>{project?.name}</FontData>
+                Nome: <FontData>{name}</FontData>
               </FormatData>
               <FormatData>
                 Data de início:
-                <FontData>{maskDate(project.creationDate)}</FontData>
+                <FontData>{maskDate(creationDate)}</FontData>
               </FormatData>
               <FormatData>
                 Data de término:
-                <FontData>{maskDate(project.endDate) || "Não terminou"}</FontData>
+                <FontData>{maskDate(endDate) || "Não terminou"}</FontData>
               </FormatData>
             </div>
-            <div>{!project.endDate ? "🟢" : "🔴"}</div>
+            <div>{!endDate ? "🟢" : "🔴"}</div>
           </Card>
         ))}
       </Container>

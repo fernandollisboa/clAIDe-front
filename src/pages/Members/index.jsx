@@ -6,7 +6,7 @@ import Card from "../../components/Card";
 import Menu from "../../components/Menu";
 import Layout from "../../components/Layout";
 import { setSession } from "contexts/AuthContext";
-import { alertUser } from "utils/alertUser";
+import { alertUnmappedError, alertUser } from "utils/alertUser";
 import maskPhone from "../../utils/maskPhone";
 import MembersService from "../../services/MembersService";
 
@@ -36,8 +36,7 @@ export default function Member() {
         setSession(null);
         alertUser({ text: "Token expirado, por favor logue novamente", type: "warning" });
         navigate("/");
-      }
-      alert(err);
+      } else alertUnmappedError(err);
     }
   }
 
@@ -70,34 +69,28 @@ export default function Member() {
           url="/newMember"
         />
         <Container>
-          {filteredMembers.map((member) => (
+          {filteredMembers.map(({ id, name, roomName, lsdEmail, email, isActive, phone }) => (
             <Card
-              key={member.id}
+              key={id}
               onClick={() => {
-                navigateToMember(member.id);
+                navigateToMember(id);
               }}
               style={{ width: "30%", height: "15%" }}
             >
               <Info>
-                <Name>{member.name}</Name>
+                <Name>{name}</Name>
 
                 <Data>
-                  Sala: <FontData>{member.roomName}</FontData>
+                  Sala: <FontData>{roomName}</FontData>
                 </Data>
-                {member.lsdEmail ? (
-                  <Data>
-                    Email: <FontData>{member.lsdEmail}</FontData>
-                  </Data>
-                ) : (
-                  <Data>
-                    Email: <FontData>{member.email}</FontData>
-                  </Data>
-                )}
-                {/* <Data>
-                  Telefone: <FontData>{maskPhone(member.phone)}</FontData>
-                </Data> */}
+                <Data>
+                  Email: <FontData>{lsdEmail ? lsdEmail : email}</FontData>
+                </Data>
+                <Data>
+                  Telefone: <FontData>{maskPhone(phone)}</FontData>
+                </Data>
               </Info>
-              <div>{member.isActive ? "🟢" : "🔴"}</div>
+              <div>{isActive ? "🟢" : "🔴"}</div>
             </Card>
           ))}
         </Container>
@@ -111,7 +104,6 @@ const Container = styled.div`
   max-width: 90%;
   margin: 0 auto;
   flex-wrap: wrap;
-  gap: 2vh;
   margin-top: 1%;
 `;
 const Info = styled.div`

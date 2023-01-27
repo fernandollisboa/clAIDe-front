@@ -73,6 +73,7 @@ const Title = styled.h1`
 const FilterButton = styled.button`
   border: 1px solid #131313;
   padding: 1%;
+  cursor: pointer;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.04);
   border-radius: 4px;
   background: #f6f5fc;
@@ -111,10 +112,10 @@ const Filters = styled.div`
     font-weight: 600;
   }
   select {
+    cursor: pointer;
     background: transparent;
     color: rgb(102, 102, 102);
     border: none;
     outline: none;
-    cursor: pointer;
   }
 `;

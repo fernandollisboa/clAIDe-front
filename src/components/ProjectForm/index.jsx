@@ -55,6 +55,7 @@ export default function ProjectForm({
       });
     }
   }
+
   function handleCreationDateInputChange(creationDate) {
     setProjectData((state) => {
       return { ...state, creationDate: maskDate(creationDate) };
@@ -86,16 +87,14 @@ export default function ProjectForm({
     },
 
     {
-      required: isEditingActiveProject,
-      name: isEditingActiveProject ? "Sala *" : "Sala",
+      name: "Sala",
       id: "room",
       placeholder: "Sala",
       value: room,
     },
     {
-      required: isEditingActiveProject,
       id: "building",
-      name: isEditingActiveProject ? "Prédio *" : "Prédio",
+      name: "Prédio",
       placeholder: "Prédio",
       value: building,
     },
@@ -122,7 +121,7 @@ export default function ProjectForm({
   const isFormValid =
     inputs.filter(({ required }) => required).every(({ value }) => value) &&
     parseDateBrToISO(creationDate) &&
-    parseDateBrToISO(endDate) &&
+    (!isEditingActiveProject || parseDateBrToISO(endDate)) &&
     !errors.length;
 
   return (

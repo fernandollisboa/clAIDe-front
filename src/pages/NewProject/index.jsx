@@ -14,7 +14,7 @@ export default function NewProject() {
   async function handleSubmit(formData) {
     try {
       await ProjectsService.create(formData);
-      alertUser({ text: "Formulario enviado", type: "success" });
+      alertUser({ text: "Formulário enviado", type: "success" });
       setFormSent(true);
       navigate(-1);
     } catch (error) {

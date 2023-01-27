@@ -1,3 +1,4 @@
+import { bool, func, array, string } from "prop-types";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
@@ -12,6 +13,25 @@ import useErrors from "hooks/useErrors";
 import Select from "components/Select";
 import maskDateRaw from "utils/maskDateRaw";
 
+Form.propTypes = {
+  isFormValid: bool.isRequired,
+  handleSubmit: func.isRequired,
+  inputs: array.isRequired,
+  setInputValues: func.isRequired,
+  buttonLabel: string,
+  typeLabel: string,
+  onReturnNavigate: func,
+  incomingErrors: array,
+  maxWidth: string,
+  height: string,
+};
+Form.defaultProps = {
+  initialState: {},
+  typeLabel: "Formulário",
+  buttonLabel: "Enviar",
+  maxWidth: "60%",
+  incomingErrors: null,
+};
 export default function Form({
   isFormValid,
   handleSubmit,
@@ -20,7 +40,7 @@ export default function Form({
   buttonLabel,
   typeLabel,
   onReturnNavigate,
-  incomingErrors = null,
+  incomingErrors,
   maxWidth,
   height,
 }) {
