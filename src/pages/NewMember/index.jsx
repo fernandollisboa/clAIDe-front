@@ -25,7 +25,7 @@ export default function NewMember() {
 
       await MembersService.create(member);
 
-      alertUser({ text: "Formulario enviado", type: "success" });
+      alertUser({ text: "Formulário enviado", type: "success" });
       setFormSent(true);
       navigate(-1);
     } catch (error) {

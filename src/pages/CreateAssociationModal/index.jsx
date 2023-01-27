@@ -1,30 +1,24 @@
 import { object, bool, func } from "prop-types";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import Modal from "components/Modal";
 import MemberAssociationForm from "components/MemberAssociationForm";
 import ProjectService from "services/ProjectsService";
-import { alertUnmappedError, alertUser } from "utils/alertUser";
-import maskDate from "utils/maskDate";
-import { useNavigate } from "react-router-dom";
 
-UpdateAssociationModal.propTypes = {
+import { alertUnmappedError, alertUser } from "utils/alertUser";
+
+CreateAssociationModal.propTypes = {
   project: object.isRequired,
   member: object.isRequired,
   showModal: bool.isRequired,
   setShowModal: func.isRequired,
   initialState: object,
 };
-UpdateAssociationModal.defaultProps = {
+CreateAssociationModal.defaultProps = {
   initialState: {},
 };
-export default function UpdateAssociationModal({
-  project,
-  member,
-  showModal,
-  setShowModal,
-  initialState,
-}) {
+export default function CreateAssociationModal({ project, member, showModal, setShowModal }) {
   const [formSent, setFormSent] = useState(false);
   const navigate = useNavigate();
 
@@ -35,7 +29,7 @@ export default function UpdateAssociationModal({
     const { projectId } = project;
 
     try {
-      await ProjectService.updateAssociateMemberWithProject({
+      await ProjectService.createAssociateMemberWithProject({
         memberId,
         projectId,
         startDate,
@@ -45,8 +39,9 @@ export default function UpdateAssociationModal({
       setFormSent(true);
       navigate(-1);
       alertUser({ text: "Projeto atualizado!", type: "success" });
-    } catch (error) {
-      const { status } = error.response;
+    } catch (err) {
+      const { status } = err.response;
+      setFormSent(false);
 
       if (status === 404) {
         alertUser({
@@ -58,8 +53,7 @@ export default function UpdateAssociationModal({
           text: `Data de inicio não pode ser antes do projeto iniciar e data de fim não pode ser depois do projeto terminar `,
           type: "error",
         });
-      } else alertUnmappedError(error);
-      setFormSent(false);
+      } else alertUnmappedError(err);
     }
   }
 
@@ -67,13 +61,9 @@ export default function UpdateAssociationModal({
     <Modal modalOpen={showModal} width="40vw">
       <MemberAssociationForm
         onSubmit={onSubmit}
-        typeLabel="Editar Associação em Projeto"
+        typeLabel="Criar Associação em Projeto"
         formSent={formSent}
         onReturnNavigate={() => setShowModal((s) => !s)}
-        initialState={{
-          startDate: maskDate(initialState?.startDate),
-          endDate: maskDate(initialState?.endDate),
-        }}
       />
     </Modal>
   );

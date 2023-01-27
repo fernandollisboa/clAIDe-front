@@ -1,21 +1,13 @@
-import { useState } from "react";
 import DatePicker from "react-datepicker";
-import maskDate from "utils/maskDate";
-import dayjs from "dayjs";
 import "react-datepicker/dist/react-datepicker.css";
 import styled from "styled-components";
 import PropTypes from "prop-types";
 import { IoCalendarOutline } from "react-icons/io5";
 
-export default function FormDate({ onChange, minDate = new Date("02-01-1920"), maxDate, value }) {
-  const [isOpen, setIsOpen] = useState(false);
-
-  function toggleCalendarVisibility() {
-    setIsOpen((state) => !state);
-  }
+export default function FormDate({ onChange, minDate, maxDate, value }) {
   return (
     <DatePickerWrapper>
-      <Img onClick={toggleCalendarVisibility}></Img>
+      <Img />
       <HiddenDatePickerWrapper>
         <DatePicker
           peekNextMonth
@@ -27,8 +19,6 @@ export default function FormDate({ onChange, minDate = new Date("02-01-1920"), m
           tabIndex={-1}
           minDate={minDate}
           maxDate={maxDate}
-          value={value}
-          dateFormat="dd/MM/yyyy"
         ></DatePicker>
       </HiddenDatePickerWrapper>
     </DatePickerWrapper>
@@ -52,7 +42,6 @@ const HiddenDatePickerWrapper = styled.div`
     height: 50px;
     width: 100%;
     cursor: pointer;
-    z-index: 1;
   }
 `;
 

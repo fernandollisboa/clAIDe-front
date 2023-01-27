@@ -4,10 +4,10 @@ import styled from "styled-components";
 
 import Layout from "../../components/Layout";
 import Card from "../../components/Card";
-import EditMember from "pages/EditMember";
+import EditMemberModal from "pages/EditMemberModal";
 import AssociatedProjects from "components/AssociatedProjects";
 import ProjectsToAssociated from "components/ProjectsToAssociated";
-import CreationAssociationModal from "../CreationAssociationModal";
+import CreateAssociationModal from "../CreateAssociationModal";
 import UpdateAssociationModal from "pages/UpdateAssociationModal";
 
 import arrowback from "../../assets/arrow-back.svg";
@@ -19,64 +19,56 @@ import { alertUnmappedError, alertUser } from "../../utils/alertUser";
 import maskCpf from "../../utils/maskCpf";
 import parseMemberTypeToPortuguese from "../../utils/parseMemberTypeToPortuguese";
 import maskDate from "../../utils/maskDate";
-import { setSession } from "contexts/AuthContext";
 
 export default function Member() {
   const [member, setMember] = useState({});
   const [viewProjectAssociation, setViewProjectAssociation] = useState(true);
   const [memberProjects, setMemberProjects] = useState([]);
   const [projects, setProjects] = useState([]);
-  const [showEditModal, setShowEditModal] = useState(false);
-  const [selectedProject, setSelectedProject] = useState({});
-  const [modalCreateAssociationOpen, setModalCreateAssociationOpen] = useState(false);
+  const [selectedProjectAssociation, setSelectedProjectAssociation] = useState({});
 
-  const [modalEditAssociationOpen, setModalEditAssociationOpen] = useState(false);
-  const [selectedProjectAssociated, setSelectedProjectAssociated] = useState({});
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showCreateAssociationModal, setShowCreateAssociationModal] = useState(false);
+  const [showEditAssociationModal, setShowEditAssociationModal] = useState(false);
 
   const params = useParams();
-  const { id: memberId } = params;
   const navigate = useNavigate();
+
+  const { id: memberId } = params;
 
   const loadDashboardMember = useCallback(async () => {
     try {
-      const memberId = params.id;
       const { data: member } = await MembersService.getById(memberId);
-      const { data: projects } = await ProjectService.getAssociateProjectByMemberId(memberId);
+      const { data: memberProjects } = await ProjectService.getAssociateProjectByMemberId(memberId);
+      const { data: projects } = await ProjectService.getAll(true);
 
+      const memberProjectIds = memberProjects.map(({ projectId }) => projectId);
+
+      const filterNotAssociatedProjects = ({ id }) => {
+        return memberProjectIds.every((projectId) => projectId !== id);
+      };
+
+      const otherProjects = projects.filter(filterNotAssociatedProjects);
+
+      setProjects(otherProjects);
       setMember(member);
-      setMemberProjects(projects);
-    } catch (error) {
-      const { status } = error.response;
+      setMemberProjects(memberProjects);
+    } catch (err) {
+      const { status } = err.response;
 
       if (status === 404) {
         alertUser({ text: "Membro não encontrado" });
         navigate("/members");
-      }
-      if (status === 401) {
-        setSession(null);
-        alertUser({ text: "Token expirado, por favor logue novamente", type: "warning" });
-        navigate("/");
-      } else alertUnmappedError(error);
+      } else alertUnmappedError(err);
     }
-  }, [memberId, projects, showEditModal]);
+  }, [memberId, navigate]);
 
   useEffect(() => {
     loadDashboardMember();
   }, [loadDashboardMember]);
 
-  async function handleToggleAssociationProject() {
-    setViewProjectAssociation((prevState) => (prevState ? false : true));
-    if (viewProjectAssociation) {
-      try {
-        const { data } = await ProjectService.getAll(true);
-
-        setProjects(data);
-      } catch (error) {
-        alert(error);
-      }
-    } else {
-      setProjects([]);
-    }
+  function handleToggleAssociationProject() {
+    setViewProjectAssociation((state) => !state);
   }
 
   function navigateToProject(id) {
@@ -86,22 +78,23 @@ export default function Member() {
   return (
     <>
       <Layout>
-        <EditMember
+        <EditMemberModal
           initialState={member}
           showModal={showEditModal}
           setShowModal={setShowEditModal}
         />
         <UpdateAssociationModal
           member={member}
-          showModal={modalEditAssociationOpen}
-          editShowModal={setModalEditAssociationOpen}
-          projectAssociated={selectedProjectAssociated}
+          showModal={showEditAssociationModal}
+          setShowModal={setShowEditAssociationModal}
+          project={selectedProjectAssociation}
+          initialState={selectedProjectAssociation}
         />
-        <CreationAssociationModal
+        <CreateAssociationModal
           member={member}
-          showModal={modalCreateAssociationOpen}
-          editShowModal={setModalCreateAssociationOpen}
-          project={selectedProject}
+          project={selectedProjectAssociation}
+          showModal={showCreateAssociationModal}
+          setShowModal={setShowCreateAssociationModal}
         />
         <Container>
           <Header>
@@ -244,16 +237,16 @@ export default function Member() {
                           ? "Editar projetos associados"
                           : "Nenhum projeto associado"
                       }
-                      editShowModal={setModalEditAssociationOpen}
-                      selectedProject={setSelectedProjectAssociated}
+                      editShowModal={setShowEditAssociationModal}
+                      setProjectAssociation={setSelectedProjectAssociation}
                     />
                   </ListProjects>
                   <ListProjects>
                     <ProjectsToAssociated
                       projects={projects}
                       title="Associar a um projeto"
-                      editShowModal={setModalCreateAssociationOpen}
-                      selectedProject={setSelectedProject}
+                      editShowModal={setShowCreateAssociationModal}
+                      setProjectAssociation={setSelectedProjectAssociation}
                     />
                   </ListProjects>
                 </>

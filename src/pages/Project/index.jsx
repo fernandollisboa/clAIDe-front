@@ -9,7 +9,7 @@ import arrowback from "../../assets/arrow-back.svg";
 import ProjectService from "../../services/ProjectsService";
 
 import maskDate from "../../utils/maskDate";
-import { alertUser } from "../../utils/alertUser";
+import { alertUnmappedError, alertUser } from "../../utils/alertUser";
 import EditProject from "pages/EditProject";
 
 export default function Project() {
@@ -28,7 +28,12 @@ export default function Project() {
       setMembers(members);
       setProject({ ...project, id });
     } catch (error) {
-      alertUser({ text: error.response.data.message, type: "error" });
+      const { status } = error.response;
+      if (status === 404) {
+        alertUser({ text: "Projeto não encontrado" });
+        navigate("/members");
+      }
+      alertUnmappedError(error);
     }
   }
   useEffect(() => {

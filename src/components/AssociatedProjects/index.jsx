@@ -9,9 +9,14 @@ AssociatedProjects.propTypes = {
   projects: PropTypes.array.isRequired,
   title: PropTypes.string.isRequired,
   editShowModal: PropTypes.func,
-  selectedProject: PropTypes.object,
+  setProjectAssociation: PropTypes.func,
 };
-export default function AssociatedProjects({ title, projects, editShowModal, selectedProject }) {
+export default function AssociatedProjects({
+  title,
+  projects,
+  editShowModal,
+  setProjectAssociation,
+}) {
   function toggleShowModal() {
     editShowModal((state) => !state);
   }
@@ -24,7 +29,7 @@ export default function AssociatedProjects({ title, projects, editShowModal, sel
           <Card
             key={project.id}
             onClick={() => {
-              selectedProject({ startDate, endDate });
+              setProjectAssociation({ startDate, endDate, projectId: project.id });
               toggleShowModal();
             }}
           >

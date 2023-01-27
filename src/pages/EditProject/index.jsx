@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { bool, func } from "prop-types";
+import { bool, func, object, number } from "prop-types";
 import ProjectsService from "services/ProjectsService";
 
 import { alertUser } from "../../utils/alertUser";
@@ -8,11 +8,10 @@ import ProjectForm from "components/ProjectForm";
 import maskDate from "utils/maskDate";
 
 EditProject.propTypes = {
-  showModal: bool,
-  setShowModal: func,
-};
-EditProject.defaultProps = {
-  showModal: false,
+  showModal: bool.isRequired,
+  setShowModal: func.isRequired,
+  initialState: object.isRequired,
+  projectId: number.isRequired,
 };
 export default function EditProject({ showModal, setShowModal, initialState, projectId }) {
   const [formSent, setFormSent] = useState(false);
@@ -27,8 +26,9 @@ export default function EditProject({ showModal, setShowModal, initialState, pro
 
       await ProjectsService.update(project);
 
-      alertUser({ text: "Formulario enviado", type: "success" });
+      alertUser({ text: "Formulário enviado", type: "success" });
       setFormSent(true);
+      setErrors();
       setShowModal(false);
     } catch (error) {
       const { status } = error.response;
@@ -62,7 +62,6 @@ export default function EditProject({ showModal, setShowModal, initialState, pro
         typeLabel="Editar Projeto"
         buttonLabel="Enviar"
         formSent={formSent}
-        isModal={true}
         onReturnNavigate={toggleShowModal}
         isEditingActiveProject={true}
         initialState={{
