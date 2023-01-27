@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import Card from "../../components/Card";
 import Layout from "../../components/Layout";
 import Menu from "../../components/Menu";
+import { alertUnmappedError, alertUser } from "utils/alertUser";
 
 import maskDate from "../../utils/maskDate";
 import ProjectsService from "../../services/ProjectsService";
@@ -12,7 +13,7 @@ import ProjectsService from "../../services/ProjectsService";
 export default function Project() {
   const [projects, setProjects] = useState([]);
   const [projectNameToBeSearched, setProjectNameToBeSearched] = useState("");
-  const [isActive, setIsActive] = useState(true);
+  const [isActive, setIsActive] = useState("");
   const [desc, setDesc] = useState(false);
   const navigate = useNavigate();
 
@@ -29,10 +30,14 @@ export default function Project() {
       const projectsList = await ProjectsService.getAll(isActive, desc);
 
       setProjects(projectsList.data);
-    } catch (err) {
-      alert(err);
+    } catch (error) {
+      const { status } = error.response;
+      if (status === 404) {
+        alertUser({ text: "Projeto não encontrado" });
+        navigate("/members");
+      } else alertUnmappedError(error);
     }
-  }, [isActive, desc]);
+  }, [isActive, desc, navigate]);
 
   useEffect(loadProjects, [loadProjects]);
 
@@ -102,7 +107,6 @@ const Container = styled.div`
   max-width: 90%;
   margin: 0 auto;
   flex-wrap: wrap;
-  gap: 2vh;
   margin-top: 1%;
 `;
 const Info = styled.div`

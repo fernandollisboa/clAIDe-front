@@ -1,20 +1,20 @@
 import { useState } from "react";
-import { bool, func } from "prop-types";
+import { bool, func, object } from "prop-types";
 
 import MemberForm from "../../components/MemberForm";
 import MembersService from "../../services/MembersService";
 import { alertUser } from "../../utils/alertUser";
 import Modal from "components/Modal";
-import maskDate from "utils/maskDate";
 
-EditMember.propTypes = {
-  showModal: bool,
-  setShowModal: func,
+EditMemberModal.propTypes = {
+  showModal: bool.isRequired,
+  setShowModal: func.isRequired,
+  initialState: object,
 };
-EditMember.defaultProps = {
-  showModal: false,
+EditMemberModal.defaultProps = {
+  initialState: {},
 };
-export default function EditMember({ showModal, setShowModal, initialState }) {
+export default function EditMemberModal({ showModal, setShowModal, initialState }) {
   const [formSent, setFormSent] = useState(false);
   const [errors, setErrors] = useState(null);
 
@@ -23,9 +23,10 @@ export default function EditMember({ showModal, setShowModal, initialState }) {
       const member = { ...formData };
       await MembersService.update(member);
 
-      alertUser({ text: "Formulario enviado", type: "success" });
+      alertUser({ text: "Formulário enviado", type: "success" });
       setFormSent(true);
       setShowModal(false);
+      setErrors();
     } catch (error) {
       const { status } = error.response;
 
@@ -58,7 +59,6 @@ export default function EditMember({ showModal, setShowModal, initialState }) {
         typeLabel="Editar Membro"
         buttonLabel="Enviar"
         formSent={formSent}
-        isModal={true}
         onReturnNavigate={toggleShowModal}
         initialState={initialState}
         maxWidth="90%"

@@ -15,15 +15,15 @@ class ProjectsService {
     const config = createHeaders();
     return api.get(`projects/${id}`, config);
   }
-  updateAssociateMemberWithProject(memberId, projectId, startDate, endDate) {
+  updateAssociateMemberWithProject({ memberId, projectId, startDate, endDate }) {
     const config = createHeaders();
     const body = { startDate, endDate };
     return api.put(`projects/${projectId}/members/${memberId}`, body, config);
   }
-  createAssociateMemberWithProject(memberId, projectId, startDate, endDate) {
+  createAssociateMemberWithProject({ memberId, projectId, startDate, endDate }) {
     const config = createHeaders();
-    const body = { startDate, endDate };
-    return api.post(`projects/${projectId}/members/${memberId}`, body, config);
+    const body = { startDate, endDate, memberId };
+    return api.post(`projects/${projectId}/members/`, body, config);
   }
   getAssociateProjectByMemberId(memberId) {
     const config = createHeaders();
