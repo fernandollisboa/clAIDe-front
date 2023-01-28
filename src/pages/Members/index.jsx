@@ -105,6 +105,7 @@ const Container = styled.div`
   margin: 0 auto;
   flex-wrap: wrap;
   margin-top: 1%;
+  justify-content: space-between;
 `;
 const Info = styled.div`
   p {
