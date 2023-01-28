@@ -5,7 +5,7 @@ export default styled.div`
   background: #ffffff;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.04);
   border-radius: 15px;
-  margin: 1% 0.5%;
+  margin: 0.5%;
   padding: 1.2%;
   cursor: pointer;
   justify-content: space-between;
