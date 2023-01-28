@@ -31,7 +31,7 @@ class ProjectsService {
   }
   getActivity() {
     const config = createHeaders();
-    return api.get(`activity-records/`, config);
+    return api.get(`activityRecords/`, config);
   }
   getAssociateProjectByProjectId(projectId) {
     const config = createHeaders();

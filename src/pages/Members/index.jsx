@@ -13,7 +13,7 @@ import MembersService from "../../services/MembersService";
 export default function Member() {
   const [members, setMembers] = useState([]);
   const [membersNameToBeSearched, setMembersNameToBeSearched] = useState("");
-  const [isActive, setIsActive] = useState(true);
+  const [isActive, setIsActive] = useState("");
   const [desc, setDesc] = useState(false);
   const navigate = useNavigate();
 
