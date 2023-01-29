@@ -69,7 +69,7 @@ export default function Member() {
 
   useEffect(() => {
     loadDashboardMember();
-  }, [loadDashboardMember]);
+  }, [loadDashboardMember, showServiceAssociationModal]);
 
   function handleToggleAssociationProject() {
     setViewProjectAssociation((state) => !state);
@@ -231,7 +231,7 @@ export default function Member() {
                         </Button>
                       </ServiceHeader>
                       <Cards>
-                        {servicesAssociates.map((service) => (
+                        {servicesAssociates.map(({ service }) => (
                           <ServiceCard key={service.id}>{service.name}</ServiceCard>
                         ))}
                       </Cards>
