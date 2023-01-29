@@ -19,6 +19,8 @@ import { alertUnmappedError, alertUser } from "../../utils/alertUser";
 import maskCpf from "../../utils/maskCpf";
 import parseMemberTypeToPortuguese from "../../utils/parseMemberTypeToPortuguese";
 import maskDate from "../../utils/maskDate";
+import CreateServiceAssociationModal from "pages/CreateServiceAssociationModal";
+import ServicesService from "services/ServicesService";
 
 export default function Member() {
   const [member, setMember] = useState({});
@@ -30,6 +32,8 @@ export default function Member() {
   const [showEditModal, setShowEditModal] = useState(false);
   const [showCreateAssociationModal, setShowCreateAssociationModal] = useState(false);
   const [showEditAssociationModal, setShowEditAssociationModal] = useState(false);
+  const [showServiceAssociationModal, setShowServiceAssociationModal] = useState(false);
+  const [servicesAssociates, setServicesAssociates] = useState([]);
 
   const params = useParams();
   const navigate = useNavigate();
@@ -41,7 +45,7 @@ export default function Member() {
       const { data: member } = await MembersService.getById(memberId);
       const { data: memberProjects } = await ProjectService.getAssociateProjectByMemberId(memberId);
       const { data: projects } = await ProjectService.getAll(true);
-
+      const { data: services } = await ServicesService.getAssociationByMemberId(memberId);
       const memberProjectIds = memberProjects.map(({ projectId }) => projectId);
 
       const filterNotAssociatedProjects = ({ id }) => {
@@ -49,7 +53,7 @@ export default function Member() {
       };
 
       const otherProjects = projects.filter(filterNotAssociatedProjects);
-
+      setServicesAssociates(services);
       setProjects(otherProjects);
       setMember(member);
       setMemberProjects(memberProjects);
@@ -65,7 +69,7 @@ export default function Member() {
 
   useEffect(() => {
     loadDashboardMember();
-  }, [loadDashboardMember]);
+  }, [loadDashboardMember, showServiceAssociationModal]);
 
   function handleToggleAssociationProject() {
     setViewProjectAssociation((state) => !state);
@@ -95,6 +99,11 @@ export default function Member() {
           project={selectedProjectAssociation}
           showModal={showCreateAssociationModal}
           setShowModal={setShowCreateAssociationModal}
+        />
+        <CreateServiceAssociationModal
+          member={member}
+          showModal={showServiceAssociationModal}
+          setShowModal={setShowServiceAssociationModal}
         />
         <Container>
           <Header>
@@ -213,16 +222,18 @@ export default function Member() {
 
                     <Services>
                       <ServiceHeader>
-                        <ServiceTitle>Servicos</ServiceTitle>
-                        <AssociationSelectService>
-                          <option value="">Associar Servico</option>
-                          <option value="">GitHub</option>
-                          <option value="">Cloud</option>
-                        </AssociationSelectService>
+                        <ServiceTitle>Serviços</ServiceTitle>
+                        <Button
+                          style={{ padding: "1.5%" }}
+                          onClick={() => setShowServiceAssociationModal(true)}
+                        >
+                          Associar serviço
+                        </Button>
                       </ServiceHeader>
                       <Cards>
-                        <ServiceCard>Card 1</ServiceCard>
-                        <ServiceCard>Card 1</ServiceCard>
+                        {servicesAssociates.map(({ service }) => (
+                          <ServiceCard key={service.id}>{service.name}</ServiceCard>
+                        ))}
                       </Cards>
                     </Services>
                   </List>
@@ -393,17 +404,6 @@ const ServiceTitle = styled.h1`
   font-weight: 700;
   font-size: 20px;
   line-height: 25px;
-`;
-const AssociationSelectService = styled.select`
-  width: 40%;
-  border: 2px solid #131313;
-  text-decoration: none;
-  border-radius: 4px;
-  padding: 1.2vh 2vh;
-  background: #fff;
-  font-weight: 700;
-  font-size: 1rem;
-  cursor: pointer;
 `;
 const Cards = styled.div`
   display: flex;

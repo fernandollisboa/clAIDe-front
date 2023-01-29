@@ -36,7 +36,6 @@ class MembersService {
       roomName,
     } = memberData;
     const body = {
-      id,
       name,
       email,
       birthDate,
@@ -54,7 +53,7 @@ class MembersService {
       roomName,
     };
     const config = createHeaders();
-    return api.put(`members/`, body, config);
+    return api.put(`members/${id}`, body, config);
   }
 }
 export default new MembersService();

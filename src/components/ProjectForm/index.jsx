@@ -106,7 +106,7 @@ export default function ProjectForm({
     },
     { name: "Financiador", id: "financier", placeholder: "Financiador", value: financier },
     {
-      required: isEditingActiveProject,
+      required: false,
       inputType: "date",
       name: isEditingActiveProject ? "Data de Término *" : "Data de Término",
       id: "endDate",
@@ -121,7 +121,6 @@ export default function ProjectForm({
   const isFormValid =
     inputs.filter(({ required }) => required).every(({ value }) => value) &&
     parseDateBrToISO(creationDate) &&
-    (!isEditingActiveProject || parseDateBrToISO(endDate)) &&
     !errors.length;
 
   return (

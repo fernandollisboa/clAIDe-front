@@ -9,7 +9,7 @@ export default styled.div`
   padding: 1.2%;
   cursor: pointer;
   justify-content: space-between;
-  border: 1px solid rgba(0, 0, 0, 0.04);
+  border: ${({ isSelected }) => (isSelected ? "2px solid black" : "1px solid rgba(0, 0, 0, 0.04)")};
   &:hover {
     transition: all 50ms ease-in;
     transform: scale(0.98);
