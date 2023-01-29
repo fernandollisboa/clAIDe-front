@@ -29,7 +29,7 @@ export default function CreateServiceAssociationModal({ member, showModal, setSh
 
       setServices(membersList.data);
     } catch (err) {
-      console.log(err);
+      // console.log(err);
     }
   }
 
