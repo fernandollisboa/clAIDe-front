@@ -57,7 +57,7 @@ export default function MemberAssociationForm({
       value: startDate,
     },
     {
-      required: true,
+      required: false,
       inputType: "date",
       name: "Data de fim",
       id: "endDate",
@@ -66,7 +66,6 @@ export default function MemberAssociationForm({
       value: endDate,
     },
   ];
-  console.log({ errors });
   const isFormValid =
     inputs.filter(({ required }) => required).every(({ value }) => value) && !errors.length;
 
