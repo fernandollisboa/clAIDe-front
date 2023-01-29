@@ -37,9 +37,9 @@ class ProjectsService {
     const config = createHeaders();
     return api.get(`projects/${projectId}/members`, config);
   }
-  update(projectData) {
+  update(projectId, projectData) {
     const config = createHeaders();
-    return api.put(`projects/`, projectData, config);
+    return api.put(`projects/${projectId}`, projectData, config);
   }
 }
 export default new ProjectsService();
