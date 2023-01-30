@@ -28,7 +28,7 @@ export default function Menu({
       </FilterButton>
       <Filters>
         <span>Filtrar por: </span>
-        <select name="filter" style={{ height: "40px" }} onClick={handleToggleIsActive}>
+        <select onClick={handleToggleIsActive}>
           <option value={true}>Ativos</option>
           <option value={false}>Inativos</option>
           <option value={""}>Todos</option>
@@ -112,6 +112,7 @@ const Filters = styled.div`
     font-weight: 600;
   }
   select {
+    height: 40px;
     cursor: pointer;
     background: transparent;
     color: rgb(102, 102, 102);

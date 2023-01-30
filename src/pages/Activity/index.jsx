@@ -1,13 +1,19 @@
 import { useEffect, useState, useMemo } from "react";
+
 import Layout from "../../components/Layout";
-import ProjectsService from "../../services/ProjectsService";
 import styled from "styled-components";
-import Card from "../../components/Card";
+
+import arrow from "../../assets/arrow.svg";
+
+import ProjectsService from "../../services/ProjectsService";
 import maskDate from "../../utils/maskDate";
 
 export default function Activty() {
   const [activitys, setActivitys] = useState([]);
   const [activityUserNameToBeSearched, setActivityUserNameToBeSearched] = useState("");
+  const [desc, setDesc] = useState(false);
+  const [entity, setEntity] = useState("");
+  const [operation, setOperation] = useState("");
 
   const filteredActivity = useMemo(
     () =>
@@ -18,7 +24,7 @@ export default function Activty() {
   );
   async function loadActivity() {
     try {
-      const { data } = await ProjectsService.getActivity();
+      const { data } = await ProjectsService.getActivity(desc, entity, operation);
 
       setActivitys(data);
     } catch (error) {
@@ -27,10 +33,16 @@ export default function Activty() {
   }
   useEffect(() => {
     loadActivity();
-  }, []);
+  }, [desc, entity, operation]);
 
   function handleChangeSearchActivity(event) {
     setActivityUserNameToBeSearched(event.target.value);
+  }
+  function handleChangeEntity(event) {
+    setEntity(event.target.value);
+  }
+  function handleChangeOperation(event) {
+    setOperation(event.target.value);
   }
   return (
     <>
@@ -44,6 +56,30 @@ export default function Activty() {
               type="text"
               onChange={handleChangeSearchActivity}
             />
+            <FilterDesc onClick={() => setDesc((s) => !s)} desc={desc}>
+              <span>Nome</span>
+              <img src={arrow} alt="Arrow" />
+            </FilterDesc>
+            <Filter>
+              <span>Filtrar por: </span>
+              <select onClick={handleChangeEntity}>
+                <option value={""}>Todos</option>
+                <option value={"MEMBER"}>Membro</option>
+                <option value={"PROJECT"}>Projeto</option>
+                <option value={"SERVICE"}>Serviço</option>
+
+                <option value={"PROJECT_ASSOCIATION"}>Associação de projeto</option>
+                <option value={"SERVICE_ASSOCIATION"}>Associação de serviço</option>
+              </select>
+            </Filter>
+            <Filter>
+              <span>Filtrar por: </span>
+              <select onClick={handleChangeOperation}>
+                <option value={""}>Todos</option>
+                <option value={"CREATE"}>Criação</option>
+                <option value={"UPDATE"}>Atualização</option>
+              </select>
+            </Filter>
           </Filters>
           <ListActivities>
             {filteredActivity.map((activity) => (
@@ -110,6 +146,45 @@ const Filters = styled.div`
   justify-content: center;
   margin-bottom: 3%;
 `;
+const FilterDesc = styled.button`
+  border: 1px solid #131313;
+  padding: 1%;
+  cursor: pointer;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.04);
+  border-radius: 4px;
+  background: #f6f5fc;
+  display: flex;
+  align-items: center;
+
+  span {
+    font-weight: 700;
+    margin-right: 10%;
+  }
+  img {
+    cursor: pointer;
+    transform: ${({ desc }) => (!desc ? "rotate(-180deg)" : "rotate(0deg)")};
+    transition: transform 0.2s ease-in;
+  }
+`;
+const Filter = styled.div`
+  display: flex;
+  align-items: center;
+  border: 1px solid #131313;
+  border-radius: 4px;
+  font-size: 1rem;
+  padding: 0 1%;
+  span {
+    font-weight: 600;
+  }
+  select {
+    height: 40px;
+    cursor: pointer;
+    background: transparent;
+    color: rgb(102, 102, 102);
+    border: none;
+    outline: none;
+  }
+`;
 const InputSearch = styled.input`
   width: 30%;
   background: #fff;
@@ -126,6 +201,7 @@ const ListActivities = styled.div`
   gap: 3vh;
 `;
 const Log = styled.div`
+  background: white;
   padding: 1%;
   width: 100%;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
