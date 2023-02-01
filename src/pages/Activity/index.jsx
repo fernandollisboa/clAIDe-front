@@ -67,8 +67,7 @@ export default function Activty() {
                   <option value={""}>Todos</option>
                   <option value={"MEMBER"}>Membro</option>
                   <option value={"PROJECT"}>Projeto</option>
-                  <option value={"SERVICE"}>Serviço</option>
-
+                  {/* <option value={"SERVICE"}>Serviço</option> */}
                   <option value={"PROJECT_ASSOCIATION"}>Associação de projeto</option>
                   <option value={"SERVICE_ASSOCIATION"}>Associação de serviço</option>
                 </select>
