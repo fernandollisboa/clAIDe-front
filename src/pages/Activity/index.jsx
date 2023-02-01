@@ -50,36 +50,38 @@ export default function Activty() {
         <Container>
           <Title>Log de atividades</Title>
           <Filters>
+            <FilterDesc onClick={() => setDesc((s) => !s)} desc={desc}>
+              <span>Nome</span>
+              <img src={arrow} alt="Arrow" />
+            </FilterDesc>
             <InputSearch
               value={activityUserNameToBeSearched}
               placeholder="Pesquisar por nome..."
               type="text"
               onChange={handleChangeSearchActivity}
             />
-            <FilterDesc onClick={() => setDesc((s) => !s)} desc={desc}>
-              <span>Nome</span>
-              <img src={arrow} alt="Arrow" />
-            </FilterDesc>
-            <Filter>
-              <span>Filtrar por: </span>
-              <select onClick={handleChangeEntity}>
-                <option value={""}>Todos</option>
-                <option value={"MEMBER"}>Membro</option>
-                <option value={"PROJECT"}>Projeto</option>
-                <option value={"SERVICE"}>Serviço</option>
+            <FilterOperation>
+              <Filter>
+                <span>Filtrar por: </span>
+                <select onClick={handleChangeEntity}>
+                  <option value={""}>Todos</option>
+                  <option value={"MEMBER"}>Membro</option>
+                  <option value={"PROJECT"}>Projeto</option>
+                  <option value={"SERVICE"}>Serviço</option>
 
-                <option value={"PROJECT_ASSOCIATION"}>Associação de projeto</option>
-                <option value={"SERVICE_ASSOCIATION"}>Associação de serviço</option>
-              </select>
-            </Filter>
-            <Filter>
-              <span>Filtrar por: </span>
-              <select onClick={handleChangeOperation}>
-                <option value={""}>Todos</option>
-                <option value={"CREATE"}>Criação</option>
-                <option value={"UPDATE"}>Atualização</option>
-              </select>
-            </Filter>
+                  <option value={"PROJECT_ASSOCIATION"}>Associação de projeto</option>
+                  <option value={"SERVICE_ASSOCIATION"}>Associação de serviço</option>
+                </select>
+              </Filter>
+              <Filter>
+                <span>Filtrar por: </span>
+                <select onClick={handleChangeOperation}>
+                  <option value={""}>Todos</option>
+                  <option value={"CREATE"}>Criação</option>
+                  <option value={"UPDATE"}>Atualização</option>
+                </select>
+              </Filter>
+            </FilterOperation>
           </Filters>
           <ListActivities>
             {filteredActivity.map((activity) => (
@@ -143,7 +145,7 @@ const Title = styled.h1`
 const Filters = styled.div`
   width: 100%;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   margin-bottom: 3%;
 `;
 const FilterDesc = styled.button`
@@ -166,6 +168,9 @@ const FilterDesc = styled.button`
     transition: transform 0.2s ease-in;
   }
 `;
+const FilterOperation = styled.div`
+  display: flex;
+`;
 const Filter = styled.div`
   display: flex;
   align-items: center;
@@ -173,6 +178,10 @@ const Filter = styled.div`
   border-radius: 4px;
   font-size: 1rem;
   padding: 0 1%;
+  & + & {
+    margin-left: 3%;
+  }
+
   span {
     font-weight: 600;
   }
