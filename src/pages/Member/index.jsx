@@ -185,42 +185,42 @@ export default function Member() {
                   </ListMemberInfo>
 
                   <List>
-                    <Project>
-                      <ProjectTitle>
-                        {memberProjects.filter(({ endDate }) => !endDate).length > 0 ? (
-                          <h1>Projetos Atuais</h1>
-                        ) : (
-                          <h1>Nenhum projeto associado</h1>
-                        )}
-                      </ProjectTitle>
-                      {memberProjects
-                        .filter(({ endDate }) => !endDate)
-                        .map(({ project, startDate }) => (
-                          <Card
-                            key={project.id}
-                            onClick={() => {
-                              navigateToProject(project.id);
-                            }}
-                          >
-                            <div>
-                              <FormatData>
-                                Nome: <FontData>{project.name}</FontData>
-                              </FormatData>
-                              <FormatData>
-                                Sala:
-                                <FontData> {project.roomName || " Sem sala"}</FontData>
-                              </FormatData>
-                              <FormatData>
-                                Data que entrou:
-                                <FontData> {maskDate(startDate)}</FontData>
-                              </FormatData>
-                            </div>
-                            <div>{project.isActive ? "🟢" : "🔴"} </div>
-                          </Card>
-                        ))}
-                    </Project>
+                    {/* <Project> */}
+                    <ProjectTitle>
+                      {memberProjects.filter(({ endDate }) => !endDate).length > 0 ? (
+                        <h1>Projetos Atuais</h1>
+                      ) : (
+                        <h1>Nenhum projeto associado</h1>
+                      )}
+                    </ProjectTitle>
+                    {memberProjects
+                      .filter(({ endDate }) => !endDate)
+                      .map(({ project, startDate }) => (
+                        <Card
+                          key={project.id}
+                          onClick={() => {
+                            navigateToProject(project.id);
+                          }}
+                        >
+                          <div>
+                            <FormatData>
+                              Nome: <FontData>{project.name}</FontData>
+                            </FormatData>
+                            <FormatData>
+                              Sala:
+                              <FontData> {project.roomName || " Sem sala"}</FontData>
+                            </FormatData>
+                            <FormatData>
+                              Data que entrou:
+                              <FontData> {maskDate(startDate)}</FontData>
+                            </FormatData>
+                          </div>
+                          <div>{project.isActive ? "🟢" : "🔴"} </div>
+                        </Card>
+                      ))}
+                    {/* </Project> */}
 
-                    <Services>
+                    {/* <Services>
                       <ServiceHeader>
                         <ServiceTitle>Serviços</ServiceTitle>
                         <Button
@@ -235,7 +235,7 @@ export default function Member() {
                           <ServiceCard key={service.id}>{service.name}</ServiceCard>
                         ))}
                       </Cards>
-                    </Services>
+                    </Services> */}
                   </List>
                 </>
               ) : (
@@ -380,7 +380,7 @@ const List = styled.div`
 `;
 const Project = styled.div`
   height: 200px;
-  border-bottom: 2px solid #bcbcbc;
+  /* border-bottom: 2px solid #bcbcbc; */
   overflow-y: auto;
 `;
 const ProjectTitle = styled.div`
