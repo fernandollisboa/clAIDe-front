@@ -69,7 +69,7 @@ export default function Project() {
                 <div className="project-info">
                   <div className="name">{project.name}</div>
                   <div className="status">
-                    {(project.isActive && <p>Ativo</p>) || <p>Inativo</p>}
+                    <p>{project.isActive ? "Ativo" : "Inativo"}</p>
                   </div>
                 </div>
               </Info>
@@ -81,28 +81,27 @@ export default function Project() {
               <ListInfo>
                 <div className="data">
                   <p>
-                    <span className="atribute-title">Data de Criação: </span>
-                    {maskDate(project.creationDate)}
+                    <span className="atribute-title">Código Embrapii: </span>
+                    {project.embrapiiCode || "-"}
                   </p>
                   <p>
-                    <span className="atribute-title">Data de Término: </span>
-                    {maskDate(project.endDate) || "Sem data"}
-                  </p>
-                  <p>
-                    <span className="atribute-title">Prédio: </span>
-                    {project.building || "Sem prédio"}
+                    <span className="atribute-title">Financiador: </span> {project.financier || "-"}
                   </p>
                   <p>
                     <span className="atribute-title">Sala: </span>
-                    {project.room || "Sem sala"}
+                    {project.room || "-"}
                   </p>
                   <p>
-                    <span className="atribute-title">Código Embrapii: </span>
-                    {project.embrapiiCode || "Sem código"}
+                    <span className="atribute-title">Prédio: </span>
+                    {project.building || "-"}
                   </p>
                   <p>
-                    <span className="atribute-title">Financiador: </span>{" "}
-                    {project.financier || "Sem financiador"}
+                    <span className="atribute-title">Data de Criação: </span>
+                    {maskDate(project.creationDate) || "-"}
+                  </p>
+                  <p>
+                    <span className="atribute-title">Data de Término: </span>
+                    {maskDate(project.endDate) || "-"}
                   </p>
                 </div>
                 <div className="list-teachers">
@@ -147,13 +146,13 @@ export default function Project() {
                     >
                       <div>
                         <FormatData>
-                          Nome: <FontData>{associationMember.member.name}</FontData>
+                          Nome: <FontData>{associationMember.member.name || "-"}</FontData>
                         </FormatData>
                         <FormatData>
-                          Sala: <FontData>{associationMember.member.roomName}</FontData>
+                          Sala: <FontData>{associationMember.member.roomName || "-"}</FontData>
                         </FormatData>
                         <FormatData>
-                          Email LSD: <FontData>{associationMember.member.lsdEmail}</FontData>
+                          Email LSD: <FontData>{associationMember.member.lsdEmail || "-"}</FontData>
                         </FormatData>
                       </div>
                       <div>{associationMember.member.isActive ? "🟢" : "🔴"}</div>

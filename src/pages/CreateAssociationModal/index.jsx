@@ -18,7 +18,12 @@ CreateAssociationModal.propTypes = {
 CreateAssociationModal.defaultProps = {
   initialState: {},
 };
-export default function CreateAssociationModal({ project, member, showModal, setShowModal }) {
+export default function CreateAssociationModal({
+  project: projectAssociation,
+  member,
+  showModal,
+  setShowModal,
+}) {
   const [formSent, setFormSent] = useState(false);
   const navigate = useNavigate();
 
@@ -26,7 +31,7 @@ export default function CreateAssociationModal({ project, member, showModal, set
     const { startDate, endDate } = formData;
 
     const { id: memberId } = member;
-    const { projectId } = project;
+    const { projectId } = projectAssociation;
 
     try {
       await ProjectService.createAssociateMemberWithProject({
@@ -43,12 +48,7 @@ export default function CreateAssociationModal({ project, member, showModal, set
       const { status } = err.response;
       setFormSent(false);
 
-      if (status === 404) {
-        alertUser({
-          text: `${member?.name} e/ou ${project?.name} não encontrados`,
-          type: "error",
-        });
-      } else if (status === 422) {
+      if (status === 422) {
         alertUser({
           text: `Data de inicio não pode ser antes do projeto iniciar e data de fim não pode ser depois do projeto terminar `,
           type: "error",

@@ -57,7 +57,7 @@ export default function MemberAssociationForm({
       value: startDate,
     },
     {
-      required: false,
+      required: true,
       inputType: "date",
       name: "Data de fim",
       id: "endDate",
@@ -66,8 +66,12 @@ export default function MemberAssociationForm({
       value: endDate,
     },
   ];
+  console.log({ errors });
   const isFormValid =
-    inputs.filter(({ required }) => required).every(({ value }) => value) && !errors.length;
+    inputs.filter(({ required }) => required).every(({ value }) => value) &&
+    parseDateBrToISO(startDate) &&
+    parseDateBrToISO(endDate) &&
+    !errors.length;
 
   return (
     <>
@@ -76,7 +80,6 @@ export default function MemberAssociationForm({
         handleSubmit={handleSubmit}
         inputs={inputs}
         setInputValues={setProjectAssociationData}
-        buttonLabel="Enviar"
         typeLabel={typeLabel}
         incomingErrors={incomingErrors}
         height={"25vh"}

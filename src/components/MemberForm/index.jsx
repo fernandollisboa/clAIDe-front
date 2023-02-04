@@ -1,15 +1,13 @@
 import { string, func, bool, object } from "prop-types";
 import { useState, useEffect, useMemo } from "react";
-import { MINIMUM_REQUIRED_AGE, getTodaySubtractYears } from "utils/dateUtil";
 
+import { MINIMUM_REQUIRED_AGE, getTodaySubtractYears } from "utils/dateUtil";
 import useErrors from "../../hooks/useErrors";
 import maskCpf from "../../utils/maskCpf";
 import maskPhone from "../../utils/maskPhone";
 import removeChar from "../../utils/removeChar";
-
 import Form from "components/Form";
 import maskDate from "utils/maskDate";
-
 import parseDateBrToISO from "utils/parseDateBrToISO";
 
 MemberForm.propTypes = {
@@ -44,7 +42,6 @@ export default function MemberForm({
     memberType: "",
     lattes: "",
     roomName: "",
-
     ...initialState,
     birthDate: maskDate(initialState?.birthDate),
     isBrazilian: initialState?.isBrazilian ?? 1,
@@ -75,9 +72,7 @@ export default function MemberForm({
     else removeError("birthDate");
   }
 
-  const getIsBrazilian = useMemo(() => {
-    return !!Number(isBrazilian);
-  }, [isBrazilian]);
+  const getIsBrazilian = useMemo(() => !!Number(isBrazilian), [isBrazilian]);
 
   async function handleSubmit(event) {
     event.preventDefault();

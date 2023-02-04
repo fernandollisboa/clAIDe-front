@@ -19,8 +19,6 @@ import { alertUnmappedError, alertUser } from "../../utils/alertUser";
 import maskCpf from "../../utils/maskCpf";
 import parseMemberTypeToPortuguese from "../../utils/parseMemberTypeToPortuguese";
 import maskDate from "../../utils/maskDate";
-import CreateServiceAssociationModal from "pages/CreateServiceAssociationModal";
-import ServicesService from "services/ServicesService";
 
 export default function Member() {
   const [member, setMember] = useState({});
@@ -32,8 +30,6 @@ export default function Member() {
   const [showEditModal, setShowEditModal] = useState(false);
   const [showCreateAssociationModal, setShowCreateAssociationModal] = useState(false);
   const [showEditAssociationModal, setShowEditAssociationModal] = useState(false);
-  const [showServiceAssociationModal, setShowServiceAssociationModal] = useState(false);
-  const [servicesAssociates, setServicesAssociates] = useState([]);
 
   const params = useParams();
   const navigate = useNavigate();
@@ -45,7 +41,7 @@ export default function Member() {
       const { data: member } = await MembersService.getById(memberId);
       const { data: memberProjects } = await ProjectService.getAssociateProjectByMemberId(memberId);
       const { data: projects } = await ProjectService.getAll(true);
-      const { data: services } = await ServicesService.getAssociationByMemberId(memberId);
+
       const memberProjectIds = memberProjects.map(({ projectId }) => projectId);
 
       const filterNotAssociatedProjects = ({ id }) => {
@@ -53,7 +49,7 @@ export default function Member() {
       };
 
       const otherProjects = projects.filter(filterNotAssociatedProjects);
-      setServicesAssociates(services);
+
       setProjects(otherProjects);
       setMember(member);
       setMemberProjects(memberProjects);
@@ -69,7 +65,7 @@ export default function Member() {
 
   useEffect(() => {
     loadDashboardMember();
-  }, [loadDashboardMember, showServiceAssociationModal]);
+  }, [loadDashboardMember]);
 
   function handleToggleAssociationProject() {
     setViewProjectAssociation((state) => !state);
@@ -100,11 +96,6 @@ export default function Member() {
           showModal={showCreateAssociationModal}
           setShowModal={setShowCreateAssociationModal}
         />
-        <CreateServiceAssociationModal
-          member={member}
-          showModal={showServiceAssociationModal}
-          setShowModal={setShowServiceAssociationModal}
-        />
         <Container>
           <Header>
             <Link
@@ -122,7 +113,9 @@ export default function Member() {
                 <MemberInfo>
                   <Name>{member.name}</Name>
                   <Type>{parseMemberTypeToPortuguese(member.memberType)}</Type>
-                  <Status>{member.status ? <p>Ativo</p> : <p>Inativo</p>}</Status>
+                  <Status isActive={member.isActive}>
+                    {member.isActive ? <p>Ativo</p> : <p>Inativo</p>}
+                  </Status>
                 </MemberInfo>
                 <Username>{member.username}</Username>
               </Info>
@@ -143,82 +136,75 @@ export default function Member() {
                   <ListMemberInfo>
                     <Data>
                       <FormatData>
-                        E-mail principal: <FontData>{member.email}</FontData>
+                        E-mail principal: <FontData>{member.email || "-"}</FontData>
                       </FormatData>
                       <FormatData>
-                        E-mail LSD: <FontData>{member.lsdEmail}</FontData>
+                        E-mail LSD: <FontData>{member.lsdEmail || "-"}</FontData>
                       </FormatData>
                       <FormatData>
-                        E-mail secundário: <FontData>{member.secondaryEmail}</FontData>
+                        E-mail secundário: <FontData>{member.secondaryEmail || "-"}</FontData>
                       </FormatData>
                       <FormatData>
-                        Lattes: <FontData>{member.lattes}</FontData>
+                        Lattes: <FontData>{member.lattes || "-"}</FontData>
                       </FormatData>
                       <FormatData>
-                        Sala LSD: <FontData>{member.roomName}</FontData>
+                        Sala LSD: <FontData>{member.roomName || " Sem sala"}</FontData>
                       </FormatData>
                       <FormatData>
-                        Tem chave?:
-                        {(member.hasKey && <FontData> Sim</FontData>) || <FontData> Não</FontData>}
+                        Tem a chave da sala? <FontData>{member.hasKey ? "Sim" : "Não"}</FontData>
                       </FormatData>
                     </Data>
                     <PersonalData>
                       <FormatData>
-                        Data de nascimento: <FontData>{maskDate(member.birthDate)}</FontData>
+                        Data de nascimento: <FontData>{maskDate(member.birthDate) || "-"}</FontData>
                       </FormatData>
                       <FormatData>
-                        CPF: <FontData>{maskCpf(member.cpf)}</FontData>
+                        CPF: <FontData>{maskCpf(member.cpf) || "-"}</FontData>
                       </FormatData>
                       <FormatData>
-                        RG: <FontData>{member.rg}</FontData>
+                        RG: <FontData>{member.rg || "-"}</FontData>
                       </FormatData>
-                      {(member.passport && (
-                        <FormatData>
-                          Passaporte: <FontData>{member.passport}</FontData>{" "}
-                        </FormatData>
-                      )) || (
-                        <FormatData>
-                          Passaporte: <FontData>Não tem informação</FontData>{" "}
-                        </FormatData>
-                      )}
+                      <FormatData>
+                        Passaporte: <FontData>{member.passport || "-"}</FontData>
+                      </FormatData>
                     </PersonalData>
                   </ListMemberInfo>
 
                   <List>
-                    {/* <Project> */}
-                    <ProjectTitle>
-                      {memberProjects.filter(({ endDate }) => !endDate).length > 0 ? (
-                        <h1>Projetos Atuais</h1>
-                      ) : (
-                        <h1>Nenhum projeto associado</h1>
-                      )}
-                    </ProjectTitle>
-                    {memberProjects
-                      .filter(({ endDate }) => !endDate)
-                      .map(({ project, startDate }) => (
-                        <Card
-                          key={project.id}
-                          onClick={() => {
-                            navigateToProject(project.id);
-                          }}
-                        >
-                          <div>
-                            <FormatData>
-                              Nome: <FontData>{project.name}</FontData>
-                            </FormatData>
-                            <FormatData>
-                              Sala:
-                              <FontData> {project.roomName || " Sem sala"}</FontData>
-                            </FormatData>
-                            <FormatData>
-                              Data que entrou:
-                              <FontData> {maskDate(startDate)}</FontData>
-                            </FormatData>
-                          </div>
-                          <div>{project.isActive ? "🟢" : "🔴"} </div>
-                        </Card>
-                      ))}
-                    {/* </Project> */}
+                    <Project>
+                      <ProjectTitle>
+                        {memberProjects.filter(({ isActive }) => isActive).length ? (
+                          <h1>Projetos Atuais</h1>
+                        ) : (
+                          <h1>Nenhum projeto associado</h1>
+                        )}
+                      </ProjectTitle>
+                      {memberProjects
+                        .filter(({ isActive }) => !isActive)
+                        .map(({ project, startDate }) => (
+                          <Card
+                            key={project.id}
+                            onClick={() => {
+                              navigateToProject(project.id);
+                            }}
+                          >
+                            <div>
+                              <FormatData>
+                                Nome: <FontData>{project.name}</FontData>
+                              </FormatData>
+                              <FormatData>
+                                Sala:
+                                <FontData> {project.roomName || " Sem sala"}</FontData>
+                              </FormatData>
+                              <FormatData>
+                                Data que entrou:
+                                <FontData> {maskDate(startDate)}</FontData>
+                              </FormatData>
+                            </div>
+                            <div>{project.isActive ? "🟢" : "🔴"} </div>
+                          </Card>
+                        ))}
+                    </Project>
 
                     {/* <Services>
                       <ServiceHeader>
@@ -244,7 +230,7 @@ export default function Member() {
                     <AssociatedProjects
                       projects={memberProjects}
                       title={
-                        memberProjects.length > 0
+                        memberProjects.length
                           ? "Editar projetos associados"
                           : "Nenhum projeto associado"
                       }
@@ -321,7 +307,7 @@ const Type = styled.div`
 const Status = styled.div`
   font-weight: 800;
   font-size: 0.7rem;
-  color: ${({ status }) => (status ? "#069d15" : "red")};
+  color: ${({ isActive }) => (isActive ? "#069d15" : "red")};
   background: #f6f5fc;
   border-radius: 4px;
   padding: 0.5vh;

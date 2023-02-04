@@ -13,7 +13,7 @@ import ProjectsService from "../../services/ProjectsService";
 export default function Project() {
   const [projects, setProjects] = useState([]);
   const [projectNameToBeSearched, setProjectNameToBeSearched] = useState("");
-  const [isActive, setIsActive] = useState(true);
+  const [isActive, setIsActive] = useState("");
   const [desc, setDesc] = useState(false);
   const navigate = useNavigate();
 
