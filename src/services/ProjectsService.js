@@ -29,9 +29,14 @@ class ProjectsService {
     const config = createHeaders();
     return api.get(`/members/${memberId}/projects`, config);
   }
-  getActivity() {
+  getActivity(desc, entity, operation) {
     const config = createHeaders();
-    return api.get(`activity-records/`, config);
+    let params = new URLSearchParams();
+    params.append("operation", operation);
+    params.append("desc", desc);
+    params.append("entity", entity);
+    let queryString = params.toString();
+    return api.get(`activity-records/?${queryString}`, config);
   }
   getAssociateProjectByProjectId(projectId) {
     const config = createHeaders();
