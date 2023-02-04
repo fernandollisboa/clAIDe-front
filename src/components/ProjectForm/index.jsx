@@ -6,6 +6,7 @@ import useErrors from "../../hooks/useErrors";
 import maskDate from "utils/maskDate";
 import parseDateBrToISO from "utils/parseDateBrToISO";
 
+// isEditingActiveProjeto NAO QUER DIZER isso, na verdade deveria ser isEditingProject
 export default function ProjectForm({
   onSubmit,
   typeLabel,

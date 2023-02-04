@@ -60,7 +60,6 @@ export default function EditProject({ showModal, setShowModal, initialState, pro
       <ProjectForm
         onSubmit={handleSubmit}
         typeLabel="Editar Projeto"
-        buttonLabel="Enviar"
         formSent={formSent}
         onReturnNavigate={toggleShowModal}
         isEditingActiveProject={true}

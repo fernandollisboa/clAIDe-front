@@ -40,6 +40,7 @@ export default function Login() {
       alertUser({ text: "Bem-vindo(a)!", type: "success" });
       navigate("/members");
     } catch (err) {
+      console.log({ err });
       const { status } = err.response;
 
       if (status === 404) alertUser({ text: "Usuário não encontrado" });

@@ -68,7 +68,10 @@ export default function MemberAssociationForm({
   ];
   console.log({ errors });
   const isFormValid =
-    inputs.filter(({ required }) => required).every(({ value }) => value) && !errors.length;
+    inputs.filter(({ required }) => required).every(({ value }) => value) &&
+    parseDateBrToISO(startDate) &&
+    parseDateBrToISO(endDate) &&
+    !errors.length;
 
   return (
     <>
@@ -77,7 +80,6 @@ export default function MemberAssociationForm({
         handleSubmit={handleSubmit}
         inputs={inputs}
         setInputValues={setProjectAssociationData}
-        buttonLabel="Enviar"
         typeLabel={typeLabel}
         incomingErrors={incomingErrors}
         height={"25vh"}

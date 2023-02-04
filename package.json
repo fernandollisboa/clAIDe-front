@@ -9,6 +9,8 @@
     "axios": "^0.24.0",
     "dayjs": "^1.11.6",
     "dayjs-plugin-utc": "^0.1.2",
+    "https-browserify": "^1.0.0",
+    "node-polyfill-webpack-plugin": "^2.0.1",
     "react": "^17.0.2",
     "react-datepicker": "^4.8.0",
     "react-dom": "^17.0.2",
@@ -52,6 +54,7 @@
   "devDependencies": {
     "@commitlint/cli": "^17.2.0",
     "@commitlint/config-conventional": "^17.2.0",
+    "@webpack-cli/generators": "^3.0.1",
     "commitizen": "^4.2.5",
     "cypress": "^12.4.0",
     "cz-conventional-changelog": "^3.3.0",
@@ -61,7 +64,8 @@
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-react": "^7.31.10",
     "eslint-plugin-react-hooks": "^4.6.0",
-    "husky": "^8.0.1"
+    "husky": "^8.0.1",
+    "webpack-cli": "^5.0.1"
   },
   "config": {
     "commitizen": {

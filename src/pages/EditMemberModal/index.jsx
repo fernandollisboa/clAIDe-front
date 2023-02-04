@@ -57,7 +57,6 @@ export default function EditMemberModal({ showModal, setShowModal, initialState 
       <MemberForm
         onSubmit={handleSubmit}
         typeLabel="Editar Membro"
-        buttonLabel="Enviar"
         formSent={formSent}
         onReturnNavigate={toggleShowModal}
         initialState={initialState}

@@ -25,7 +25,7 @@ export default function AssociatedProjects({
     <>
       <Title>{title}</Title>
       <Container>
-        {projects.map(({ project, startDate, endDate }) => (
+        {projects.map(({ project, startDate, endDate, isActive }) => (
           <Card
             key={project.id}
             onClick={() => {
@@ -46,7 +46,7 @@ export default function AssociatedProjects({
                 <FontData>{maskDate(endDate) || "Não terminou"}</FontData>
               </FormatData>
             </div>
-            <div>{!endDate ? "🟢" : "🔴"}</div>
+            <div>{isActive ? "🟢" : "🔴"}</div>
           </Card>
         ))}
       </Container>
