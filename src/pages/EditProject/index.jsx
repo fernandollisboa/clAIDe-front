@@ -20,11 +20,10 @@ export default function EditProject({ showModal, setShowModal, initialState, pro
   async function handleSubmit(formData) {
     try {
       const project = {
-        id: projectId,
         ...formData,
       };
 
-      await ProjectsService.update(project);
+      await ProjectsService.update(projectId, project);
 
       alertUser({ text: "Formulário enviado", type: "success" });
       setFormSent(true);

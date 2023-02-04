@@ -13,7 +13,7 @@ import MembersService from "../../services/MembersService";
 export default function Member() {
   const [members, setMembers] = useState([]);
   const [membersNameToBeSearched, setMembersNameToBeSearched] = useState("");
-  const [isActive, setIsActive] = useState("");
+  const [isActive, setIsActive] = useState(true);
   const [desc, setDesc] = useState(false);
   const navigate = useNavigate();
 
@@ -105,6 +105,7 @@ const Container = styled.div`
   margin: 0 auto;
   flex-wrap: wrap;
   margin-top: 1%;
+  /* justify-content: space-between; */
 `;
 const Info = styled.div`
   p {

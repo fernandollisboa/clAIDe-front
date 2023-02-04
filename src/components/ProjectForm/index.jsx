@@ -107,7 +107,7 @@ export default function ProjectForm({
     },
     { name: "Financiador", id: "financier", placeholder: "Financiador", value: financier },
     {
-      required: isEditingActiveProject,
+      required: false,
       inputType: "date",
       name: isEditingActiveProject ? "Data de Término *" : "Data de Término",
       id: "endDate",

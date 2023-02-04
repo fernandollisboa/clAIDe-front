@@ -17,8 +17,8 @@ export default function Header() {
         <img src={logo} alt="logo lsd" onClick={() => navigate("/members")} />
         <NavBar>
           <Link to="/members">Membros</Link>
-          {/* <Link to="/teachers">Professores</Link> */}
           <Link to="/projects">Projetos</Link>
+          <Link to="/activity">Log de Atividades</Link>
         </NavBar>
         <LogoutIcon onClick={logout} fontSize="5rem" />
       </Container>

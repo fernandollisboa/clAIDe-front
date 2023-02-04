@@ -206,20 +206,22 @@ export default function Member() {
                         ))}
                     </Project>
 
-                    <Services>
+                    {/* <Services>
                       <ServiceHeader>
-                        <ServiceTitle>Servicos</ServiceTitle>
-                        <AssociationSelectService>
-                          <option value="">Associar Servico</option>
-                          <option value="">GitHub</option>
-                          <option value="">Cloud</option>
-                        </AssociationSelectService>
+                        <ServiceTitle>Serviços</ServiceTitle>
+                        <Button
+                          style={{ padding: "1.5%" }}
+                          onClick={() => setShowServiceAssociationModal(true)}
+                        >
+                          Associar serviço
+                        </Button>
                       </ServiceHeader>
                       <Cards>
-                        <ServiceCard>Card 1</ServiceCard>
-                        <ServiceCard>Card 1</ServiceCard>
+                        {servicesAssociates.map(({ service }) => (
+                          <ServiceCard key={service.id}>{service.name}</ServiceCard>
+                        ))}
                       </Cards>
-                    </Services>
+                    </Services> */}
                   </List>
                 </>
               ) : (
@@ -364,7 +366,7 @@ const List = styled.div`
 `;
 const Project = styled.div`
   height: 200px;
-  border-bottom: 2px solid #bcbcbc;
+  /* border-bottom: 2px solid #bcbcbc; */
   overflow-y: auto;
 `;
 const ProjectTitle = styled.div`
@@ -388,17 +390,6 @@ const ServiceTitle = styled.h1`
   font-weight: 700;
   font-size: 20px;
   line-height: 25px;
-`;
-const AssociationSelectService = styled.select`
-  width: 40%;
-  border: 2px solid #131313;
-  text-decoration: none;
-  border-radius: 4px;
-  padding: 1.2vh 2vh;
-  background: #fff;
-  font-weight: 700;
-  font-size: 1rem;
-  cursor: pointer;
 `;
 const Cards = styled.div`
   display: flex;

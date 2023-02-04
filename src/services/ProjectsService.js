@@ -29,17 +29,22 @@ class ProjectsService {
     const config = createHeaders();
     return api.get(`/members/${memberId}/projects`, config);
   }
-  getActivity() {
+  getActivity(desc, entity, operation) {
     const config = createHeaders();
-    return api.get(`activityRecords/`, config);
+    let params = new URLSearchParams();
+    params.append("operation", operation);
+    params.append("desc", desc);
+    params.append("entity", entity);
+    let queryString = params.toString();
+    return api.get(`activity-records/?${queryString}`, config);
   }
   getAssociateProjectByProjectId(projectId) {
     const config = createHeaders();
     return api.get(`projects/${projectId}/members`, config);
   }
-  update(projectData) {
+  update(projectId, projectData) {
     const config = createHeaders();
-    return api.put(`projects/`, projectData, config);
+    return api.put(`projects/${projectId}`, projectData, config);
   }
 }
 export default new ProjectsService();

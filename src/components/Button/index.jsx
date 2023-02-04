@@ -1,9 +1,9 @@
 import PropTypes from "prop-types";
 import styled from "styled-components";
 
-export default function Button({ type, children, onClick, disabled }) {
+export default function Button({ type, children, onClick, disabled, width }) {
   return (
-    <ButtonStyle type={type} onClick={onClick} disabled={disabled}>
+    <ButtonStyle type={type} onClick={onClick} disabled={disabled} width={width}>
       {children}
     </ButtonStyle>
   );
@@ -29,7 +29,7 @@ const ButtonStyle = styled.button`
   color: #fff;
   border-radius: 5px;
   font-size: 1rem;
-  width: 100%;
+  width: ${({ width }) => (width ? width : " 100%")};
   &:hover {
     background: #6674f4;
   }
