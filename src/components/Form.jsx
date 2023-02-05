@@ -2,7 +2,7 @@ import { bool, func, array, string } from "prop-types";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import arrow from "../assets/arrow.svg";
 import FormGroup from "components/FormGroup";
@@ -12,6 +12,7 @@ import Button from "components/Button";
 import useErrors from "hooks/useErrors";
 import Select from "components/Select";
 import maskDateRaw from "utils/maskDateRaw";
+import Loader from "./Loader";
 
 Form.propTypes = {
   isFormValid: bool.isRequired,
@@ -46,6 +47,8 @@ export default function Form({
 }) {
   const { setError, removeError, getErrorMessageByFieldName, isErrorActive } = useErrors();
 
+  const [isLoading, setIsLoading] = useState(false);
+
   useEffect(() => {
     if (incomingErrors) {
       incomingErrors?.forEach((error) =>
@@ -76,9 +79,16 @@ export default function Form({
     else navigate(-1);
   }
 
+  async function handleFormSubmit(e) {
+    e.preventDefault();
+    setIsLoading(true);
+    await handleSubmit();
+    setIsLoading(false);
+  }
+
   return (
     <>
-      <FormWrapper onSubmit={handleSubmit} maxWidth={maxWidth}>
+      <FormWrapper onSubmit={handleFormSubmit} maxWidth={maxWidth}>
         <Title>
           <Link onClick={handleNavigationReturn}>
             <img src={arrow} alt="voltar" />
@@ -106,7 +116,13 @@ export default function Form({
                 const { options } = { ...rest };
                 return (
                   <FormGroup key={id} error={getErrorMessageByFieldName(id)}>
-                    <Select id={id} data-cy={`input-${id}`} onChange={onChange} value={value}>
+                    <Select
+                      id={id}
+                      data-cy={`input-${id}`}
+                      onChange={onChange}
+                      value={value}
+                      disabled={isLoading}
+                    >
                       {options.map(({ value, label, selected }) => {
                         return (
                           <option key={value} value={value} selected={selected}>
@@ -124,13 +140,13 @@ export default function Form({
                     <div style={{ display: "flex" }}>
                       <Input
                         id={id}
-                        type="text"
                         placeholder={placeholder}
                         maxLength={10}
                         minLength={10}
                         data-cy={`input-${id}`}
                         value={maskDateRaw(value)}
                         onChange={handleInputChange}
+                        disabled={isLoading}
                       />
                       <FormDate
                         id={id}
@@ -151,7 +167,7 @@ export default function Form({
                       placeholder={placeholder}
                       name={name}
                       id={id}
-                      disabled={disabled}
+                      disabled={disabled || isLoading}
                       value={value}
                       onChange={onChange}
                       minLength={minLength}
@@ -165,8 +181,8 @@ export default function Form({
             }
           )}
         </InputsContainer>
-        <Button type="submit" disabled={!isFormValid}>
-          {buttonLabel}
+        <Button type="submit" disabled={!isFormValid || isLoading}>
+          {isLoading ? "Enviando..." : buttonLabel}
         </Button>
       </FormWrapper>
     </>

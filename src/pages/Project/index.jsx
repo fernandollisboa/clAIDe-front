@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
@@ -11,16 +11,21 @@ import ProjectService from "../../services/ProjectsService";
 import maskDate from "../../utils/maskDate";
 import { alertUnmappedError, alertUser } from "../../utils/alertUser";
 import EditProject from "pages/EditProject";
+import Loader from "components/Loader";
 
 export default function Project() {
   const [project, setProject] = useState({});
   const [members, setMembers] = useState([]);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const params = useParams();
   const navigate = useNavigate();
   const { id } = params;
-  async function loadDashboardProject() {
+
+  const loadDashboardProject = useCallback(async () => {
+    console.log("useEffect");
+    setIsLoading(true);
     try {
       const { data: project } = await ProjectService.getById(id);
       const { data: members } = await ProjectService.getAssociateProjectByProjectId(id);
@@ -35,13 +40,17 @@ export default function Project() {
       }
       alertUnmappedError(error);
     }
-  }
+    setIsLoading(false);
+  }, [id]);
+
   useEffect(() => {
     loadDashboardProject();
-  }, [params.id, showEditModal]);
+  }, [loadDashboardProject]);
+
   function navigateToMember(id) {
     navigate(`/member/${id}`);
   }
+
   return (
     <>
       <Layout>
@@ -60,55 +69,89 @@ export default function Project() {
             initialState={project}
             showModal={showEditModal}
             setShowModal={setShowEditModal}
+            onSubmitReload={loadDashboardProject}
             projectId={id}
           />
 
-          <Dashboard>
-            <HeaderDashboard>
-              <Info status={project.isActive}>
-                <div className="project-info">
-                  <div className="name">{project.name}</div>
-                  <div className="status">
-                    <p>{project.isActive ? "Ativo" : "Inativo"}</p>
+          {isLoading ? (
+            <Loader />
+          ) : (
+            <Dashboard>
+              <HeaderDashboard>
+                <Info status={project.isActive}>
+                  <div className="project-info">
+                    <div className="name">{project.name}</div>
+                    <div className="status">
+                      <p>{project.isActive ? "Ativo" : "Inativo"}</p>
+                    </div>
                   </div>
-                </div>
-              </Info>
-              <Buttons>
-                <Button onClick={() => setShowEditModal((state) => !state)}> Editar</Button>
-              </Buttons>
-            </HeaderDashboard>
-            <Body>
-              <ListInfo>
-                <div className="data">
-                  <p>
-                    <span className="atribute-title">Código Embrapii: </span>
-                    {project.embrapiiCode || "-"}
-                  </p>
-                  <p>
-                    <span className="atribute-title">Financiador: </span> {project.financier || "-"}
-                  </p>
-                  <p>
-                    <span className="atribute-title">Sala: </span>
-                    {project.room || "-"}
-                  </p>
-                  <p>
-                    <span className="atribute-title">Prédio: </span>
-                    {project.building || "-"}
-                  </p>
-                  <p>
-                    <span className="atribute-title">Data de Criação: </span>
-                    {maskDate(project.creationDate) || "-"}
-                  </p>
-                  <p>
-                    <span className="atribute-title">Data de Término: </span>
-                    {maskDate(project.endDate) || "-"}
-                  </p>
-                </div>
-                <div className="list-teachers">
-                  <span>Professores</span>
+                </Info>
+                <Buttons>
+                  <Button onClick={() => setShowEditModal((state) => !state)}> Editar</Button>
+                </Buttons>
+              </HeaderDashboard>
+              <Body>
+                <ListInfo>
+                  <div className="data">
+                    <p>
+                      <span className="atribute-title">Código Embrapii: </span>
+                      {project.embrapiiCode || "-"}
+                    </p>
+                    <p>
+                      <span className="atribute-title">Financiador: </span>{" "}
+                      {project.financier || "-"}
+                    </p>
+                    <p>
+                      <span className="atribute-title">Sala: </span>
+                      {project.room || "-"}
+                    </p>
+                    <p>
+                      <span className="atribute-title">Prédio: </span>
+                      {project.building || "-"}
+                    </p>
+                    <p>
+                      <span className="atribute-title">Data de Criação: </span>
+                      {maskDate(project.creationDate) || "-"}
+                    </p>
+                    <p>
+                      <span className="atribute-title">Data de Término: </span>
+                      {maskDate(project.endDate) || "-"}
+                    </p>
+                  </div>
+                  <div className="list-teachers">
+                    <span>Professores</span>
+                    {members
+                      .filter(
+                        (associationMember) => associationMember.member.memberType === "PROFESSOR"
+                      )
+                      .map((associationMember) => (
+                        <Card
+                          key={associationMember.member.id}
+                          onClick={() => {
+                            navigateToMember(associationMember.member.id);
+                          }}
+                        >
+                          <div>
+                            <FormatData>
+                              Nome: <FontData>{associationMember.member.name}</FontData>
+                            </FormatData>
+                            <FormatData>
+                              Sala: <FontData>{associationMember.member.roomName}</FontData>
+                            </FormatData>
+                            <FormatData>
+                              Email LSD: <FontData>{associationMember.member.lsdEmail}</FontData>
+                            </FormatData>
+                          </div>
+                          <div>{associationMember.member.isActive ? "🟢" : "🔴"}</div>
+                        </Card>
+                      ))}
+                  </div>
+                </ListInfo>
+                <Members>
+                  <span>Alunos</span>
                   {members
                     .filter(
-                      (associationMember) => associationMember.member.memberType === "PROFESSOR"
+                      (associationMember) => associationMember.member.memberType === "STUDENT"
                     )
                     .map((associationMember) => (
                       <Card
@@ -119,48 +162,23 @@ export default function Project() {
                       >
                         <div>
                           <FormatData>
-                            Nome: <FontData>{associationMember.member.name}</FontData>
+                            Nome: <FontData>{associationMember.member.name || "-"}</FontData>
                           </FormatData>
                           <FormatData>
-                            Sala: <FontData>{associationMember.member.roomName}</FontData>
+                            Sala: <FontData>{associationMember.member.roomName || "-"}</FontData>
                           </FormatData>
                           <FormatData>
-                            Email LSD: <FontData>{associationMember.member.lsdEmail}</FontData>
+                            Email LSD:{" "}
+                            <FontData>{associationMember.member.lsdEmail || "-"}</FontData>
                           </FormatData>
                         </div>
                         <div>{associationMember.member.isActive ? "🟢" : "🔴"}</div>
                       </Card>
                     ))}
-                </div>
-              </ListInfo>
-              <Members>
-                <span>Alunos</span>
-                {members
-                  .filter((associationMember) => associationMember.member.memberType === "STUDENT")
-                  .map((associationMember) => (
-                    <Card
-                      key={associationMember.member.id}
-                      onClick={() => {
-                        navigateToMember(associationMember.member.id);
-                      }}
-                    >
-                      <div>
-                        <FormatData>
-                          Nome: <FontData>{associationMember.member.name || "-"}</FontData>
-                        </FormatData>
-                        <FormatData>
-                          Sala: <FontData>{associationMember.member.roomName || "-"}</FontData>
-                        </FormatData>
-                        <FormatData>
-                          Email LSD: <FontData>{associationMember.member.lsdEmail || "-"}</FontData>
-                        </FormatData>
-                      </div>
-                      <div>{associationMember.member.isActive ? "🟢" : "🔴"}</div>
-                    </Card>
-                  ))}
-              </Members>
-            </Body>
-          </Dashboard>
+                </Members>
+              </Body>
+            </Dashboard>
+          )}
         </Container>
       </Layout>
     </>
@@ -281,6 +299,7 @@ const Members = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 0.5rem;
   font-size: 1rem;
   margin: 0 auto;
   overflow-y: auto;

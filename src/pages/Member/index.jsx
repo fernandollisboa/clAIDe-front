@@ -19,6 +19,7 @@ import { alertUnmappedError, alertUser } from "../../utils/alertUser";
 import maskCpf from "../../utils/maskCpf";
 import parseMemberTypeToPortuguese from "../../utils/parseMemberTypeToPortuguese";
 import maskDate from "../../utils/maskDate";
+import Loader from "components/Loader";
 
 export default function Member() {
   const [member, setMember] = useState({});
@@ -30,6 +31,7 @@ export default function Member() {
   const [showEditModal, setShowEditModal] = useState(false);
   const [showCreateAssociationModal, setShowCreateAssociationModal] = useState(false);
   const [showEditAssociationModal, setShowEditAssociationModal] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const params = useParams();
   const navigate = useNavigate();
@@ -37,6 +39,7 @@ export default function Member() {
   const { id: memberId } = params;
 
   const loadDashboardMember = useCallback(async () => {
+    setIsLoading(true);
     try {
       const { data: member } = await MembersService.getById(memberId);
       const { data: memberProjects } = await ProjectService.getAssociateProjectByMemberId(memberId);
@@ -61,7 +64,8 @@ export default function Member() {
         navigate("/members");
       } else alertUnmappedError(err);
     }
-  }, [memberId, navigate]);
+    setIsLoading(false);
+  }, [memberId]);
 
   useEffect(() => {
     loadDashboardMember();
@@ -82,6 +86,7 @@ export default function Member() {
           initialState={member}
           showModal={showEditModal}
           setShowModal={setShowEditModal}
+          onSubmitReload={loadDashboardMember}
         />
         <UpdateAssociationModal
           member={member}
@@ -107,106 +112,114 @@ export default function Member() {
             </Link>
             <Title>Informações de Membro</Title>
           </Header>
-          <Dashboard>
-            <HeaderDashboard>
-              <Info status={member.status}>
-                <MemberInfo>
-                  <Name>{member.name}</Name>
-                  <Type>{parseMemberTypeToPortuguese(member.memberType)}</Type>
-                  <Status isActive={member.isActive}>
-                    {member.isActive ? <p>Ativo</p> : <p>Inativo</p>}
-                  </Status>
-                </MemberInfo>
-                <Username>{member.username}</Username>
-              </Info>
-              <Buttons>
-                {viewProjectAssociation ? (
-                  <>
-                    <Button onClick={() => setShowEditModal((state) => !state)}> Editar</Button>
-                    <Button onClick={handleToggleAssociationProject}>Gerenciar projetos</Button>
-                  </>
-                ) : (
-                  <Button onClick={handleToggleAssociationProject}> Voltar</Button>
-                )}
-              </Buttons>
-            </HeaderDashboard>
-            <Body>
-              {viewProjectAssociation ? (
-                <>
-                  <ListMemberInfo>
-                    <Data>
-                      <FormatData>
-                        E-mail principal: <FontData>{member.email || "-"}</FontData>
-                      </FormatData>
-                      <FormatData>
-                        E-mail LSD: <FontData>{member.lsdEmail || "-"}</FontData>
-                      </FormatData>
-                      <FormatData>
-                        E-mail secundário: <FontData>{member.secondaryEmail || "-"}</FontData>
-                      </FormatData>
-                      <FormatData>
-                        Lattes: <FontData>{member.lattes || "-"}</FontData>
-                      </FormatData>
-                      <FormatData>
-                        Sala LSD: <FontData>{member.roomName || " Sem sala"}</FontData>
-                      </FormatData>
-                      <FormatData>
-                        Tem a chave da sala? <FontData>{member.hasKey ? "Sim" : "Não"}</FontData>
-                      </FormatData>
-                    </Data>
-                    <PersonalData>
-                      <FormatData>
-                        Data de nascimento: <FontData>{maskDate(member.birthDate) || "-"}</FontData>
-                      </FormatData>
-                      <FormatData>
-                        CPF: <FontData>{maskCpf(member.cpf) || "-"}</FontData>
-                      </FormatData>
-                      <FormatData>
-                        RG: <FontData>{member.rg || "-"}</FontData>
-                      </FormatData>
-                      <FormatData>
-                        Passaporte: <FontData>{member.passport || "-"}</FontData>
-                      </FormatData>
-                    </PersonalData>
-                  </ListMemberInfo>
+          {isLoading ? (
+            <Loader />
+          ) : (
+            <Dashboard>
+              <>
+                <HeaderDashboard>
+                  <Info status={member.status}>
+                    <MemberInfo>
+                      <Name>{member.name}</Name>
+                      <Type>{parseMemberTypeToPortuguese(member.memberType)}</Type>
+                      <Status isActive={member.isActive}>
+                        {member.isActive ? <p>Ativo</p> : <p>Inativo</p>}
+                      </Status>
+                    </MemberInfo>
+                    <Username>{member.username}</Username>
+                  </Info>
+                  <Buttons>
+                    {viewProjectAssociation ? (
+                      <>
+                        <Button onClick={() => setShowEditModal((state) => !state)}> Editar</Button>
+                        <Button onClick={handleToggleAssociationProject}>Gerenciar projetos</Button>
+                      </>
+                    ) : (
+                      <Button onClick={handleToggleAssociationProject}> Voltar</Button>
+                    )}
+                  </Buttons>
+                </HeaderDashboard>
+                <Body>
+                  {viewProjectAssociation ? (
+                    <>
+                      <ListMemberInfo>
+                        <Data>
+                          <FormatData>
+                            E-mail principal: <FontData>{member.email || "-"}</FontData>
+                          </FormatData>
+                          <FormatData>
+                            E-mail LSD: <FontData>{member.lsdEmail || "-"}</FontData>
+                          </FormatData>
+                          <FormatData>
+                            E-mail secundário: <FontData>{member.secondaryEmail || "-"}</FontData>
+                          </FormatData>
+                          <FormatData>
+                            Lattes: <FontData>{member.lattes || "-"}</FontData>
+                          </FormatData>
+                          <FormatData>
+                            Sala LSD: <FontData>{member.roomName || " Sem sala"}</FontData>
+                          </FormatData>
+                          <FormatData>
+                            Tem a chave da sala?{" "}
+                            <FontData>{member.hasKey ? "Sim" : "Não"}</FontData>
+                          </FormatData>
+                        </Data>
+                        <PersonalData>
+                          <FormatData>
+                            Data de nascimento:{" "}
+                            <FontData>{maskDate(member.birthDate) || "-"}</FontData>
+                          </FormatData>
+                          <FormatData>
+                            CPF: <FontData>{maskCpf(member.cpf) || "-"}</FontData>
+                          </FormatData>
+                          <FormatData>
+                            RG: <FontData>{member.rg || "-"}</FontData>
+                          </FormatData>
+                          <FormatData>
+                            Passaporte: <FontData>{member.passport || "-"}</FontData>
+                          </FormatData>
+                        </PersonalData>
+                      </ListMemberInfo>
 
-                  <List>
-                    <Project>
-                      <ProjectTitle>
-                        {memberProjects.filter(({ isActive }) => isActive).length ? (
-                          <h1>Projetos Atuais</h1>
-                        ) : (
-                          <h1>Nenhum projeto associado</h1>
-                        )}
-                      </ProjectTitle>
-                      {memberProjects
-                        .filter(({ isActive }) => !isActive)
-                        .map(({ project, startDate }) => (
-                          <Card
-                            key={project.id}
-                            onClick={() => {
-                              navigateToProject(project.id);
-                            }}
-                          >
-                            <div>
-                              <FormatData>
-                                Nome: <FontData>{project.name}</FontData>
-                              </FormatData>
-                              <FormatData>
-                                Sala:
-                                <FontData> {project.roomName || " Sem sala"}</FontData>
-                              </FormatData>
-                              <FormatData>
-                                Data que entrou:
-                                <FontData> {maskDate(startDate)}</FontData>
-                              </FormatData>
-                            </div>
-                            <div>{project.isActive ? "🟢" : "🔴"} </div>
-                          </Card>
-                        ))}
-                    </Project>
+                      <List>
+                        <Project>
+                          <ProjectTitle>
+                            {memberProjects.filter(({ isActive }) => isActive).length ? (
+                              <h1>Projetos Atuais</h1>
+                            ) : (
+                              <h1>Nenhum projeto associado</h1>
+                            )}
+                          </ProjectTitle>
+                          <ProjectsContainer>
+                            {memberProjects
+                              .filter(({ isActive }) => isActive)
+                              .map(({ project, startDate }) => (
+                                <Card
+                                  key={project.id}
+                                  onClick={() => {
+                                    navigateToProject(project.id);
+                                  }}
+                                >
+                                  <div>
+                                    <FormatData>
+                                      Nome: <FontData>{project.name}</FontData>
+                                    </FormatData>
+                                    <FormatData>
+                                      Sala:
+                                      <FontData> {project.roomName || " Sem sala"}</FontData>
+                                    </FormatData>
+                                    <FormatData>
+                                      Data de ingresso:
+                                      <FontData> {maskDate(startDate)}</FontData>
+                                    </FormatData>
+                                  </div>
+                                  <div>{project.isActive ? "🟢" : "🔴"} </div>
+                                </Card>
+                              ))}
+                          </ProjectsContainer>
+                        </Project>
 
-                    {/* <Services>
+                        {/* <Services>
                       <ServiceHeader>
                         <ServiceTitle>Serviços</ServiceTitle>
                         <Button
@@ -222,34 +235,36 @@ export default function Member() {
                         ))}
                       </Cards>
                     </Services> */}
-                  </List>
-                </>
-              ) : (
-                <>
-                  <ListProjects>
-                    <AssociatedProjects
-                      projects={memberProjects}
-                      title={
-                        memberProjects.length
-                          ? "Editar projetos associados"
-                          : "Nenhum projeto associado"
-                      }
-                      editShowModal={setShowEditAssociationModal}
-                      setProjectAssociation={setSelectedProjectAssociation}
-                    />
-                  </ListProjects>
-                  <ListProjects>
-                    <ProjectsToAssociated
-                      projects={projects}
-                      title="Associar a um projeto"
-                      editShowModal={setShowCreateAssociationModal}
-                      setProjectAssociation={setSelectedProjectAssociation}
-                    />
-                  </ListProjects>
-                </>
-              )}
-            </Body>
-          </Dashboard>
+                      </List>
+                    </>
+                  ) : (
+                    <>
+                      <ListProjects>
+                        <AssociatedProjects
+                          projects={memberProjects}
+                          title={
+                            memberProjects.length
+                              ? "Editar projetos associados"
+                              : "Nenhum projeto associado"
+                          }
+                          editShowModal={setShowEditAssociationModal}
+                          setProjectAssociation={setSelectedProjectAssociation}
+                        />
+                      </ListProjects>
+                      <ListProjects>
+                        <ProjectsToAssociated
+                          projects={projects}
+                          title="Associar a um projeto"
+                          editShowModal={setShowCreateAssociationModal}
+                          setProjectAssociation={setSelectedProjectAssociation}
+                        />
+                      </ListProjects>
+                    </>
+                  )}
+                </Body>
+              </>
+            </Dashboard>
+          )}
         </Container>
       </Layout>
     </>
@@ -386,28 +401,10 @@ const ServiceHeader = styled.div`
   justify-content: space-between;
   align-items: center;
 `;
-const ServiceTitle = styled.h1`
-  font-weight: 700;
-  font-size: 20px;
-  line-height: 25px;
-`;
-const Cards = styled.div`
+const ProjectsContainer = styled.div`
+  width: 100%;
   display: flex;
-  margin-top: 2%;
-  overflow-y: scroll;
-  flex-wrap: wrap;
-  gap: 3vh;
-  max-height: 15vh;
-  padding: 1%;
-`;
-const ServiceCard = styled.div`
-  font-weight: 700;
-  font-size: 1rem;
-  max-width: 15%;
-  padding: 2%;
-  background: #fff;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-  border-radius: 20px;
+  justify-content: center;
 `;
 const ListProjects = styled.div`
   width: 50%;

@@ -31,9 +31,7 @@ export default function ProjectForm({
   });
   const { name, creationDate, endDate, room, building, embrapiiCode, financier } = projectData;
 
-  async function handleSubmit(event) {
-    event.preventDefault();
-
+  async function handleSubmit() {
     await onSubmit({
       name,
       creationDate: parseDateBrToISO(creationDate),

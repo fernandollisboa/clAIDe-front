@@ -74,9 +74,7 @@ export default function MemberForm({
 
   const getIsBrazilian = useMemo(() => !!Number(isBrazilian), [isBrazilian]);
 
-  async function handleSubmit(event) {
-    event.preventDefault();
-
+  async function handleSubmit() {
     await onSubmit({
       ...memberData,
       birthDate: parseDateBrToISO(birthDate),

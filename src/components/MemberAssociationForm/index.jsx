@@ -29,9 +29,7 @@ export default function MemberAssociationForm({
     // else removeError({ field: id });
   }
 
-  async function handleSubmit(event) {
-    event.preventDefault();
-
+  async function handleSubmit() {
     await onSubmit({
       startDate: parseDateBrToISO(startDate),
       endDate: parseDateBrToISO(endDate),

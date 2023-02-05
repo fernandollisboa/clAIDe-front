@@ -14,7 +14,7 @@ EditMemberModal.propTypes = {
 EditMemberModal.defaultProps = {
   initialState: {},
 };
-export default function EditMemberModal({ showModal, setShowModal, initialState }) {
+export default function EditMemberModal({ showModal, setShowModal, initialState, onSubmitReload }) {
   const [formSent, setFormSent] = useState(false);
   const [errors, setErrors] = useState(null);
 
@@ -27,6 +27,7 @@ export default function EditMemberModal({ showModal, setShowModal, initialState 
       setFormSent(true);
       setShowModal(false);
       setErrors();
+      onSubmitReload();
     } catch (error) {
       const { status } = error.response;
 
