@@ -9,12 +9,15 @@ import { setSession } from "contexts/AuthContext";
 import { alertUnmappedError, alertUser } from "utils/alertUser";
 import maskPhone from "../../utils/maskPhone";
 import MembersService from "../../services/MembersService";
+import Loader from "components/Loader";
+import NoDataMessage from "components/NoDataMessage";
 
-export default function Member() {
+export default function Members() {
   const [members, setMembers] = useState([]);
   const [membersNameToBeSearched, setMembersNameToBeSearched] = useState("");
   const [isActive, setIsActive] = useState(true);
   const [desc, setDesc] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
   const filteredMembers = useMemo(
@@ -26,6 +29,7 @@ export default function Member() {
   );
 
   async function loadMembers() {
+    setIsLoading(true);
     try {
       const membersList = await MembersService.getAll(isActive, desc);
 
@@ -38,6 +42,7 @@ export default function Member() {
         navigate("/");
       } else alertUnmappedError(err);
     }
+    setIsLoading(false);
   }
 
   useEffect(() => {
@@ -69,30 +74,38 @@ export default function Member() {
           url="/newMember"
         />
         <Container>
-          {filteredMembers.map(({ id, name, roomName, lsdEmail, email, isActive, phone }) => (
-            <Card
-              key={id}
-              onClick={() => {
-                navigateToMember(id);
-              }}
-              style={{ width: "30%", height: "15%" }}
-            >
-              <Info>
-                <Name>{name}</Name>
+          {isLoading ? (
+            <Loader />
+          ) : !members.length ? (
+            <NoDataMessage />
+          ) : (
+            <MemberListContainer>
+              {filteredMembers.map(({ id, name, roomName, lsdEmail, email, isActive, phone }) => (
+                <Card
+                  key={id}
+                  onClick={() => {
+                    navigateToMember(id);
+                  }}
+                  style={{ width: "30%", height: "15%" }}
+                >
+                  <Info>
+                    <Name>{name}</Name>
 
-                <Data>
-                  Sala: <FontData>{roomName}</FontData>
-                </Data>
-                <Data>
-                  Email: <FontData>{lsdEmail ? lsdEmail : email}</FontData>
-                </Data>
-                <Data>
-                  Telefone: <FontData>{maskPhone(phone)}</FontData>
-                </Data>
-              </Info>
-              <div>{isActive ? "🟢" : "🔴"}</div>
-            </Card>
-          ))}
+                    <Data>
+                      Sala: <FontData>{roomName}</FontData>
+                    </Data>
+                    <Data>
+                      Email: <FontData>{lsdEmail ? lsdEmail : email}</FontData>
+                    </Data>
+                    <Data>
+                      Telefone: <FontData>{maskPhone(phone)}</FontData>
+                    </Data>
+                  </Info>
+                  <div>{isActive ? "🟢" : "🔴"}</div>
+                </Card>
+              ))}
+            </MemberListContainer>
+          )}
         </Container>
       </Layout>
     </>
@@ -105,7 +118,6 @@ const Container = styled.div`
   margin: 0 auto;
   flex-wrap: wrap;
   margin-top: 1%;
-  /* justify-content: space-between; */
 `;
 const Info = styled.div`
   p {
@@ -119,4 +131,10 @@ const Name = styled.p`
 const Data = styled.p``;
 const FontData = styled.span`
   color: #2e2d2d;
+`;
+
+const MemberListContainer = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: center;
 `;

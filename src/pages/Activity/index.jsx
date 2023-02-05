@@ -7,6 +7,7 @@ import arrow from "../../assets/arrow.svg";
 
 import ProjectsService from "../../services/ProjectsService";
 import maskDate from "../../utils/maskDate";
+import Loader from "components/Loader";
 
 export default function Activty() {
   const [activitys, setActivitys] = useState([]);
@@ -14,6 +15,7 @@ export default function Activty() {
   const [desc, setDesc] = useState(false);
   const [entity, setEntity] = useState("");
   const [operation, setOperation] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
 
   const filteredActivity = useMemo(
     () =>
@@ -23,6 +25,7 @@ export default function Activty() {
     [activitys, activityUserNameToBeSearched]
   );
   async function loadActivity() {
+    setIsLoading(true);
     try {
       const { data } = await ProjectsService.getActivity(desc, entity, operation);
 
@@ -30,6 +33,7 @@ export default function Activty() {
     } catch (error) {
       //   alertUser({ text: error.response.data.message, type: "error" });
     }
+    setIsLoading(false);
   }
   useEffect(() => {
     loadActivity();
@@ -49,6 +53,7 @@ export default function Activty() {
       <Layout>
         <Container>
           <Title>Log de atividades</Title>
+
           <Filters>
             <FilterDesc onClick={() => setDesc((s) => !s)} desc={desc}>
               <span>Nome</span>
@@ -82,44 +87,48 @@ export default function Activty() {
               </Filter>
             </FilterOperation>
           </Filters>
-          <ListActivities>
-            {filteredActivity.map((activity) => (
-              <Log key={activity.id} style={{ flexDirection: "column" }}>
-                <FormatData>
-                  Usuário: <FontData>{activity.user}</FontData>
-                </FormatData>
-                <FormatData>
-                  Entidade: <FontData>{activity.entity}</FontData>
-                </FormatData>
-                <FormatData>
-                  Operação: <FontData>{activity.operation}</FontData>
-                </FormatData>
-                <FormatData>
-                  Data: <FontData>{maskDate(activity.date)}</FontData>
-                </FormatData>
-                <Log key={activity.newValue.id} style={{ border: "none" }}>
+          {isLoading ? (
+            <Loader />
+          ) : (
+            <ListActivities>
+              {filteredActivity.map((activity) => (
+                <Log key={activity.id} style={{ flexDirection: "column" }}>
                   <FormatData>
-                    Valor novo:
-                    {Object.keys(activity.newValue).map((key, index) => (
-                      <div key={index}>
-                        <span>{key}</span>: <FontData>{activity.newValue[key]}</FontData>
-                      </div>
-                    ))}
+                    Usuário: <FontData>{activity.user}</FontData>
                   </FormatData>
-                  {activity.oldValue && (
+                  <FormatData>
+                    Entidade: <FontData>{activity.entity}</FontData>
+                  </FormatData>
+                  <FormatData>
+                    Operação: <FontData>{activity.operation}</FontData>
+                  </FormatData>
+                  <FormatData>
+                    Data: <FontData>{maskDate(activity.date)}</FontData>
+                  </FormatData>
+                  <Log key={activity.newValue.id} style={{ border: "none" }}>
                     <FormatData>
-                      Valor antigo:
-                      {Object.keys(activity.oldValue).map((key, index) => (
+                      Valor novo:
+                      {Object.keys(activity.newValue).map((key, index) => (
                         <div key={index}>
-                          <span>{key}</span>: <FontData>{activity.oldValue[key]}</FontData>
+                          <span>{key}</span>: <FontData>{activity.newValue[key]}</FontData>
                         </div>
                       ))}
                     </FormatData>
-                  )}
+                    {activity.oldValue && (
+                      <FormatData>
+                        Valor antigo:
+                        {Object.keys(activity.oldValue).map((key, index) => (
+                          <div key={index}>
+                            <span>{key}</span>: <FontData>{activity.oldValue[key]}</FontData>
+                          </div>
+                        ))}
+                      </FormatData>
+                    )}
+                  </Log>
                 </Log>
-              </Log>
-            ))}
-          </ListActivities>
+              ))}
+            </ListActivities>
+          )}
         </Container>
       </Layout>
     </>
@@ -135,10 +144,8 @@ const Container = styled.div`
 const Title = styled.h1`
   justify-content: center;
   font-style: italic;
-  color: rgba(0, 0, 0, 0.65);
   font-weight: 700;
   font-size: 3rem;
-  padding-top: 2%;
   padding-bottom: 8%;
 `;
 const Filters = styled.div`

@@ -9,13 +9,16 @@ import { alertUnmappedError, alertUser } from "utils/alertUser";
 
 import maskDate from "../../utils/maskDate";
 import ProjectsService from "../../services/ProjectsService";
+import Loader from "components/Loader";
+import NoDataMessage from "components/NoDataMessage";
 
-export default function Project() {
+export default function Projects() {
   const [projects, setProjects] = useState([]);
   const [projectNameToBeSearched, setProjectNameToBeSearched] = useState("");
   const [isActive, setIsActive] = useState("");
   const [desc, setDesc] = useState(false);
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(true);
 
   const filteredProjects = useMemo(
     () =>
@@ -26,6 +29,7 @@ export default function Project() {
   );
 
   const loadProjects = useCallback(async () => {
+    setIsLoading(true);
     try {
       const projectsList = await ProjectsService.getAll(isActive, desc);
 
@@ -37,6 +41,7 @@ export default function Project() {
         navigate("/members");
       } else alertUnmappedError(error);
     }
+    setIsLoading(false);
   }, [isActive, desc, navigate]);
 
   useEffect(loadProjects, [loadProjects]);
@@ -66,35 +71,43 @@ export default function Project() {
           url="/newProject"
         />
         <Container>
-          {filteredProjects.map((project) => (
-            <Card
-              key={project.id}
-              onClick={() => {
-                navigateToProject(project.id);
-              }}
-              style={{ width: "30%", height: "20%" }}
-            >
-              <Info>
-                <Name>{project.name}</Name>
-                {project.endDate ? (
-                  <Data>
-                    Data de Fim: <FontData>{maskDate(project.endDate)}</FontData>
-                  </Data>
-                ) : (
-                  <Data>
-                    Data de início: <FontData>{maskDate(project.creationDate)}</FontData>
-                  </Data>
-                )}
-                <Data>
-                  Prédio: <FontData>{project.building}</FontData>
-                </Data>
-                <Data>
-                  Sala: <FontData>{project.room}</FontData>
-                </Data>
-              </Info>
-              <div>{project.isActive ? "🟢" : "🔴"}</div>
-            </Card>
-          ))}
+          {isLoading ? (
+            <Loader />
+          ) : !projects.length ? (
+            <NoDataMessage />
+          ) : (
+            <ProjectListContainer>
+              {filteredProjects.map((project) => (
+                <Card
+                  key={project.id}
+                  onClick={() => {
+                    navigateToProject(project.id);
+                  }}
+                  style={{ width: "30%", height: "20%" }}
+                >
+                  <Info>
+                    <Name>{project.name}</Name>
+                    {project.endDate ? (
+                      <Data>
+                        Data de Fim: <FontData>{maskDate(project.endDate)}</FontData>
+                      </Data>
+                    ) : (
+                      <Data>
+                        Data de início: <FontData>{maskDate(project.creationDate)}</FontData>
+                      </Data>
+                    )}
+                    <Data>
+                      Prédio: <FontData>{project.building}</FontData>
+                    </Data>
+                    <Data>
+                      Sala: <FontData>{project.room}</FontData>
+                    </Data>
+                  </Info>
+                  <div>{project.isActive ? "🟢" : "🔴"}</div>
+                </Card>
+              ))}
+            </ProjectListContainer>
+          )}
         </Container>
       </Layout>
     </>
@@ -122,4 +135,10 @@ const Name = styled.p`
 const Data = styled.p``;
 const FontData = styled.span`
   color: #2e2d2d;
+`;
+
+const ProjectListContainer = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: center;
 `;

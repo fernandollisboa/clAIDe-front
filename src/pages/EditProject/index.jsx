@@ -13,11 +13,18 @@ EditProject.propTypes = {
   initialState: object.isRequired,
   projectId: number.isRequired,
 };
-export default function EditProject({ showModal, setShowModal, initialState, projectId }) {
+export default function EditProject({
+  showModal,
+  setShowModal,
+  initialState,
+  projectId,
+  onSubmitReload,
+}) {
   const [formSent, setFormSent] = useState(false);
   const [errors, setErrors] = useState(null);
 
   async function handleSubmit(formData) {
+    console.log("form data");
     try {
       const project = {
         ...formData,
@@ -29,6 +36,7 @@ export default function EditProject({ showModal, setShowModal, initialState, pro
       setFormSent(true);
       setErrors();
       setShowModal(false);
+      onSubmitReload();
     } catch (error) {
       const { status } = error.response;
 
