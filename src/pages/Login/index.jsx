@@ -40,12 +40,16 @@ export default function Login() {
       alertUser({ text: "Bem-vindo(a)!", type: "success" });
       navigate("/members");
     } catch (err) {
-      console.log({ err });
-      const { status } = err.response;
+      const { message } = err;
+      if (message === "Network Error") {
+        alertUser({ text: "Não foi possível se conectar com o Servidor", type: "question" });
+      } else {
+        const { status } = err.response;
 
-      if (status === 404) alertUser({ text: "Usuário não encontrado" });
-      else if (status === 401 || status === 403) alertUser({ text: "Credenciais inválidas" });
-      else alertUser({ text: "Erro não mapeado" });
+        if (status === 404) alertUser({ text: "Usuário não encontrado" });
+        else if (status === 401 || status === 403) alertUser({ text: "Credenciais inválidas" });
+        else alertUser({ text: "Erro não mapeado" });
+      }
     }
     setIsLoading(false);
   }
