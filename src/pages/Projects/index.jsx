@@ -15,7 +15,7 @@ import NoDataMessage from "components/NoDataMessage";
 export default function Projects() {
   const [projects, setProjects] = useState([]);
   const [projectNameToBeSearched, setProjectNameToBeSearched] = useState("");
-  const [isActive, setIsActive] = useState("");
+  const [isActive, setIsActive] = useState(true);
   const [desc, setDesc] = useState(false);
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
@@ -58,6 +58,8 @@ export default function Projects() {
   function navigateToProject(id) {
     navigate(`/project/${id}`);
   }
+  console.log(projects.length);
+
   return (
     <>
       <Layout>
@@ -77,13 +79,12 @@ export default function Projects() {
             <NoDataMessage />
           ) : (
             <ProjectListContainer>
-              {filteredProjects.map((project) => (
+              {filteredProjects.map((project, index) => (
                 <Card
-                  key={project.id}
+                  key={index}
                   onClick={() => {
                     navigateToProject(project.id);
                   }}
-                  style={{ width: "30%", height: "20%" }}
                 >
                   <Info>
                     <Name>{project.name}</Name>
@@ -116,12 +117,11 @@ export default function Projects() {
 
 const Container = styled.div`
   display: flex;
-  align-items: center;
-  max-width: 90%;
+
   margin: 0 auto;
+  gap: 2vh;
   flex-wrap: wrap;
   margin-top: 1%;
-  /* justify-content: space-between; */
 `;
 const Info = styled.div`
   p {
@@ -138,7 +138,8 @@ const FontData = styled.span`
 `;
 
 const ProjectListContainer = styled.div`
-  width: 100%;
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
+  gap: 0.2vh;
 `;

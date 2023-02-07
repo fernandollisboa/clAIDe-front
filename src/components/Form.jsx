@@ -13,6 +13,7 @@ import useErrors from "hooks/useErrors";
 import Select from "components/Select";
 import maskDateRaw from "utils/maskDateRaw";
 import Loader from "./Loader";
+import parseDateBrToISO from "utils/parseDateBrToISO";
 
 Form.propTypes = {
   isFormValid: bool.isRequired,
@@ -45,7 +46,7 @@ export default function Form({
   maxWidth,
   height,
 }) {
-  const { setError, removeError, getErrorMessageByFieldName, isErrorActive } = useErrors();
+  const { setError, removeError, getErrorMessageByFieldName, isErrorActive, errors } = useErrors();
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -64,7 +65,14 @@ export default function Form({
       return { ...state, [id]: value };
     });
 
-    if (isErrorActive(id)) removeError(id);
+    if (id.includes("Date")) {
+      if (!parseDateBrToISO(value)) {
+        setError({ field: id, message: `${name} inválida` });
+      } else {
+        removeError(id);
+      }
+      return;
+    }
 
     if (required) {
       if (!value) setError({ field: id, message: `${name} é obrigatório` });
@@ -107,7 +115,7 @@ export default function Form({
               type = "text",
               inputType,
               onChange = handleInputChange,
-              maxLength,
+              maxLength = 25,
               minLength,
               disabled = false,
               ...rest
@@ -135,11 +143,16 @@ export default function Form({
                 );
               } else if (inputType === "date") {
                 const { minDate, maxDate } = { ...rest };
+                const removeDateErrorsOnDatePicker = (date, id) => {
+                  removeError(id);
+                  onChange(date);
+                };
                 return (
                   <FormGroup key={id} error={getErrorMessageByFieldName(id)}>
                     <div style={{ display: "flex" }}>
                       <Input
                         id={id}
+                        name={name}
                         placeholder={placeholder}
                         maxLength={10}
                         minLength={10}
@@ -150,8 +163,9 @@ export default function Form({
                       />
                       <FormDate
                         id={id}
+                        name={name}
                         placeholder={placeholder}
-                        onChange={onChange}
+                        onChange={(date) => removeDateErrorsOnDatePicker(date, id)}
                         minDate={minDate}
                         maxDate={maxDate}
                         value={value}

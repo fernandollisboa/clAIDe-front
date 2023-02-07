@@ -12,6 +12,7 @@ import maskDate from "../../utils/maskDate";
 import { alertUnmappedError, alertUser } from "../../utils/alertUser";
 import EditProject from "pages/EditProject";
 import Loader from "components/Loader";
+import NoDataMessage from "components/NoDataMessage";
 
 export default function Project() {
   const [project, setProject] = useState({});
@@ -124,27 +125,31 @@ export default function Project() {
                       .filter(
                         (associationMember) => associationMember.member.memberType === "PROFESSOR"
                       )
-                      .map((associationMember) => (
-                        <Card
-                          key={associationMember.member.id}
-                          onClick={() => {
-                            navigateToMember(associationMember.member.id);
-                          }}
-                        >
-                          <div>
-                            <FormatData>
-                              Nome: <FontData>{associationMember.member.name}</FontData>
-                            </FormatData>
-                            <FormatData>
-                              Sala: <FontData>{associationMember.member.roomName}</FontData>
-                            </FormatData>
-                            <FormatData>
-                              Email LSD: <FontData>{associationMember.member.lsdEmail}</FontData>
-                            </FormatData>
-                          </div>
-                          <div>{associationMember.member.isActive ? "🟢" : "🔴"}</div>
-                        </Card>
-                      ))}
+                      .map((associationMember) => {
+                        if (!associationMember.length) {
+                          return <NoDataMessage key={associationMember.member.memberType} />;
+                        } else {
+                          <Card
+                            key={associationMember.member.id}
+                            onClick={() => {
+                              navigateToMember(associationMember.member.id);
+                            }}
+                          >
+                            <div>
+                              <FormatData>
+                                Nome: <FontData>{associationMember.member.name}</FontData>
+                              </FormatData>
+                              <FormatData>
+                                Sala: <FontData>{associationMember.member.roomName}</FontData>
+                              </FormatData>
+                              <FormatData>
+                                Email LSD: <FontData>{associationMember.member.lsdEmail}</FontData>
+                              </FormatData>
+                            </div>
+                            <div>{associationMember.member.isActive ? "🟢" : "🔴"}</div>
+                          </Card>;
+                        }
+                      })}
                   </div>
                 </ListInfo>
                 <Members>
@@ -199,7 +204,7 @@ const Container = styled.div`
   flex-direction: column;
   margin: 0 auto;
   width: 88%;
-  height: 653px;
+  height: 75vh;
   background: #fff;
   border-radius: 10px;
   padding: 1% 2%;
@@ -295,7 +300,6 @@ const ListInfo = styled.div`
 `;
 const Members = styled.div`
   width: 50%;
-  padding: 0 2%;
   display: flex;
   flex-direction: column;
   align-items: center;
