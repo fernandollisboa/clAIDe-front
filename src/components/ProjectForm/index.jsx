@@ -68,9 +68,6 @@ export default function ProjectForm({
     setProjectData((state) => {
       return { ...state, endDate: maskDate(endDate) };
     });
-
-    if (!endDate) setError({ field: "endDate", message: `Data de Término é obrigatório` });
-    else removeError("endDate");
   }
   const inputs = [
     { required: true, name: "Nome", id: "name", placeholder: "Nome *", value: name },
@@ -107,7 +104,7 @@ export default function ProjectForm({
     {
       required: false,
       inputType: "date",
-      name: isEditingActiveProject ? "Data de Término *" : "Data de Término",
+      name: "Data de Término",
       id: "endDate",
       onChange: handleEndDateInputChange,
       placeholder: "Data de Término",
@@ -120,7 +117,6 @@ export default function ProjectForm({
   const isFormValid =
     inputs.filter(({ required }) => required).every(({ value }) => value) &&
     parseDateBrToISO(creationDate) &&
-    (!isEditingActiveProject || parseDateBrToISO(endDate)) &&
     !errors.length;
 
   return (

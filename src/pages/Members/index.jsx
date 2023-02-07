@@ -15,7 +15,7 @@ import NoDataMessage from "components/NoDataMessage";
 export default function Members() {
   const [members, setMembers] = useState([]);
   const [membersNameToBeSearched, setMembersNameToBeSearched] = useState("");
-  const [isActive, setIsActive] = useState(true);
+  const [isActive, setIsActive] = useState("");
   const [desc, setDesc] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
