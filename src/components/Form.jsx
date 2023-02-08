@@ -114,7 +114,7 @@ export default function Form({
               type = "text",
               inputType,
               onChange = handleInputChange,
-              maxLength = 25,
+              maxLength,
               minLength,
               disabled = false,
               ...rest

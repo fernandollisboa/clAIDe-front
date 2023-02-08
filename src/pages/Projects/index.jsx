@@ -15,7 +15,7 @@ import NoDataMessage from "components/NoDataMessage";
 export default function Projects() {
   const [projects, setProjects] = useState([]);
   const [projectNameToBeSearched, setProjectNameToBeSearched] = useState("");
-  const [isActive, setIsActive] = useState(true);
+  const [isActive, setIsActive] = useState("");
   const [desc, setDesc] = useState(false);
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
