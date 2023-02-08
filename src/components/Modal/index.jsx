@@ -1,29 +1,31 @@
 import PropTypes from "prop-types";
 import ReactModal from "react-modal";
 
-export default function Modal({ modalOpen, children }) {
+export default function Modal({ modalOpen, children, height, width }) {
   return (
-    <ReactModal isOpen={modalOpen} style={StyleModal}>
+    <ReactModal isOpen={modalOpen} style={getStyleModal({ height, width })} ariaHideApp={false}>
       {children}
     </ReactModal>
   );
 }
-const StyleModal = {
-  content: {
-    left: "0",
-    right: "0",
-    top: "0",
-    bottom: "0",
-    margin: "auto",
-    width: "70vw",
-    height: "40vh",
-    boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
-    borderRadius: "20px",
-    fontSize: "1rem",
-    fontWeight: "400",
-  },
-};
+
+function getStyleModal({ height, width }) {
+  return {
+    content: {
+      margin: "auto",
+      width: width || "70vw",
+      height: height || "50vh",
+      boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
+      borderRadius: "20px",
+      fontSize: "1rem",
+      fontWeight: "400",
+    },
+    overlay: { zIndex: 100 },
+  };
+}
 Modal.propTypes = {
   modalOpen: PropTypes.bool.isRequired,
   children: PropTypes.node.isRequired,
+  height: PropTypes.string,
+  width: PropTypes.string,
 };

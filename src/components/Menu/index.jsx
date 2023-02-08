@@ -16,19 +16,19 @@ export default function Menu({
   return (
     <Container>
       <Title>{type} cadastrados</Title>
+      <InputSearch
+        value={nameToBeSearched}
+        placeholder="Pesquisar por nome..."
+        type="text"
+        onChange={handleChangeSearch}
+      />
       <FilterButton onClick={handleToggleDesc} desc={desc}>
         <span>Nome</span>
         <img src={arrow} alt="Arrow" />
       </FilterButton>
-      <InputSearch
-        value={nameToBeSearched}
-        placeholder="Pesquisar por nome ..."
-        type="text"
-        onChange={handleChangeSearch}
-      />
       <Filters>
         <span>Filtrar por: </span>
-        <select style={{ height: "40px" }} onClick={handleToggleIsActive}>
+        <select onClick={handleToggleIsActive}>
           <option value={""}>Todos</option>
           <option value={true}>Ativos</option>
           <option value={false}>Inativos</option>
@@ -73,6 +73,7 @@ const Title = styled.h1`
 const FilterButton = styled.button`
   border: 1px solid #131313;
   padding: 1%;
+  cursor: pointer;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.04);
   border-radius: 4px;
   background: #f6f5fc;
@@ -85,7 +86,7 @@ const FilterButton = styled.button`
   }
   img {
     cursor: pointer;
-    transform: ${({ desc }) => (desc ? "rotate(-180deg)" : "rotate(0deg)")};
+    transform: ${({ desc }) => (!desc ? "rotate(-180deg)" : "rotate(0deg)")};
     transition: transform 0.2s ease-in;
   }
 `;
@@ -111,10 +112,11 @@ const Filters = styled.div`
     font-weight: 600;
   }
   select {
+    height: 40px;
+    cursor: pointer;
     background: transparent;
     color: rgb(102, 102, 102);
     border: none;
     outline: none;
-    cursor: pointer;
   }
 `;

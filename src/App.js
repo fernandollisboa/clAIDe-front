@@ -3,11 +3,10 @@ import GlobalStyle from "./styles/GlobalStyle.js";
 import Login from "./pages/Login";
 import NewProject from "./pages/NewProject";
 import Projects from "./pages/Projects";
-import Teacher from "./pages/Teacher";
 import NewMember from "./pages/NewMember";
 import Members from "./pages/Members";
 import Member from "./pages/Member";
-import Activty from "./pages/Activity/index.jsx";
+import Activty from "./pages/Activity";
 import Project from "./pages/Project";
 import ProtectedRoute from "./routes/ProtectedRoute";
 
@@ -22,7 +21,6 @@ function App() {
           <Route path="/newProject" element={<NewProject />} />
           <Route path="/projects" element={<Projects />} />
           <Route path="/project/:id" element={<Project />} />
-          <Route path="/teachers" element={<Teacher />} />
           <Route path="/newMember" element={<NewMember />} />
           <Route path="/members" element={<Members />} />
           <Route path="/member/:id" element={<Member />} />

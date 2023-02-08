@@ -17,21 +17,20 @@ Layout.propTypes = {
   children: PropTypes.node,
 };
 const Container = styled.div`
-  height: calc(100vh - 76px - 1%);
-  padding-top: calc(166px - 1%);
+  height: 100%;
+  padding-top: 8%;
   overflow: auto;
 `;
 
 const LayoutContainer = styled.div`
-  height: 100vh;
+  height: 94vh;
   width: 100vw;
   position: relative;
 `;
 
 const Footer = styled.div`
-  height: 70px;
+  height: 6vh;
   background: #486fbd;
   width: 100%;
   bottom: 0;
-  position: absolute;
 `;

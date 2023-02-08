@@ -1,318 +1,282 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
 
 import Layout from "../../components/Layout";
-import Modal from "../../components/Modal";
+import Card from "../../components/Card";
+import EditMemberModal from "pages/EditMemberModal";
+import AssociatedProjects from "components/AssociatedProjects";
+import ProjectsToAssociated from "components/ProjectsToAssociated";
+import CreateAssociationModal from "../CreateAssociationModal";
+import UpdateAssociationModal from "pages/UpdateAssociationModal";
+
 import arrowback from "../../assets/arrow-back.svg";
 
 import ProjectService from "../../services/ProjectsService";
 import MembersService from "../../services/MembersService";
 
-import { alertUser } from "../../utils/alertUser";
+import { alertUnmappedError, alertUser } from "../../utils/alertUser";
 import maskCpf from "../../utils/maskCpf";
-import { transformDate } from "../../utils/transformDate";
+import parseMemberTypeToPortuguese from "../../utils/parseMemberTypeToPortuguese";
+import maskDate from "../../utils/maskDate";
+import Loader from "components/Loader";
 
 export default function Member() {
   const [member, setMember] = useState({});
-  const [viewProjectButton, setviewProjectButton] = useState(true);
-  const [activeProjects, setActiveProjects] = useState([]);
+  const [viewProjectAssociation, setViewProjectAssociation] = useState(true);
+  const [memberProjects, setMemberProjects] = useState([]);
   const [projects, setProjects] = useState([]);
-  const [modalOpen, setModalOpen] = useState(false);
-  const [selectedProject, setSelectedProject] = useState({});
-  const [startDate, setStartDate] = useState(null);
-  const [endDate, setEndDate] = useState(null);
+  const [selectedProjectAssociation, setSelectedProjectAssociation] = useState({});
+
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showCreateAssociationModal, setShowCreateAssociationModal] = useState(false);
+  const [showEditAssociationModal, setShowEditAssociationModal] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
   const params = useParams();
   const navigate = useNavigate();
 
-  async function loadDashboardMember() {
-    try {
-      const memberId = params.id;
-      const { data: member } = await MembersService.getById(memberId);
-      const { data: projects } = await ProjectService.getAssociateProjectByMemberId(memberId);
+  const { id: memberId } = params;
 
+  const loadDashboardMember = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const { data: member } = await MembersService.getById(memberId);
+      const { data: memberProjects } = await ProjectService.getAssociateProjectByMemberId(memberId);
+      const { data: projects } = await ProjectService.getAll(true);
+
+      const memberProjectIds = memberProjects.map(({ projectId }) => projectId);
+
+      const filterNotAssociatedProjects = ({ id }) => {
+        return memberProjectIds.every((projectId) => projectId !== id);
+      };
+
+      const otherProjects = projects.filter(filterNotAssociatedProjects);
+
+      setProjects(otherProjects);
       setMember(member);
-      setActiveProjects(projects);
-    } catch (error) {
-      alertUser({ text: error.response.data.message, type: "error" });
+      setMemberProjects(memberProjects);
+    } catch (err) {
+      const { status } = err.response;
+
+      if (status === 404) {
+        alertUser({ text: "Membro não encontrado" });
+        navigate("/members");
+      } else alertUnmappedError(err);
     }
-  }
+    setIsLoading(false);
+  }, [memberId]);
+
   useEffect(() => {
     loadDashboardMember();
-  }, [params.id, projects]);
+  }, [loadDashboardMember]);
 
-  async function associateStudentWithProject() {
-    try {
-      await ProjectService.associateMemberWithProject(
-        member.id,
-        selectedProject.id,
-        transformDate(startDate),
-        transformDate(endDate)
-      );
-      setStartDate(null);
-      setEndDate(null);
-      setModalOpen(false);
-      alertUser({ text: "Projeto associado!", type: "success" });
-    } catch (error) {
-      alertUser({ text: error.response.data.message, type: "error" });
-    }
+  function handleToggleAssociationProject() {
+    setViewProjectAssociation((state) => !state);
   }
 
-  async function handleToggleAssociationProject() {
-    setviewProjectButton((prevState) => (prevState ? false : true));
-    if (viewProjectButton) {
-      try {
-        const { data } = await ProjectService.getAll(true);
-
-        setProjects(data);
-      } catch (error) {
-        alert(error);
-      }
-    } else {
-      setProjects([]);
-    }
-  }
   function navigateToProject(id) {
     navigate(`/project/${id}`);
   }
+
   return (
     <>
       <Layout>
-        <Modal modalOpen={modalOpen}>
-          <ModalContainer>
-            <span>
-              Tem certeza que deseja associar o aluno <strong> {member.name} </strong> ao projeto
-              <strong> {selectedProject.name}</strong>?
-            </span>
-            <InputsModal>
-              <DatePicker
-                placeholderText="Data de inicio"
-                className="date"
-                required
-                onChange={setStartDate}
-                value={transformDate(startDate)}
-              />
-
-              <DatePicker
-                placeholderText="Data de fim"
-                className="date"
-                onChange={setEndDate}
-                value={transformDate(endDate)}
-              />
-
-              <Button
-                style={{ padding: "1%", height: "52px" }}
-                onClick={() => {
-                  setModalOpen(false);
-                  setSelectedProject({});
-                  setStartDate("");
-                  setEndDate("");
-                }}
-              >
-                Cancelar
-              </Button>
-              <Button
-                style={{ border: "2px solid red", color: "red", padding: "1%", height: "52px" }}
-                onClick={associateStudentWithProject}
-              >
-                Confirmar
-              </Button>
-            </InputsModal>
-          </ModalContainer>
-        </Modal>
+        <EditMemberModal
+          initialState={member}
+          showModal={showEditModal}
+          setShowModal={setShowEditModal}
+          onSubmitReload={loadDashboardMember}
+        />
+        <UpdateAssociationModal
+          member={member}
+          showModal={showEditAssociationModal}
+          setShowModal={setShowEditAssociationModal}
+          project={selectedProjectAssociation}
+          initialState={selectedProjectAssociation}
+        />
+        <CreateAssociationModal
+          member={member}
+          project={selectedProjectAssociation}
+          showModal={showCreateAssociationModal}
+          setShowModal={setShowCreateAssociationModal}
+        />
         <Container>
           <Header>
-            <Link to="/members">
+            <Link
+              onClick={() => {
+                navigate(-1);
+              }}
+            >
               <img src={arrowback} />
             </Link>
             <Title>Informações de Membro</Title>
           </Header>
-          <Dashboard>
-            <HeaderDashboard>
-              <Info status={member.status}>
-                <MemberInfo>
-                  <Name>{member.name}</Name>
-                  <Type>{member.memberType}</Type>
-                  <Status>{(member.status && <p>Ativo</p>) || <p>Inativo</p>}</Status>
-                </MemberInfo>
-                <Username>{member.username}</Username>
-              </Info>
-              <Buttons>
-                {viewProjectButton ? (
-                  <>
-                    <Button> Editar</Button>
-                    <Button onClick={handleToggleAssociationProject}>Gerenciar projetos</Button>
-                  </>
-                ) : (
-                  <Button onClick={handleToggleAssociationProject}> Voltar</Button>
-                )}
-              </Buttons>
-            </HeaderDashboard>
-            <Body>
-              <ListInfo>
-                <Data>
-                  <FormatData>
-                    E-mail principal: <FontData>{member.email}</FontData>
-                  </FormatData>
-                  <FormatData>
-                    E-mail LSD: <FontData>{member.lsdEmail}</FontData>
-                  </FormatData>
-                  <FormatData>
-                    E-mail secundário: <FontData>{member.secondaryEmail}</FontData>
-                  </FormatData>
-                  <FormatData>
-                    Lattes: <FontData>{member.lattes}</FontData>
-                  </FormatData>
-                  <FormatData>
-                    Sala LSD: <FontData>{member.roomName}</FontData>
-                  </FormatData>
-                  <FormatData>
-                    Tem chave:
-                    {(member.hasKey && <FontData>Tem a chave</FontData>) || (
-                      <FontData>Tem a chave</FontData>
+          {isLoading ? (
+            <Loader />
+          ) : (
+            <Dashboard>
+              <>
+                <HeaderDashboard>
+                  <Info status={member.status}>
+                    <MemberInfo>
+                      <Name>{member.name}</Name>
+                      <Type>{parseMemberTypeToPortuguese(member.memberType)}</Type>
+                      <Status isActive={member.isActive}>
+                        {member.isActive ? <p>Ativo</p> : <p>Inativo</p>}
+                      </Status>
+                    </MemberInfo>
+                    <Username>{member.username}</Username>
+                  </Info>
+                  <Buttons>
+                    {viewProjectAssociation ? (
+                      <>
+                        <Button onClick={() => setShowEditModal((state) => !state)}> Editar</Button>
+                        <Button onClick={handleToggleAssociationProject}>Gerenciar projetos</Button>
+                      </>
+                    ) : (
+                      <Button onClick={handleToggleAssociationProject}> Voltar</Button>
                     )}
-                  </FormatData>
-                </Data>
-                <PersonalData>
-                  <FormatData>
-                    Data de nascimento: <FontData>{member.birthDate}</FontData>
-                  </FormatData>
-                  <FormatData>
-                    CPF: <FontData>{maskCpf(member.cpf)}</FontData>
-                  </FormatData>
-                  <FormatData>
-                    RG: <FontData>{member.rg}</FontData>
-                  </FormatData>
-                  {(member.passport && (
-                    <FormatData>
-                      Passaporte: <FontData>{member.passport}</FontData>{" "}
-                    </FormatData>
-                  )) || (
-                    <FormatData>
-                      Passaporte: <FontData>Nao tem informacao</FontData>{" "}
-                    </FormatData>
-                  )}
-                </PersonalData>
-              </ListInfo>
-              {viewProjectButton ? (
-                <List>
-                  <Project>
-                    <ProjectTitle>
-                      {activeProjects.length > 1 ? (
-                        <h1>Projetos Atuais</h1>
-                      ) : (
-                        <h1>Projeto Atual</h1>
-                      )}
-                    </ProjectTitle>
-                    {activeProjects.map((projectAssociation) => (
-                      <CardProjectActive
-                        key={projectAssociation.id}
-                        onClick={() => {
-                          navigateToProject(projectAssociation.project.id);
-                        }}
-                      >
-                        <div>
-                          <span>
-                            Nome: <FontData>{projectAssociation.project.name}</FontData>
-                          </span>
-                          <span>
-                            Sala:{" "}
-                            <FontData>{projectAssociation.project.room || "Sem sala"}</FontData>
-                          </span>
-                          <span>
-                            Data de inicio:{" "}
-                            <FontData>{transformDate(projectAssociation.startDate)}</FontData>
-                          </span>
-                        </div>
-                        <div>{projectAssociation.project.isActive ? "🟢" : "🔴"} </div>
-                      </CardProjectActive>
-                    ))}
-                  </Project>
+                  </Buttons>
+                </HeaderDashboard>
+                <Body>
+                  {viewProjectAssociation ? (
+                    <>
+                      <ListMemberInfo>
+                        <Data>
+                          <FormatData>
+                            E-mail principal: <FontData>{member.email || "-"}</FontData>
+                          </FormatData>
+                          <FormatData>
+                            E-mail LSD: <FontData>{member.lsdEmail || "-"}</FontData>
+                          </FormatData>
+                          <FormatData>
+                            E-mail secundário: <FontData>{member.secondaryEmail || "-"}</FontData>
+                          </FormatData>
+                          <FormatData>
+                            Lattes: <FontData>{member.lattes || "-"}</FontData>
+                          </FormatData>
+                          <FormatData>
+                            Sala LSD: <FontData>{member.roomName || " Sem sala"}</FontData>
+                          </FormatData>
+                          <FormatData>
+                            Tem a chave da sala?{" "}
+                            <FontData>{member.hasKey ? "Sim" : "Não"}</FontData>
+                          </FormatData>
+                        </Data>
+                        <PersonalData>
+                          <FormatData>
+                            Data de nascimento:{" "}
+                            <FontData>{maskDate(member.birthDate) || "-"}</FontData>
+                          </FormatData>
+                          <FormatData>
+                            CPF: <FontData>{maskCpf(member.cpf) || "-"}</FontData>
+                          </FormatData>
+                          <FormatData>
+                            RG: <FontData>{member.rg || "-"}</FontData>
+                          </FormatData>
+                          <FormatData>
+                            Passaporte: <FontData>{member.passport || "-"}</FontData>
+                          </FormatData>
+                        </PersonalData>
+                      </ListMemberInfo>
 
-                  <Services>
-                    <ServiceHeader>
-                      <ServiceTitle>Servicos</ServiceTitle>
-                      <AssociationSelectService>
-                        <option value="">Associar Servico</option>
-                        <option value="">GitHub</option>
-                        <option value="">Cloud</option>
-                      </AssociationSelectService>
-                    </ServiceHeader>
-                    <Cards>
-                      <ServiceCard>Card 1</ServiceCard>
-                      <ServiceCard>Card 1</ServiceCard>
-                    </Cards>
-                  </Services>
-                </List>
-              ) : (
-                <ListProjects>
-                  <p>Associar à Novo Projeto</p>
-                  <div className="card-body">
-                    {projects.map((project) => (
-                      <CardProject
-                        key={project.id}
-                        onClick={() => {
-                          setModalOpen(true);
-                          setSelectedProject(project);
-                        }}
-                      >
-                        <div className="info">
-                          <span>
-                            Nome: <p>{project.name}</p>
-                          </span>
-                          <span>
-                            Sala: <p>{project.room || "Sem sala"}</p>
-                          </span>
-                          <span>
-                            Predio: <p>{project.building || "Sem predio"}</p>
-                          </span>
-                        </div>
-                        <div>{project.isActive ? "🟢" : "🔴"}</div>
-                      </CardProject>
-                    ))}
-                  </div>
-                </ListProjects>
-              )}
-            </Body>
-          </Dashboard>
+                      <List>
+                        <Project>
+                          <ProjectTitle>
+                            {memberProjects.filter(({ isActive }) => isActive).length ? (
+                              <h1>Projetos Atuais</h1>
+                            ) : (
+                              <h1>Nenhum projeto associado</h1>
+                            )}
+                          </ProjectTitle>
+                          <ProjectsContainer>
+                            {memberProjects
+                              .filter(({ isActive }) => isActive)
+                              .map(({ project, startDate }) => (
+                                <Card
+                                  key={project.id}
+                                  onClick={() => {
+                                    navigateToProject(project.id);
+                                  }}
+                                >
+                                  <div>
+                                    <FormatData>
+                                      Nome: <FontData>{project.name}</FontData>
+                                    </FormatData>
+                                    <FormatData>
+                                      Sala:
+                                      <FontData> {project.roomName || " Sem sala"}</FontData>
+                                    </FormatData>
+                                    <FormatData>
+                                      Data de ingresso:
+                                      <FontData> {maskDate(startDate)}</FontData>
+                                    </FormatData>
+                                  </div>
+                                  <div>{project.isActive ? "🟢" : "🔴"} </div>
+                                </Card>
+                              ))}
+                          </ProjectsContainer>
+                        </Project>
+
+                        {/* <Services>
+                      <ServiceHeader>
+                        <ServiceTitle>Serviços</ServiceTitle>
+                        <Button
+                          style={{ padding: "1.5%" }}
+                          onClick={() => setShowServiceAssociationModal(true)}
+                        >
+                          Associar serviço
+                        </Button>
+                      </ServiceHeader>
+                      <Cards>
+                        {servicesAssociates.map(({ service }) => (
+                          <ServiceCard key={service.id}>{service.name}</ServiceCard>
+                        ))}
+                      </Cards>
+                    </Services> */}
+                      </List>
+                    </>
+                  ) : (
+                    <>
+                      <ListProjects>
+                        <AssociatedProjects
+                          projects={memberProjects}
+                          title={
+                            memberProjects.length
+                              ? "Editar projetos associados"
+                              : "Nenhum projeto associado"
+                          }
+                          editShowModal={setShowEditAssociationModal}
+                          setProjectAssociation={setSelectedProjectAssociation}
+                        />
+                      </ListProjects>
+                      <ListProjects>
+                        <ProjectsToAssociated
+                          projects={projects}
+                          title="Associar a um projeto"
+                          editShowModal={setShowCreateAssociationModal}
+                          setProjectAssociation={setSelectedProjectAssociation}
+                        />
+                      </ListProjects>
+                    </>
+                  )}
+                </Body>
+              </>
+            </Dashboard>
+          )}
         </Container>
       </Layout>
     </>
   );
 }
 
-const ModalContainer = styled.div`
-  width: 100%;
-  height: 100%;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  strong {
-    font-weight: 700;
-  }
-`;
-const InputsModal = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-end;
-  .date {
-    margin-right: 5%;
-    border: 2px solid black;
-    outline: 0;
-    padding: 0 5%;
-    font-size: 1rem;
-    height: 52px;
-  }
-`;
 const Container = styled.div`
   display: flex;
   flex-direction: column;
   margin: 0 auto;
   width: 88%;
-  height: 653px;
+  height: 75vh;
   background: #fff;
   border-radius: 10px;
   padding: 1% 2%;
@@ -325,7 +289,6 @@ const Title = styled.h1`
 const Header = styled.div`
   display: flex;
 `;
-
 const Dashboard = styled.div``;
 const HeaderDashboard = styled.div`
   display: flex;
@@ -359,7 +322,7 @@ const Type = styled.div`
 const Status = styled.div`
   font-weight: 800;
   font-size: 0.7rem;
-  color: ${({ status }) => (status ? "#069d15" : "red")};
+  color: ${({ isActive }) => (isActive ? "#069d15" : "red")};
   background: #f6f5fc;
   border-radius: 4px;
   padding: 0.5vh;
@@ -386,13 +349,12 @@ const Button = styled.button`
   margin-right: 5%;
   cursor: pointer;
 `;
-
 const Body = styled.div`
   display: flex;
   justify-content: space-between;
   padding-top: 1%;
 `;
-const ListInfo = styled.div`
+const ListMemberInfo = styled.div`
   width: 50%;
   border-right: 2px solid #bcbcbc;
   padding-right: 2%;
@@ -405,13 +367,12 @@ const PersonalData = styled.div`
   height: 200px;
   padding-top: 2%;
 `;
-const FormatData = styled.span`
+const FormatData = styled.p`
   padding: 7px;
   font-size: 1rem;
-  display: flex;
   font-weight: 700;
 `;
-const FontData = styled.p`
+const FontData = styled.span`
   font-weight: 400;
 `;
 const List = styled.div`
@@ -419,8 +380,7 @@ const List = styled.div`
   padding: 0 2%;
 `;
 const Project = styled.div`
-  height: 200px;
-  border-bottom: 2px solid #bcbcbc;
+  height: 48vh;
   overflow-y: auto;
 `;
 const ProjectTitle = styled.div`
@@ -431,21 +391,6 @@ const ProjectTitle = styled.div`
   line-height: 25px;
   padding: 3% 0;
 `;
-const CardProjectActive = styled.div`
-  margin: 0 auto;
-  width: 60%;
-  display: flex;
-  justify-content: space-between;
-  padding: 3%;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-  border-radius: 20px;
-  font-size: 1rem;
-  span {
-    display: flex;
-    font-weight: 700;
-    margin-bottom: 4%;
-  }
-`;
 const Services = styled.div`
   height: 200px;
   padding-top: 2%;
@@ -455,87 +400,16 @@ const ServiceHeader = styled.div`
   justify-content: space-between;
   align-items: center;
 `;
-const ServiceTitle = styled.h1`
-  font-weight: 700;
-  font-size: 20px;
-  line-height: 25px;
-`;
-const AssociationSelectService = styled.select`
-  width: 40%;
-  border: 2px solid #131313;
-  text-decoration: none;
-  border-radius: 4px;
-  padding: 1.2vh 2vh;
-  background: #fff;
-  font-weight: 700;
-  font-size: 1rem;
-  cursor: pointer;
-`;
-const Cards = styled.div`
+const ProjectsContainer = styled.div`
+  width: 100%;
   display: flex;
-  margin-top: 2%;
-  overflow-y: scroll;
   flex-wrap: wrap;
-  gap: 3vh;
-  max-height: 15vh;
-  padding: 1%;
-`;
-const ServiceCard = styled.div`
-  font-weight: 700;
-  font-size: 1rem;
-  max-width: 15%;
-  padding: 2%;
-  background: #fff;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-  border-radius: 20px;
+  justify-content: center;
 `;
 const ListProjects = styled.div`
   width: 50%;
   display: flex;
   flex-direction: column;
-  height: 400px;
   align-items: center;
   padding: 0 3%;
-  p {
-    font-weight: 700;
-    font-size: 1.4rem;
-    margin-bottom: 3%;
-  }
-  .card-body {
-    width: 100%;
-    overflow-y: auto;
-  }
-  .name {
-    font-weight: 700;
-    font-size: 1.4rem;
-    line-height: 30px;
-  }
-`;
-
-const CardProject = styled.div`
-  display: flex;
-  justify-content: space-between;
-  padding: 3%;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.08);
-  border-radius: 20px;
-  font-size: 1rem;
-
-  &:hover {
-    transition: all 200ms ease-in;
-    transform: scale(0.93);
-  }
-  & + & {
-    margin-bottom: 1%;
-  }
-  .info {
-    span {
-      display: flex;
-
-      font-weight: 700;
-      p {
-        font-size: 1rem;
-        font-weight: 400;
-      }
-    }
-  }
 `;

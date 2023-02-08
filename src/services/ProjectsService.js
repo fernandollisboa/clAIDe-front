@@ -1,39 +1,50 @@
 import api from "./api";
+import { createHeaders, createQueryString } from "./requestBuilders";
 
-function createHeaders() {
-  const token = window.localStorage.getItem("claideToken");
-  const config = { headers: { Authorization: `Bearer ${token}` } };
-  return config;
-}
 class ProjectsService {
   create(body) {
     const config = createHeaders();
     return api.post("projects/", body, config);
   }
-  getAll(isActive, desc) {
+  getAll(isActive, desc = false) {
     const config = createHeaders();
-    return api.get(`projects/?isActive=${isActive}&desc=${desc}`, config);
+    const query = createQueryString({ isActive, desc });
+    return api.get(`projects/${query}`, config);
   }
-  async getById(id) {
+  getById(id) {
     const config = createHeaders();
-    return await api.get(`projects/${id}`, config);
+    return api.get(`projects/${id}`, config);
   }
-  associateMemberWithProject(memberId, projectId, startDate, endDate) {
+  updateAssociateMemberWithProject({ memberId, projectId, startDate, endDate }) {
     const config = createHeaders();
     const body = { startDate, endDate };
-    return api.post(`projects/${projectId}/members/${memberId}`, body, config);
+    return api.put(`projects/${projectId}/members/${memberId}`, body, config);
   }
-  getAssociateProjectMemberId(memberId) {
+  createAssociateMemberWithProject({ memberId, projectId, startDate, endDate }) {
     const config = createHeaders();
-    return api.get(`projects/members/${memberId}`, config);
+    const body = { startDate, endDate, memberId };
+    return api.post(`projects/${projectId}/members/`, body, config);
   }
-  getActivity() {
+  getAssociateProjectByMemberId(memberId) {
     const config = createHeaders();
-    return api.get(`activityRecords/`, config);
+    return api.get(`/members/${memberId}/projects`, config);
+  }
+  getActivity(desc, entity, operation) {
+    const config = createHeaders();
+    let params = new URLSearchParams();
+    params.append("operation", operation);
+    params.append("desc", desc);
+    params.append("entity", entity);
+    let queryString = params.toString();
+    return api.get(`activity-records/?${queryString}`, config);
   }
   getAssociateProjectByProjectId(projectId) {
     const config = createHeaders();
     return api.get(`projects/${projectId}/members`, config);
+  }
+  update(projectId, projectData) {
+    const config = createHeaders();
+    return api.put(`projects/${projectId}`, projectData, config);
   }
 }
 export default new ProjectsService();

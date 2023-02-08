@@ -1,18 +1,23 @@
 import { useState, useEffect, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
 import Card from "../../components/Card";
 import Menu from "../../components/Menu";
 import Layout from "../../components/Layout";
-
+import { setSession } from "contexts/AuthContext";
+import { alertUnmappedError, alertUser } from "utils/alertUser";
+import maskPhone from "../../utils/maskPhone";
 import MembersService from "../../services/MembersService";
-import { useNavigate } from "react-router-dom";
+import Loader from "components/Loader";
+import NoDataMessage from "components/NoDataMessage";
 
-export default function Member() {
+export default function Members() {
   const [members, setMembers] = useState([]);
   const [membersNameToBeSearched, setMembersNameToBeSearched] = useState("");
-  const [isActive, setIsActive] = useState("");
+  const [isActive, setIsActive] = useState(true);
   const [desc, setDesc] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
   const filteredMembers = useMemo(
@@ -24,13 +29,20 @@ export default function Member() {
   );
 
   async function loadMembers() {
+    setIsLoading(true);
     try {
       const membersList = await MembersService.getAll(isActive, desc);
 
       setMembers(membersList.data);
     } catch (err) {
-      alert(err);
+      const { status } = err.response;
+      if (status === 401) {
+        setSession(null);
+        alertUser({ text: "Token expirado, por favor logue novamente", type: "warning" });
+        navigate("/");
+      } else alertUnmappedError(err);
     }
+    setIsLoading(false);
   }
 
   useEffect(() => {
@@ -41,7 +53,7 @@ export default function Member() {
     setIsActive(event.target.value);
   }
   function handleToggleDesc() {
-    setDesc((prevState) => (prevState ? false : true));
+    setDesc((prevState) => !prevState);
   }
   function handleChangeSearchMember(event) {
     setMembersNameToBeSearched(event.target.value);
@@ -62,28 +74,38 @@ export default function Member() {
           url="/newMember"
         />
         <Container>
-          {filteredMembers.map((member) => (
-            <Card
-              key={member.id}
-              onClick={() => {
-                navigateToMember(member.id);
-              }}
-            >
-              <div className="info">
-                <div className="name">{member.name}</div>
-                <div>
-                  Projeto: <span>Falta colocar no obj</span>
-                </div>
-                <div>
-                  Sala: <span>{member.roomName}</span>
-                </div>
-                <div>
-                  Email LSD: <span>{member.lsdEmail}</span>
-                </div>
-              </div>
-              <div>{member.isActive ? "🟢" : "🔴"}</div>
-            </Card>
-          ))}
+          {isLoading ? (
+            <Loader />
+          ) : !members.length ? (
+            <NoDataMessage />
+          ) : (
+            <MemberListContainer>
+              {filteredMembers.map(({ id, name, roomName, lsdEmail, email, isActive, phone }) => (
+                <Card
+                  key={id}
+                  onClick={() => {
+                    navigateToMember(id);
+                  }}
+                  style={{ width: "30%", height: "15%" }}
+                >
+                  <Info>
+                    <Name>{name}</Name>
+
+                    <Data>
+                      Sala: <FontData>{roomName}</FontData>
+                    </Data>
+                    <Data>
+                      Email: <FontData>{lsdEmail ? lsdEmail : email}</FontData>
+                    </Data>
+                    <Data>
+                      Telefone: <FontData>{maskPhone(phone)}</FontData>
+                    </Data>
+                  </Info>
+                  <div>{isActive ? "🟢" : "🔴"}</div>
+                </Card>
+              ))}
+            </MemberListContainer>
+          )}
         </Container>
       </Layout>
     </>
@@ -92,9 +114,27 @@ export default function Member() {
 const Container = styled.div`
   display: flex;
   align-items: center;
-  max-width: 68%;
+  max-width: 90%;
   margin: 0 auto;
   flex-wrap: wrap;
-  gap: 2vh;
   margin-top: 1%;
+`;
+const Info = styled.div`
+  p {
+    margin-bottom: 4px;
+  }
+`;
+const Name = styled.p`
+  font-size: 1rem;
+  font-weight: 700;
+`;
+const Data = styled.p``;
+const FontData = styled.span`
+  color: #2e2d2d;
+`;
+
+const MemberListContainer = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: center;
 `;

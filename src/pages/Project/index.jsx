@@ -1,91 +1,162 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
+import Card from "../../components/Card";
 import Layout from "../../components/Layout";
 import arrowback from "../../assets/arrow-back.svg";
 
 import ProjectService from "../../services/ProjectsService";
 
-import { transformDate } from "../../utils/transformDate";
-import { alertUser } from "../../utils/alertUser";
+import maskDate from "../../utils/maskDate";
+import { alertUnmappedError, alertUser } from "../../utils/alertUser";
+import EditProject from "pages/EditProject";
+import Loader from "components/Loader";
+import NoDataMessage from "components/NoDataMessage";
 
 export default function Project() {
   const [project, setProject] = useState({});
   const [members, setMembers] = useState([]);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const params = useParams();
   const navigate = useNavigate();
-  async function loadDashboardProject() {
+  const { id } = params;
+
+  const loadDashboardProject = useCallback(async () => {
+    console.log("useEffect");
+    setIsLoading(true);
     try {
-      const projectId = params.id;
-      const { data: project } = await ProjectService.getById(projectId);
-      const { data: members } = await ProjectService.getAssociateProjectByProjectId(projectId);
-      console.log(members);
+      const { data: project } = await ProjectService.getById(id);
+      const { data: members } = await ProjectService.getAssociateProjectByProjectId(id);
+
       setMembers(members);
-      setProject(project);
+      setProject({ ...project, id });
     } catch (error) {
-      alertUser({ text: error.response.data.message, type: "error" });
+      const { status } = error.response;
+      if (status === 404) {
+        alertUser({ text: "Projeto não encontrado" });
+        navigate("/members");
+      }
+      alertUnmappedError(error);
     }
-  }
+    setIsLoading(false);
+  }, [id]);
+
   useEffect(() => {
     loadDashboardProject();
-  }, [params.id]);
+  }, [loadDashboardProject]);
+
   function navigateToMember(id) {
     navigate(`/member/${id}`);
   }
+
   return (
     <>
       <Layout>
         <Container>
           <Header>
-            <Link to="/projects">
+            <Link
+              onClick={() => {
+                navigate(-1);
+              }}
+            >
               <img src={arrowback} />
             </Link>
             <Title>Informações do Projeto</Title>
           </Header>
+          <EditProject
+            initialState={project}
+            showModal={showEditModal}
+            setShowModal={setShowEditModal}
+            onSubmitReload={loadDashboardProject}
+            projectId={id}
+          />
 
-          <Dashboard>
-            <HeaderDashboard>
-              <Info status={project.isActive}>
-                <div className="project-info">
-                  <div className="name">{project.name}</div>
-                  <div className="status">
-                    {(project.isActive && <p>Ativo</p>) || <p>Inativo</p>}
+          {isLoading ? (
+            <Loader />
+          ) : (
+            <Dashboard>
+              <HeaderDashboard>
+                <Info status={project.isActive}>
+                  <div className="project-info">
+                    <div className="name">{project.name}</div>
+                    <div className="status">
+                      <p>{project.isActive ? "Ativo" : "Inativo"}</p>
+                    </div>
                   </div>
-                </div>
-              </Info>
-              <Buttons>
-                <Button> Editar</Button>
-              </Buttons>
-            </HeaderDashboard>
-            <Body>
-              <ListInfo>
-                <div className="data">
-                  <span>
-                    Data de Criacao: <p>{transformDate(project.creationDate)}</p>
-                  </span>
-                  <span>
-                    Data de Termino: <p>{transformDate(project.endDate) || "Sem data"}</p>
-                  </span>
-                  <span>
-                    Predio: <p>{project.building || "Sem predio"}</p>
-                  </span>
-                  <span>
-                    Sala: <p>{project.room || "Sem sala"}</p>
-                  </span>
-                  <span>
-                    Codigo Embrapii: <p>{project.embrapiiCode || "Sem codigo"}</p>
-                  </span>
-                  <span>
-                    Financiador: <p>{project.financier || "Sem financiador"}</p>
-                  </span>
-                </div>
-                <div className="list-teachers">
-                  <span>Professores:</span>
+                </Info>
+                <Buttons>
+                  <Button onClick={() => setShowEditModal((state) => !state)}> Editar</Button>
+                </Buttons>
+              </HeaderDashboard>
+              <Body>
+                <ListInfo>
+                  <div className="data">
+                    <p>
+                      <span className="atribute-title">Código Embrapii: </span>
+                      {project.embrapiiCode || "-"}
+                    </p>
+                    <p>
+                      <span className="atribute-title">Financiador: </span>{" "}
+                      {project.financier || "-"}
+                    </p>
+                    <p>
+                      <span className="atribute-title">Sala: </span>
+                      {project.room || "-"}
+                    </p>
+                    <p>
+                      <span className="atribute-title">Prédio: </span>
+                      {project.building || "-"}
+                    </p>
+                    <p>
+                      <span className="atribute-title">Data de Criação: </span>
+                      {maskDate(project.creationDate) || "-"}
+                    </p>
+                    <p>
+                      <span className="atribute-title">Data de Término: </span>
+                      {maskDate(project.endDate) || "-"}
+                    </p>
+                  </div>
+                  <div className="list-teachers">
+                    <span>Professores</span>
+                    {members
+                      .filter(
+                        (associationMember) => associationMember.member.memberType === "PROFESSOR"
+                      )
+                      .map((associationMember) => {
+                        if (!associationMember.length) {
+                          return <NoDataMessage key={associationMember.member.memberType} />;
+                        } else {
+                          <Card
+                            key={associationMember.member.id}
+                            onClick={() => {
+                              navigateToMember(associationMember.member.id);
+                            }}
+                          >
+                            <div>
+                              <FormatData>
+                                Nome: <FontData>{associationMember.member.name}</FontData>
+                              </FormatData>
+                              <FormatData>
+                                Sala: <FontData>{associationMember.member.roomName}</FontData>
+                              </FormatData>
+                              <FormatData>
+                                Email LSD: <FontData>{associationMember.member.lsdEmail}</FontData>
+                              </FormatData>
+                            </div>
+                            <div>{associationMember.member.isActive ? "🟢" : "🔴"}</div>
+                          </Card>;
+                        }
+                      })}
+                  </div>
+                </ListInfo>
+                <Members>
+                  <span>Alunos</span>
                   {members
                     .filter(
-                      (associationMember) => associationMember.member.memberType === "PROFESSOR"
+                      (associationMember) => associationMember.member.memberType === "STUDENT"
                     )
                     .map((associationMember) => (
                       <Card
@@ -94,62 +165,46 @@ export default function Project() {
                           navigateToMember(associationMember.member.id);
                         }}
                       >
-                        <div className="info">
-                          <span className="name">
-                            Nome: <p>{associationMember.member.name}</p>
-                          </span>
-                          <span>
-                            Sala: <p>{associationMember.member.roomName}</p>
-                          </span>
-                          <span>
-                            Email LSD: <p>{associationMember.member.lsdEmail}</p>
-                          </span>
+                        <div>
+                          <FormatData>
+                            Nome: <FontData>{associationMember.member.name || "-"}</FontData>
+                          </FormatData>
+                          <FormatData>
+                            Sala: <FontData>{associationMember.member.roomName || "-"}</FontData>
+                          </FormatData>
+                          <FormatData>
+                            Email LSD:{" "}
+                            <FontData>{associationMember.member.lsdEmail || "-"}</FontData>
+                          </FormatData>
                         </div>
                         <div>{associationMember.member.isActive ? "🟢" : "🔴"}</div>
                       </Card>
                     ))}
-                </div>
-              </ListInfo>
-              <Members>
-                <span>Alunos:</span>
-                {members
-                  .filter((associationMember) => associationMember.member.memberType === "STUDENT")
-                  .map((associationMember) => (
-                    <Card
-                      key={associationMember.member.id}
-                      onClick={() => {
-                        navigateToMember(associationMember.member.id);
-                      }}
-                    >
-                      <div className="info">
-                        <span className="name">
-                          Nome: <p>{associationMember.member.name}</p>
-                        </span>
-                        <span>
-                          Sala: <p>{associationMember.member.roomName}</p>
-                        </span>
-                        <span>
-                          Email LSD: <p>{associationMember.member.lsdEmail}</p>
-                        </span>
-                      </div>
-                      <div>{associationMember.member.isActive ? "🟢" : "🔴"}</div>
-                    </Card>
-                  ))}
-              </Members>
-            </Body>
-          </Dashboard>
+                </Members>
+              </Body>
+            </Dashboard>
+          )}
         </Container>
       </Layout>
     </>
   );
 }
 
+const FormatData = styled.p`
+  padding: 7px;
+  font-size: 1rem;
+  font-weight: 700;
+`;
+const FontData = styled.span`
+  font-weight: 400;
+`;
+
 const Container = styled.div`
   display: flex;
   flex-direction: column;
   margin: 0 auto;
   width: 88%;
-  height: 653px;
+  height: 75vh;
   background: #fff;
   border-radius: 10px;
   padding: 1% 2%;
@@ -217,15 +272,15 @@ const ListInfo = styled.div`
   width: 50%;
   border-right: 2px solid #bcbcbc;
   padding-right: 2%;
-  span {
-    padding: 7px;
-    font-size: 1rem;
-    display: flex;
+  font-size: 1rem;
+  .atribute-title {
     font-weight: 700;
-    p {
-      font-weight: 400;
-    }
   }
+  p {
+    padding: 7px;
+    font-weight: 400;
+  }
+
   .data {
     height: 200px;
     border-bottom: 2px solid #bcbcbc;
@@ -238,44 +293,19 @@ const ListInfo = styled.div`
     align-items: center;
     overflow-y: auto;
     span {
+      font-weight: 700;
       padding: 0;
     }
   }
 `;
 const Members = styled.div`
   width: 50%;
-  padding: 0 2%;
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 0.5rem;
   font-size: 1rem;
   margin: 0 auto;
   overflow-y: auto;
   font-weight: 700;
-`;
-const Card = styled.div`
-  display: flex;
-  width: 100%;
-  padding: 2%;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.08);
-  border-radius: 20px;
-  justify-content: space-between;
-  &:hover {
-    transition: all 200ms ease-in;
-    transform: scale(0.93);
-  }
-  & + & {
-    margin-bottom: 1%;
-  }
-  .info {
-    span {
-      display: flex;
-      font-size: 1rem;
-      font-weight: 700;
-      margin-bottom: 3%;
-      p {
-        font-weight: 400;
-      }
-    }
-  }
 `;
