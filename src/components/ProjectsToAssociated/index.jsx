@@ -36,12 +36,10 @@ export default function ProjectsToAssociated({
                 Nome: <FontData>{name}</FontData>
               </FormatData>
               <FormatData>
-                Data de início:
-                <FontData>{maskDate(creationDate)}</FontData>
+                Data de início: <FontData>{maskDate(creationDate)}</FontData>
               </FormatData>
               <FormatData>
-                Data de término:
-                <FontData>{maskDate(endDate) || "Não terminou"}</FontData>
+                Data de término: <FontData>{maskDate(endDate) || "Ainda não terminou"}</FontData>
               </FormatData>
             </div>
             <div>{!endDate ? "🟢" : "🔴"}</div>
@@ -61,7 +59,11 @@ const Title = styled.div`
 `;
 const Container = styled.div`
   width: 100%;
-  overflow-y: auto;
+  height: 45vh;
+  overflow-y: scroll;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 `;
 const FormatData = styled.p`
   padding: 7px;

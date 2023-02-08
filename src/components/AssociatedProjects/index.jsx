@@ -63,7 +63,11 @@ const Title = styled.div`
 `;
 const Container = styled.div`
   width: 100%;
-  overflow-y: auto;
+  height: 45vh;
+  overflow-y: scroll;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 `;
 const FormatData = styled.p`
   padding: 7px;

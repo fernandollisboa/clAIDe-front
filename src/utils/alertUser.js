@@ -3,8 +3,13 @@ import { setSession } from "contexts/AuthContext";
 import { Navigate } from "react-router-dom";
 
 export function alertUser({ text, type = "error" }) {
-  const titleMsgObj = { success: "Sucesso", error: "Erro", warning: "Atenção" };
-  const iconColorObj = { success: "green", error: "red", warning: "yellow" };
+  const titleMsgObj = {
+    success: "Sucesso",
+    error: "Erro",
+    warning: "Atenção",
+    question: "Falha",
+  };
+  const iconColorObj = { success: "green", error: "red", warning: "yellow", question: "orange" };
 
   Swal.fire({
     title: titleMsgObj[type],

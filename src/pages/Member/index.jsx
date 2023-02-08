@@ -276,7 +276,7 @@ const Container = styled.div`
   flex-direction: column;
   margin: 0 auto;
   width: 88%;
-  height: 653px;
+  height: 75vh;
   background: #fff;
   border-radius: 10px;
   padding: 1% 2%;
@@ -380,8 +380,7 @@ const List = styled.div`
   padding: 0 2%;
 `;
 const Project = styled.div`
-  height: 200px;
-  /* border-bottom: 2px solid #bcbcbc; */
+  height: 48vh;
   overflow-y: auto;
 `;
 const ProjectTitle = styled.div`
@@ -404,13 +403,13 @@ const ServiceHeader = styled.div`
 const ProjectsContainer = styled.div`
   width: 100%;
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
 `;
 const ListProjects = styled.div`
   width: 50%;
   display: flex;
   flex-direction: column;
-  height: 400px;
   align-items: center;
   padding: 0 3%;
 `;
