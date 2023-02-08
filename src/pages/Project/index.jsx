@@ -12,7 +12,6 @@ import maskDate from "../../utils/maskDate";
 import { alertUnmappedError, alertUser } from "../../utils/alertUser";
 import EditProject from "pages/EditProject";
 import Loader from "components/Loader";
-import NoDataMessage from "components/NoDataMessage";
 
 export default function Project() {
   const [project, setProject] = useState({});
@@ -125,38 +124,34 @@ export default function Project() {
                       .filter(
                         (associationMember) => associationMember.member.memberType === "PROFESSOR"
                       )
-                      .map((associationMember) => {
-                        if (!associationMember.length) {
-                          return <NoDataMessage key={associationMember.member.memberType} />;
-                        } else {
-                          <Card
-                            key={associationMember.member.id}
-                            onClick={() => {
-                              navigateToMember(associationMember.member.id);
-                            }}
-                          >
-                            <div>
-                              <FormatData>
-                                Nome: <FontData>{associationMember.member.name}</FontData>
-                              </FormatData>
-                              <FormatData>
-                                Sala: <FontData>{associationMember.member.roomName}</FontData>
-                              </FormatData>
-                              <FormatData>
-                                Email LSD: <FontData>{associationMember.member.lsdEmail}</FontData>
-                              </FormatData>
-                            </div>
-                            <div>{associationMember.member.isActive ? "🟢" : "🔴"}</div>
-                          </Card>;
-                        }
-                      })}
+                      .map((associationMember) => (
+                        <Card
+                          key={associationMember.member.id}
+                          onClick={() => {
+                            navigateToMember(associationMember.member.id);
+                          }}
+                        >
+                          <div>
+                            <FormatData>
+                              Nome: <FontData>{associationMember.member.name}</FontData>
+                            </FormatData>
+                            <FormatData>
+                              Sala: <FontData>{associationMember.member.roomName}</FontData>
+                            </FormatData>
+                            <FormatData>
+                              Email LSD: <FontData>{associationMember.member.lsdEmail}</FontData>
+                            </FormatData>
+                          </div>
+                          <div>{associationMember.member.isActive ? "🟢" : "🔴"}</div>
+                        </Card>
+                      ))}
                   </div>
                 </ListInfo>
                 <Members>
                   <span>Alunos</span>
                   {members
                     .filter(
-                      (associationMember) => associationMember.member.memberType === "STUDENT"
+                      (associationMember) => associationMember.member.memberType !== "PROFESSOR"
                     )
                     .map((associationMember) => (
                       <Card
