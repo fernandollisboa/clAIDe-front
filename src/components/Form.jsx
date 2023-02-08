@@ -12,7 +12,6 @@ import Button from "components/Button";
 import useErrors from "hooks/useErrors";
 import Select from "components/Select";
 import maskDateRaw from "utils/maskDateRaw";
-import Loader from "./Loader";
 import parseDateBrToISO from "utils/parseDateBrToISO";
 
 Form.propTypes = {
