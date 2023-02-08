@@ -43,7 +43,7 @@ export default function Member() {
     try {
       const { data: member } = await MembersService.getById(memberId);
       const { data: memberProjects } = await ProjectService.getAssociateProjectByMemberId(memberId);
-      const { data: projects } = await ProjectService.getAll(true);
+      const { data: projects } = await ProjectService.getAll("");
 
       const memberProjectIds = memberProjects.map(({ projectId }) => projectId);
 
