@@ -9,7 +9,7 @@ import ProjectsService from "../../services/ProjectsService";
 import maskDate from "../../utils/maskDate";
 import Loader from "components/Loader";
 
-export default function Activty() {
+export default function Activity() {
   const [activitys, setActivitys] = useState([]);
   const [activityUserNameToBeSearched, setActivityUserNameToBeSearched] = useState("");
   const [desc, setDesc] = useState(false);

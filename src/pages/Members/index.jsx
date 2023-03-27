@@ -5,17 +5,18 @@ import styled from "styled-components";
 import Card from "../../components/Card";
 import Menu from "../../components/Menu";
 import Layout from "../../components/Layout";
-import { setSession } from "contexts/AuthContext";
 import { alertUnmappedError, alertUser } from "utils/alertUser";
 import maskPhone from "../../utils/maskPhone";
 import MembersService from "../../services/MembersService";
 import Loader from "components/Loader";
 import NoDataMessage from "components/NoDataMessage";
+import useAuth from "hooks/useAuth";
 
 export default function Members() {
+  const { setUser } = useAuth();
   const [members, setMembers] = useState([]);
   const [membersNameToBeSearched, setMembersNameToBeSearched] = useState("");
-  const [isActive, setIsActive] = useState(true);
+  const [isActive, setIsActive] = useState("");
   const [desc, setDesc] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
@@ -37,7 +38,7 @@ export default function Members() {
     } catch (err) {
       const { status } = err.response;
       if (status === 401) {
-        setSession(null);
+        setUser(null);
         alertUser({ text: "Token expirado, por favor logue novamente", type: "warning" });
         navigate("/");
       } else alertUnmappedError(err);

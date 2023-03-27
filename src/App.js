@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import GlobalStyle from "./styles/GlobalStyle.js";
 import Login from "./pages/Login";
 import NewProject from "./pages/NewProject";
@@ -6,28 +6,25 @@ import Projects from "./pages/Projects";
 import NewMember from "./pages/NewMember";
 import Members from "./pages/Members";
 import Member from "./pages/Member";
-import Activty from "./pages/Activity";
+import Activity from "./pages/Activity";
 import Project from "./pages/Project";
-import ProtectedRoute from "./routes/ProtectedRoute";
+import RequireAuth from "components/RequireAuth";
 
 function App() {
   return (
-    <BrowserRouter>
-      <GlobalStyle />
-      <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/" element={<ProtectedRoute />}>
-          <Route path="/activity" element={<Activty />} />
-          <Route path="/newProject" element={<NewProject />} />
-          <Route path="/projects" element={<Projects />} />
-          <Route path="/project/:id" element={<Project />} />
-          <Route path="/newMember" element={<NewMember />} />
-          <Route path="/members" element={<Members />} />
-          <Route path="/member/:id" element={<Member />} />
-        </Route>
-        <Route path="*" element={<Login />} />
-      </Routes>
-    </BrowserRouter>
+    <Routes>
+      <Route path="login" element={<Login />} />
+      <Route path="/" element={<Navigate to="/login" replace />} />
+      <Route element={<RequireAuth allowedRoles={["ADMIN", "PROFESSOR"]} />}>
+        <Route path="activity" element={<Activity />} />
+        <Route path="newProject" element={<NewProject />} />
+        <Route path="projects" element={<Projects />} />
+        <Route path="project/:id" element={<Project />} />
+        <Route path="newMember" element={<NewMember />} />
+        <Route path="members" element={<Members />} />
+        <Route path="member/:id" element={<Member />} />
+      </Route>
+    </Routes>
   );
 }
 

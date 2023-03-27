@@ -4,13 +4,12 @@ import { IoLogOutOutline } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 
 import logo from "../../assets/foto_lsd.svg";
+import useAuth from "hooks/useAuth";
 
 export default function Header() {
   const navigate = useNavigate();
-  function logout() {
-    window.localStorage.removeItem("claideToken");
-    navigate("/");
-  }
+  const { logout } = useAuth();
+
   return (
     <HeaderContainer>
       <Container>

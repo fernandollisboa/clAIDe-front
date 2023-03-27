@@ -1,5 +1,4 @@
 import Swal from "sweetalert2";
-import { setSession } from "contexts/AuthContext";
 import { Navigate } from "react-router-dom";
 
 export function alertUser({ text, type = "error" }) {
@@ -23,7 +22,7 @@ export function alertUser({ text, type = "error" }) {
 export function alertUnmappedError(error) {
   const { status } = error.response;
   if (status === 401) {
-    setSession(null);
+    // setSession(null); // TO-DO revisar isso
     alertUser({ text: "Token expirado, por favor logue novamente", type: "warning" });
     return <Navigate to="/" replace={true} />;
   } else {
