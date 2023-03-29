@@ -2,17 +2,17 @@ import { useState, useEffect, useMemo, useCallback } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 
-import Card from "../../components/Card";
-import Layout from "../../components/Layout";
-import Menu from "../../components/Menu";
+import Card from "../components/Card";
+import Layout from "../components/Layout";
+import Menu from "../components/Menu";
 import { alertUnmappedError, alertUser } from "utils/alertUser";
 
-import maskDate from "../../utils/maskDate";
-import ProjectsService from "../../services/ProjectsService";
+import maskDate from "../utils/maskDate";
+import ProjectsService from "../services/ProjectsService";
 import Loader from "components/Loader";
 import NoDataMessage from "components/NoDataMessage";
 
-export default function Projects() {
+export default function ProjectsList() {
   const [projects, setProjects] = useState([]);
   const [projectNameToBeSearched, setProjectNameToBeSearched] = useState("");
   const [isActive, setIsActive] = useState("");
@@ -38,7 +38,7 @@ export default function Projects() {
       const { status } = error.response;
       if (status === 404) {
         alertUser({ text: "Projeto não encontrado" });
-        navigate("/members");
+        navigate("/projects");
       } else alertUnmappedError(error);
     }
     setIsLoading(false);
@@ -56,9 +56,8 @@ export default function Projects() {
     setProjectNameToBeSearched(event.target.value);
   }
   function navigateToProject(id) {
-    navigate(`/project/${id}`);
+    navigate(`/projects/${id}`);
   }
-  console.log(projects.length);
 
   return (
     <>
@@ -70,7 +69,7 @@ export default function Projects() {
           handleToggleIsActive={handleToggleIsActive}
           nameToBeSearched={projectNameToBeSearched}
           handleChangeSearch={handleChangeSearchProject}
-          url="/newProject"
+          url="/projects/new"
         />
         <Container>
           {isLoading ? (
@@ -117,7 +116,6 @@ export default function Projects() {
 
 const Container = styled.div`
   display: flex;
-
   margin: 0 auto;
   gap: 2vh;
   flex-wrap: wrap;
@@ -141,5 +139,6 @@ const ProjectListContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
+  width: 100%;
   gap: 0.2vh;
 `;

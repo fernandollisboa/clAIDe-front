@@ -17,6 +17,7 @@
     "no-console": "warn",
     "import/extensions": ["error", { "js": "ignorePackages" }],
     "prefer-destructuring": ["warn", { "object": true, "array": false }],
+    "prefer-const": "warn",
     "import/newline-after-import": ["warn", { "count": 1 }],
     "react/react-in-jsx-scope": "off",
     "react/prop-types": "warn",

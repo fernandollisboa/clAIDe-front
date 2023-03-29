@@ -5,10 +5,11 @@ import { IoEyeOff, IoEyeSharp, IoPerson } from "react-icons/io5";
 
 import LogoLsdWhite from "../../assets/logo_lsd_branco.png";
 import Footer from "../../layouts/Footer";
-import LoginService from "../../services/LoginService";
 import { alertUser } from "../../utils/alertUser";
+import useAuth from "hooks/useAuth";
 
 export default function Login() {
+  const { auth, login } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -16,29 +17,18 @@ export default function Login() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    (async () => {
-      try {
-        const accessToken = localStorage.getItem("claideToken");
-        if (accessToken) {
-          localStorage.setItem("claideToken", accessToken);
-          navigate("/members");
-        }
-      } catch (err) {
-        // console.log(err);
-      }
-    })();
+    if (auth) {
+      navigate("/home");
+    }
   }, []);
 
   async function sendData(e) {
     e.preventDefault();
     setIsLoading(true);
     try {
-      const response = await LoginService.post({ username, password });
-      if (localStorage.getItem("claideToken")) localStorage.removeItem("claideToken");
-
-      localStorage.setItem("claideToken", response.data.token);
+      await login({ username, password });
       alertUser({ text: "Bem-vindo(a)!", type: "success" });
-      navigate("/members");
+      navigate("/home");
     } catch (err) {
       const { message } = err;
       if (message === "Network Error") {

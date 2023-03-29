@@ -48,7 +48,7 @@ export default function Project() {
   }, [loadDashboardProject]);
 
   function navigateToMember(id) {
-    navigate(`/member/${id}`);
+    navigate(`/members/${id}`);
   }
 
   return (

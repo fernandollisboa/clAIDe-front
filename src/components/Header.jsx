@@ -1,26 +1,23 @@
-import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { IoLogOutOutline } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 
-import logo from "../../assets/foto_lsd.svg";
+import logo from "../assets/foto_lsd.svg";
+import NavigationIcons from "components/NavigationIcons";
+import useAuth from "hooks/useAuth";
 
 export default function Header() {
   const navigate = useNavigate();
-  function logout() {
-    window.localStorage.removeItem("claideToken");
-    navigate("/");
-  }
+  const { logout } = useAuth();
+
   return (
     <HeaderContainer>
       <Container>
         <IconContainer>
-          <img src={logo} alt="logo lsd" onClick={() => navigate("/members")} />
+          <img src={logo} alt="logo lsd" onClick={() => navigate("/home")} />
         </IconContainer>
         <NavBar>
-          <StyledLink to="/members">Membros</StyledLink>
-          <StyledLink to="/projects">Projetos</StyledLink>
-          <StyledLink to="/activity">Log de Atividades</StyledLink>
+          <NavigationIcons />
         </NavBar>
         <IconContainer>
           <LogoutIcon onClick={logout} />
@@ -30,30 +27,12 @@ export default function Header() {
   );
 }
 
-const StyledLink = styled(Link)`
-  padding: 1rem;
-  font-size: 1.8rem;
-  font-weight: 700;
-  font-style: bold;
-  text-decoration: none;
-  color: #131313;
-  transition: 0.3s;
-  border-bottom: 0.1px solid transparent;
-  :hover {
-    background-color: #edeaead4;
-    border-color: #486fbd;
-    border-radius: 5px;
-    color: #486fbd;
-  }
-`;
-
 const HeaderContainer = styled.div`
-  position: absolute;
+  position: fixed;
   top: 0;
-  left: 0%;
-  width: 100vw;
+  width: 100%;
   z-index: 1;
-  background-color: #ffffff75f;
+  background-color: #bd1c1c75f;
   height: 8%;
 `;
 
