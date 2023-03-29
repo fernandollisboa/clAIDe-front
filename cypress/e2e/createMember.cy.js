@@ -41,7 +41,7 @@ describe("create member", () => {
     cy.get(`input[id = username]`).type("fernando");
     cy.get("input[id = password]").type("fernando");
     cy.get("button[type = submit]").click();
-    cy.visit("/newMember");
+    cy.visit("/members/new");
 
     cy.FillForm(memberData, keys);
     cy.get("button[type = submit]").click();

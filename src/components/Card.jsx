@@ -7,8 +7,8 @@ export default styled.div`
   border-radius: 15px;
   margin: 0 0.5% 1% 0.5%;
   padding: 1.2%;
-  min-width: 20%;
   width: 500px;
+  min-width: 20%;
   cursor: pointer;
   justify-content: space-between;
   border: ${({ isSelected }) => (isSelected ? "2px solid black" : "1px solid rgba(0, 0, 0, 0.04)")};
@@ -17,6 +17,6 @@ export default styled.div`
     transform: scale(0.98);
     background-color: #f8f8f8d3;
     border-color: #486fbd;
-    border-radius: 5px;
+    border-radius: 10px;
   }
 `;

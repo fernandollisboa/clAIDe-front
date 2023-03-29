@@ -1,9 +1,8 @@
-import { createContext, useState, useEffect } from "react";
+import { createContext, useState } from "react";
 import api from "../services/api";
 import LoginService from "services/LoginService";
-import { useNavigate } from "react-router-dom";
 
-export const setSession = (token) => {
+const updateLocalStorageSession = (token) => {
   if (token) {
     localStorage.setItem("claideToken", token);
     api.defaults.headers.common.Authorization = `Bearer ${token}`;
@@ -13,7 +12,7 @@ export const setSession = (token) => {
   }
 };
 
-const setUser = (user) => {
+const updateLocalStorageUser = (user) => {
   if (user) {
     localStorage.setItem("user", JSON.stringify(user));
   } else {
@@ -24,35 +23,29 @@ const setUser = (user) => {
 const AuthContext = createContext({});
 
 export const AuthProvider = ({ children }) => {
-  const [auth, setAuth] = useState({});
-  const navigate = useNavigate();
-  console.log({ auth });
+  const [auth, setAuth] = useState(() => {
+    const token = localStorage.getItem("claideToken");
+    const user = JSON.parse(window.localStorage.getItem("user"));
+    const { roles } = user;
+    if (token && user) {
+      updateLocalStorageSession(token);
+      updateLocalStorageUser({ roles });
+      return { token, roles };
+    }
+    return null;
+  });
 
   const login = async ({ username, password }) => {
     const response = await LoginService.post({ username, password });
     const { token, roles } = response.data;
-    setSession(token);
-    setUser({ roles });
     setAuth({ token, roles });
+    updateLocalStorageSession(token);
+    updateLocalStorageUser({ roles });
   };
 
-  useEffect(() => {
-    const fetchUserDataFromLocalStorage = async () => {
-      const token = localStorage.getItem("claideToken");
-      const user = JSON.parse(window.localStorage.getItem("user"));
-      if (token && user) {
-        const { roles } = user;
-        setSession(token);
-        setAuth({ token, roles });
-        navigate("/members");
-      }
-    };
-
-    fetchUserDataFromLocalStorage().catch(console.error);
-  }, []);
-
   const logout = () => {
-    setSession(null);
+    updateLocalStorageSession(null);
+    updateLocalStorageUser(null);
     setAuth(null);
   };
 

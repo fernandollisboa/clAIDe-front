@@ -1,28 +1,34 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import GlobalStyle from "./styles/GlobalStyle.js";
+import { Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/Login";
 import NewProject from "./pages/NewProject";
-import Projects from "./pages/Projects";
+import ProjectsList from "./pages/ProjectsList.jsx";
 import NewMember from "./pages/NewMember";
-import Members from "./pages/Members";
+import MembersList from "pages/MembersList";
 import Member from "./pages/Member";
 import Activity from "./pages/Activity";
 import Project from "./pages/Project";
-import RequireAuth from "components/RequireAuth";
+import MembersMenu from "pages/MembersMenu";
+import ProtectedRoute from "components/ProtectedRoute";
+import RegistrationRequests from "pages/RegistrationRequests";
 
 function App() {
   return (
     <Routes>
       <Route path="login" element={<Login />} />
       <Route path="/" element={<Navigate to="/login" replace />} />
-      <Route element={<RequireAuth allowedRoles={["ADMIN", "PROFESSOR"]} />}>
-        <Route path="activity" element={<Activity />} />
-        <Route path="newProject" element={<NewProject />} />
-        <Route path="projects" element={<Projects />} />
-        <Route path="project/:id" element={<Project />} />
-        <Route path="newMember" element={<NewMember />} />
-        <Route path="members" element={<Members />} />
-        <Route path="member/:id" element={<Member />} />
+      <Route path="support" element={<ProtectedRoute allowedRoles={["SUPPORT"]} />}>
+        <Route path="activity-log" element={<Activity />} />
+        <Route path="registration-requests" element={<RegistrationRequests />} />
+      </Route>
+      <Route element={<ProtectedRoute allowedRoles={["SUPPORT", "SECRETARY", "PROFESSOR"]} />}>
+        <Route path="home" element={<Navigate to="/members/menu" replace />} />
+        <Route path="members/menu" element={<MembersMenu />} />
+        <Route path="members/new" element={<NewMember />} />
+        <Route path="members" element={<MembersList />} />,
+        <Route path="members/:id" element={<Member />} />
+        <Route path="projects/new" element={<NewProject />} />
+        <Route path="projects" element={<ProjectsList />} />
+        <Route path="projects/:id" element={<Project />} />
       </Route>
     </Routes>
   );

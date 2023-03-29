@@ -76,7 +76,7 @@ export default function Member() {
   }
 
   function navigateToProject(id) {
-    navigate(`/project/${id}`);
+    navigate(`/projects/${id}`);
   }
 
   return (

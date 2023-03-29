@@ -144,7 +144,6 @@ const Container = styled.div`
 `;
 const Title = styled.h1`
   justify-content: center;
-  font-style: italic;
   font-weight: 700;
   font-size: 3rem;
   padding-bottom: 8%;

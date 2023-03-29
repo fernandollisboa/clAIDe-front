@@ -5,17 +5,22 @@ import { IoEyeOff, IoEyeSharp, IoPerson } from "react-icons/io5";
 
 import LogoLsdWhite from "../../assets/logo_lsd_branco.png";
 import Footer from "../../layouts/Footer";
-import LoginService from "../../services/LoginService";
 import { alertUser } from "../../utils/alertUser";
 import useAuth from "hooks/useAuth";
 
 export default function Login() {
-  const { login } = useAuth();
+  const { auth, login } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (auth) {
+      navigate("/home");
+    }
+  }, []);
 
   async function sendData(e) {
     e.preventDefault();
@@ -23,7 +28,7 @@ export default function Login() {
     try {
       await login({ username, password });
       alertUser({ text: "Bem-vindo(a)!", type: "success" });
-      navigate("/members");
+      navigate("/home");
     } catch (err) {
       const { message } = err;
       if (message === "Network Error") {
