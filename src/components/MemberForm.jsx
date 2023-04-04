@@ -2,20 +2,21 @@ import { string, func, bool, object } from "prop-types";
 import { useState, useEffect, useMemo } from "react";
 
 import { MINIMUM_REQUIRED_AGE, getTodaySubtractYears } from "utils/dateUtil";
-import useErrors from "../../hooks/useErrors";
-import maskCpf from "../../utils/maskCpf";
-import maskPhone from "../../utils/maskPhone";
-import removeChar from "../../utils/removeChar";
+import useErrors from "../hooks/useErrors";
+import maskCpf from "../utils/maskCpf";
+import maskPhone from "../utils/maskPhone";
+import removeChar from "../utils/removeChar";
 import Form from "components/Form";
 import maskDate from "utils/maskDate";
 import parseDateBrToISO from "utils/parseDateBrToISO";
 
 MemberForm.propTypes = {
-  buttonLabel: string.isRequired,
+  buttonLabel: string,
   typeLabel: string.isRequired,
   onSubmit: func.isRequired,
   formSent: bool.isRequired,
   initialState: object,
+  incomingErrors: bool,
   maxWidth: string,
 };
 export default function MemberForm({
