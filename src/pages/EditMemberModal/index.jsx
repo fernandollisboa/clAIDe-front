@@ -10,6 +10,7 @@ EditMemberModal.propTypes = {
   showModal: bool.isRequired,
   setShowModal: func.isRequired,
   initialState: object,
+  onSubmitReload: func,
 };
 EditMemberModal.defaultProps = {
   initialState: {},
