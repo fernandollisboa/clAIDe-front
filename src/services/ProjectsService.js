@@ -31,11 +31,11 @@ class ProjectsService {
   }
   getActivity(desc, entity, operation) {
     const config = createHeaders();
-    let params = new URLSearchParams();
+    const params = new URLSearchParams();
     params.append("operation", operation);
     params.append("desc", desc);
     params.append("entity", entity);
-    let queryString = params.toString();
+    const queryString = params.toString();
     return api.get(`activity-records/?${queryString}`, config);
   }
   getAssociateProjectByProjectId(projectId) {
