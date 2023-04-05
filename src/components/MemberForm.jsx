@@ -11,11 +11,12 @@ import maskDate from "utils/maskDate";
 import parseDateBrToISO from "utils/parseDateBrToISO";
 
 MemberForm.propTypes = {
-  buttonLabel: string.isRequired,
+  buttonLabel: string,
   typeLabel: string.isRequired,
   onSubmit: func.isRequired,
   formSent: bool.isRequired,
   initialState: object,
+  incomingErrors: bool,
   maxWidth: string,
 };
 export default function MemberForm({

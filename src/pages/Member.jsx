@@ -2,24 +2,25 @@ import { useCallback, useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
-import Layout from "../../components/Layout";
-import Card from "../../components/Card";
+import Layout from "../components/Layout";
+import Card from "../components/Card";
 import EditMemberModal from "pages/EditMemberModal";
 import AssociatedProjects from "components/AssociatedProjects";
 import ProjectsToAssociated from "components/ProjectsToAssociated";
-import CreateAssociationModal from "../CreateAssociationModal";
+import CreateAssociationModal from "./CreateAssociationModal";
 import UpdateAssociationModal from "pages/UpdateAssociationModal";
 
-import arrowback from "../../assets/arrow-back.svg";
+import arrowback from "../assets/arrow-back.svg";
 
-import ProjectService from "../../services/ProjectsService";
-import MembersService from "../../services/MembersService";
+import ProjectService from "../services/ProjectsService";
+import MembersService from "../services/MembersService";
 
-import { alertUnmappedError, alertUser } from "../../utils/alertUser";
-import maskCpf from "../../utils/maskCpf";
-import parseMemberTypeToPortuguese from "../../utils/parseMemberTypeToPortuguese";
-import maskDate from "../../utils/maskDate";
+import { alertUnmappedError, alertUser } from "../utils/alertUser";
+import maskCpf from "../utils/maskCpf";
+import parseMemberTypeToPortuguese from "../utils/parseMemberTypeToPortuguese";
+import maskDate from "../utils/maskDate";
 import Loader from "components/Loader";
+import ServiceList from "components/ServiceList";
 
 export default function Member() {
   const [member, setMember] = useState({});
@@ -27,7 +28,6 @@ export default function Member() {
   const [memberProjects, setMemberProjects] = useState([]);
   const [projects, setProjects] = useState([]);
   const [selectedProjectAssociation, setSelectedProjectAssociation] = useState({});
-
   const [showEditModal, setShowEditModal] = useState(false);
   const [showCreateAssociationModal, setShowCreateAssociationModal] = useState(false);
   const [showEditAssociationModal, setShowEditAssociationModal] = useState(false);
@@ -110,7 +110,7 @@ export default function Member() {
             >
               <img src={arrowback} />
             </Link>
-            <Title>Informações de Membro</Title>
+            <HeaderTitle>Informações de Membro</HeaderTitle>
           </Header>
           {isLoading ? (
             <Loader />
@@ -183,13 +183,13 @@ export default function Member() {
 
                       <List>
                         <Project>
-                          <ProjectTitle>
+                          <Title>
                             {memberProjects.filter(({ isActive }) => isActive).length ? (
                               <h1>Projetos Atuais</h1>
                             ) : (
                               <h1>Nenhum projeto associado</h1>
                             )}
-                          </ProjectTitle>
+                          </Title>
                           <ProjectsContainer>
                             {memberProjects
                               .filter(({ isActive }) => isActive)
@@ -218,23 +218,7 @@ export default function Member() {
                               ))}
                           </ProjectsContainer>
                         </Project>
-
-                        {/* <Services>
-                      <ServiceHeader>
-                        <ServiceTitle>Serviços</ServiceTitle>
-                        <Button
-                          style={{ padding: "1.5%" }}
-                          onClick={() => setShowServiceAssociationModal(true)}
-                        >
-                          Associar serviço
-                        </Button>
-                      </ServiceHeader>
-                      <Cards>
-                        {servicesAssociates.map(({ service }) => (
-                          <ServiceCard key={service.id}>{service.name}</ServiceCard>
-                        ))}
-                      </Cards>
-                    </Services> */}
+                        <ServiceList member={member} onSubmitReload={loadDashboardMember} />
                       </List>
                     </>
                   ) : (
@@ -281,7 +265,7 @@ const Container = styled.div`
   border-radius: 10px;
   padding: 1% 2%;
 `;
-const Title = styled.h1`
+const HeaderTitle = styled.h1`
   font-weight: 400;
   font-size: 3rem;
   margin: 0 auto;
@@ -380,10 +364,11 @@ const List = styled.div`
   padding: 0 2%;
 `;
 const Project = styled.div`
-  height: 48vh;
+  height: 200px;
+
   overflow-y: auto;
 `;
-const ProjectTitle = styled.div`
+const Title = styled.div`
   display: flex;
   justify-content: center;
   font-weight: 700;
@@ -391,15 +376,7 @@ const ProjectTitle = styled.div`
   line-height: 25px;
   padding: 3% 0;
 `;
-const Services = styled.div`
-  height: 200px;
-  padding-top: 2%;
-`;
-const ServiceHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-`;
+
 const ProjectsContainer = styled.div`
   width: 100%;
   display: flex;

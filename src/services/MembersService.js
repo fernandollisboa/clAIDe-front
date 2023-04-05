@@ -32,6 +32,7 @@ class MembersService {
       lsdEmail,
       secondaryEmail,
       roomName,
+      services,
     } = memberData;
     const body = {
       name,
@@ -49,6 +50,7 @@ class MembersService {
       lsdEmail,
       secondaryEmail,
       roomName,
+      services,
     };
     const config = createHeaders();
     return api.put(`members/${id}`, body, config);

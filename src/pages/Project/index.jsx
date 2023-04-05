@@ -24,7 +24,6 @@ export default function Project() {
   const { id } = params;
 
   const loadDashboardProject = useCallback(async () => {
-    console.log("useEffect");
     setIsLoading(true);
     try {
       const { data: project } = await ProjectService.getById(id);
