@@ -36,6 +36,7 @@ export default function Members() {
 
       setMembers(data);
     } catch (err) {
+      console.log({ err });
       const { status } = err.response;
       if (status === 401) {
         logout();

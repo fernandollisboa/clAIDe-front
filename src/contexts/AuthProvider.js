@@ -1,35 +1,22 @@
 import { createContext, useState } from "react";
-import api from "../services/api";
+import { setAuthToken } from "../services/api";
 import LoginService from "services/LoginService";
+import { decodeToken } from "react-jwt";
 
 const updateLocalStorageSession = (token) => {
-  if (token) {
-    localStorage.setItem("claideToken", token);
-    api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  } else {
-    localStorage.removeItem("claideToken");
-    delete api.defaults.headers.common.Authorization;
-  }
-};
+  if (token) localStorage.setItem("claideToken", token);
+  else localStorage.removeItem("claideToken");
 
-const updateLocalStorageUser = (user) => {
-  if (user) {
-    localStorage.setItem("user", JSON.stringify(user));
-  } else {
-    localStorage.removeItem("user");
-  }
+  setAuthToken(token);
 };
-
 const AuthContext = createContext({});
 
 export const AuthProvider = ({ children }) => {
   const [auth, setAuth] = useState(() => {
     const token = localStorage.getItem("claideToken");
-    const user = JSON.parse(window.localStorage.getItem("user"));
-    const { roles } = user;
-    if (token && user) {
+    if (token) {
+      const { roles } = decodeToken(token);
       updateLocalStorageSession(token);
-      updateLocalStorageUser({ roles });
       return { token, roles };
     }
     return null;
@@ -37,15 +24,14 @@ export const AuthProvider = ({ children }) => {
 
   const login = async ({ username, password }) => {
     const response = await LoginService.post({ username, password });
-    const { token, roles } = response.data;
+    const { token } = response.data;
+    const { roles } = decodeToken(token);
     setAuth({ token, roles });
     updateLocalStorageSession(token);
-    updateLocalStorageUser({ roles });
   };
 
   const logout = () => {
     updateLocalStorageSession(null);
-    updateLocalStorageUser(null);
     setAuth(null);
   };
 

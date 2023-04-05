@@ -13,14 +13,14 @@ export default function NavigationCard({ path, label }) {
 }
 
 const NavigationCardWrapper = styled(Card)`
-  height: 10%;
   background: #48bebb;
   color: white;
   justify-content: center;
   text-align: center;
   align-items: center;
   font-size: 2rem;
-  width: 20%;
+  height: 20%;
+  width: 40%;
   &:hover {
     background-color: #486fbd;
     border-color: green;

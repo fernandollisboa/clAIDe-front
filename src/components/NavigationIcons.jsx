@@ -10,19 +10,19 @@ export default function NavigationIcons() {
     {
       id: "members",
       label: "Membros",
-      allowedRoles: ["ADMIN", "SUPPORT", "PROFESSOR"],
+      allowedRoles: ["ADMIN", "SUPPORT", "PROFESSOR", "RECEPTIONIST"],
       path: "/members",
     },
     {
       id: "projects",
       label: "Projetos",
-      allowedRoles: ["ADMIN", "PROFESSOR"],
+      allowedRoles: ["ADMIN", "PROFESSOR", "RECEPTIONIST"],
       path: "/projects",
     },
     {
       id: "activities-log",
       label: "Log de Atividades",
-      allowedRoles: ["SUPPORT"],
+      allowedRoles: [],
       path: "/support/activity-log",
     },
   ];

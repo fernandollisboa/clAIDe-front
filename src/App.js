@@ -1,4 +1,5 @@
 import { Routes, Route, Navigate } from "react-router-dom";
+
 import Login from "./pages/Login";
 import NewProject from "./pages/NewProject";
 import ProjectsList from "./pages/ProjectsList.jsx";
@@ -20,7 +21,7 @@ function App() {
         <Route path="activity-log" element={<Activity />} />
         <Route path="registration-requests" element={<RegistrationRequests />} />
       </Route>
-      <Route element={<ProtectedRoute allowedRoles={["SUPPORT", "SECRETARY", "PROFESSOR"]} />}>
+      <Route element={<ProtectedRoute allowedRoles={["SUPPORT", "RECEPTIONIST", "PROFESSOR"]} />}>
         <Route path="home" element={<Navigate to="/members/menu" replace />} />
         <Route path="members/menu" element={<MembersMenu />} />
         <Route path="members/new" element={<NewMember />} />
@@ -30,6 +31,7 @@ function App() {
         <Route path="projects" element={<ProjectsList />} />
         <Route path="projects/:id" element={<Project />} />
       </Route>
+      <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>
   );
 }

@@ -2,10 +2,10 @@ import { string, func, bool, object } from "prop-types";
 import { useState, useEffect, useMemo } from "react";
 
 import { MINIMUM_REQUIRED_AGE, getTodaySubtractYears } from "utils/dateUtil";
-import useErrors from "../../hooks/useErrors";
-import maskCpf from "../../utils/maskCpf";
-import maskPhone from "../../utils/maskPhone";
-import removeChar from "../../utils/removeChar";
+import useErrors from "../hooks/useErrors";
+import maskCpf from "../utils/maskCpf";
+import maskPhone from "../utils/maskPhone";
+import removeChar from "../utils/removeChar";
 import Form from "components/Form";
 import maskDate from "utils/maskDate";
 import parseDateBrToISO from "utils/parseDateBrToISO";

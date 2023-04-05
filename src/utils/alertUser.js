@@ -1,28 +1,14 @@
-import Swal from "sweetalert2";
 import { Navigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 export function alertUser({ text, type = "error" }) {
-  const titleMsgObj = {
-    success: "Sucesso",
-    error: "Erro",
-    warning: "Atenção",
-    question: "Falha",
-  };
-  const iconColorObj = { success: "green", error: "red", warning: "yellow", question: "orange" };
-
-  Swal.fire({
-    title: titleMsgObj[type],
-    text,
-    icon: type,
-    iconColor: iconColorObj[type],
-    confirmButtonText: "Continuar",
-  });
+  toast(text, { type });
 }
 
 export function alertUnmappedError(error) {
   const { status } = error.response;
   if (status === 401) {
-    // setSession(null); // TO-DO revisar isso
+    // setSession(null); // TODO revisar isso
     alertUser({ text: "Token expirado, por favor logue novamente", type: "warning" });
     return <Navigate to="/" replace={true} />;
   } else {
