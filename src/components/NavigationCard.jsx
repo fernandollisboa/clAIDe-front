@@ -19,8 +19,8 @@ const NavigationCardWrapper = styled(Card)`
   text-align: center;
   align-items: center;
   font-size: 2rem;
-  height: 20%;
-  width: 40%;
+  height: 5rem;
+  width: 100%;
   &:hover {
     background-color: #486fbd;
     border-color: green;

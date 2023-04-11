@@ -15,7 +15,7 @@ export default function MembersMenu() {
     {
       path: "/support/registration-requests",
       label: "Solicitações de Cadastro",
-      allowedRoles: ["SUPPORT", "RECEPTIONIST"],
+      allowedRoles: ["SUPPORT"],
     },
   ];
 
@@ -31,30 +31,29 @@ export default function MembersMenu() {
 
   return (
     <Layout>
-      <Container>
-        <DropDownContainer>
-          <NavigationsContainer>
-            {userNavigationButtons.map(({ path, label }) => (
-              <NavigationCard path={path} label={label} key={path} />
-            ))}
-          </NavigationsContainer>
-        </DropDownContainer>
-      </Container>
+      <DropDownContainer>
+        <NavigationsContainer>
+          {userNavigationButtons.map(({ path, label }) => (
+            <NavigationCard path={path} label={label} key={path} />
+          ))}
+        </NavigationsContainer>
+      </DropDownContainer>
     </Layout>
   );
 }
 
-const DropDownContainer = styled(Container)`
-  padding-left: 0.5%;
-  width: 80%;
+const DropDownContainer = styled.div`
+  padding-left: 1.5%;
+  width: 20%;
+  @media screen and (max-width: 992px) {
+    width: 100%;
+    padding: 0 5%;
+  }
 `;
 
-const NavigationsContainer = styled.div`
+const NavigationsContainer = styled(Container)`
   display: flex;
   flex-wrap: wrap;
-  gap: 1%;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 90%;
+  height: 100%;
+  gap: 0.5rem;
 `;

@@ -34,7 +34,11 @@ export default function Members() {
     try {
       const { data } = await MembersService.getAll(isActive, desc);
 
-      setMembers(data);
+      const filteredDataOnlyRegistrationActive = data.filter(
+        (member) => member.registrationStatus.status === "APPROVED"
+      );
+
+      setMembers(filteredDataOnlyRegistrationActive);
     } catch (err) {
       console.log({ err });
       const { status } = err.response;
@@ -61,7 +65,7 @@ export default function Members() {
     setMembersNameToBeSearched(event.target.value);
   }
   function navigateToMember(id) {
-    navigate(`/members/${id}`, { replace: true });
+    navigate(`/members/${id}`);
   }
   return (
     <>

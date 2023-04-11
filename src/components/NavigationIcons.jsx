@@ -16,7 +16,7 @@ export default function NavigationIcons() {
     {
       id: "projects",
       label: "Projetos",
-      allowedRoles: ["ADMIN", "PROFESSOR", "RECEPTIONIST"],
+      allowedRoles: ["ADMIN", "SUPPORT", "PROFESSOR", "RECEPTIONIST"],
       path: "/projects",
     },
     {

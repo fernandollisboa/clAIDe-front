@@ -43,6 +43,7 @@ export default function MemberForm({
     memberType: "",
     lattes: "",
     roomName: "",
+    services: [],
     ...initialState,
     birthDate: maskDate(initialState?.birthDate),
     isBrazilian: initialState?.isBrazilian ?? 1,
@@ -65,6 +66,7 @@ export default function MemberForm({
     memberType,
     roomName,
     hasKey,
+    services,
   } = memberData;
   function handleBirthDateInputChange(birthDate) {
     setMemberData((state) => ({ ...state, birthDate: maskDate(birthDate) }));
@@ -150,7 +152,7 @@ export default function MemberForm({
     {
       inputType: "select",
       required: true,
-      name: "Tipo de Membro",
+      name: "Tipo de Membro *",
       id: "memberType",
       value: memberType,
       options: [
@@ -231,6 +233,22 @@ export default function MemberForm({
       placeholder: "Email Secundário",
       value: secondaryEmail,
       type: "email",
+    },
+    {
+      inputType: "checkbox",
+      name: "Acesso à serviços:",
+      id: "services",
+      placeholder: "Acesso à serviços:",
+      value: services,
+      options: [
+        { value: "GitHub", label: "GitHub" },
+        { value: "Mattermost", label: "Mattermost" },
+        { value: "GitLab", label: "GitLab" },
+        { value: "Redmine", label: "Redmine" },
+        { value: "VPN", label: "VPN" },
+        { value: "OTRS", label: "OTRS" },
+        { value: "OpenStack", label: "OpenStack" },
+      ],
     },
   ];
 

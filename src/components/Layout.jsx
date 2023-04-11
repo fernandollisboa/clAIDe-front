@@ -20,6 +20,9 @@ const Main = styled.div`
   height: 100%;
   padding-top: 8%;
   overflow: auto;
+  @media screen and (max-width: 992px) {
+    padding-top: 20%;
+  }
 `;
 
 const LayoutContainer = styled.div`

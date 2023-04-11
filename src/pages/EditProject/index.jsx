@@ -63,7 +63,7 @@ export default function EditProject({
   }
 
   return (
-    <Modal modalOpen={showModal} height="75vh">
+    <Modal modalOpen={showModal} height="fit-content">
       <ProjectForm
         onSubmit={handleSubmit}
         typeLabel="Editar Projeto"

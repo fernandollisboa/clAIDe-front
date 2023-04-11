@@ -7,7 +7,6 @@ class MembersService {
   }
   getAll(isActive, desc = false) {
     const query = createQueryString({ isActive, desc });
-
     return api.get(`members/${query}`);
   }
   getById(id) {

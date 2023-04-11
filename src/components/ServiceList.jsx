@@ -71,7 +71,12 @@ export default function ServiceList({ member, onSubmitReload }) {
       <ServiceHeader>
         <Title>Serviços</Title>
         {managerService && (
-          <IoAddCircle cursor={"pointer"} size={40} onClick={() => setShowServiceAddModal(true)} />
+          <IoAddCircle
+            cursor={"pointer"}
+            size={40}
+            color="#486fbd"
+            onClick={() => setShowServiceAddModal(true)}
+          />
         )}
         <ButtonManager onClick={handleToggleManagerService} style={{ padding: 12 }}>
           Gerenciar
@@ -139,7 +144,6 @@ const ServiceContainer = styled.div`
   flex-wrap: wrap;
   gap: 2vh;
   font-size: 1rem;
-  overflow: auto;
   .cards {
     align-items: center;
     display: flex;
