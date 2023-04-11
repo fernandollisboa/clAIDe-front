@@ -45,7 +45,7 @@ export default function Form({
   maxWidth,
   height,
 }) {
-  const { setError, removeError, getErrorMessageByFieldName, isErrorActive, errors } = useErrors();
+  const { setError, removeError, getErrorMessageByFieldName } = useErrors();
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -55,7 +55,7 @@ export default function Form({
         setError({ field: error, message: `Verifique o campo acima (${error})` })
       );
     }
-  }, [incomingErrors]);
+  }, [incomingErrors, setError]);
 
   function handleInputChange(event) {
     const { id, name, value, required } = event.target;
@@ -84,6 +84,15 @@ export default function Form({
   function handleNavigationReturn() {
     if (onReturnNavigate) onReturnNavigate();
     else navigate(-1);
+  }
+
+  function handleCheckboxChange(event) {
+    const { name, value } = event.target;
+    setInputValues((prevState) => {
+      const newState = { ...prevState };
+      newState[name] = [...new Set([...prevState[name], value])];
+      return newState;
+    });
   }
 
   async function handleFormSubmit(e) {
@@ -172,6 +181,29 @@ export default function Form({
                     </div>
                   </FormGroup>
                 );
+              } else if (inputType === "checkbox") {
+                const { options } = { ...rest };
+                return (
+                  <FormGroup key={id} error={getErrorMessageByFieldName(id)}>
+                    <Label htmlFor={id}>{name}</Label>
+                    <CheckboxContainer>
+                      {options.map(({ value, label }) => {
+                        return (
+                          <Checkbox key={value}>
+                            <input
+                              type="checkbox"
+                              id={value}
+                              name={id}
+                              value={value}
+                              onChange={handleCheckboxChange}
+                            />
+                            <label htmlFor={value}>{label}</label>
+                          </Checkbox>
+                        );
+                      })}
+                    </CheckboxContainer>
+                  </FormGroup>
+                );
               } else {
                 return (
                   <FormGroup key={id} error={getErrorMessageByFieldName(id)}>
@@ -205,12 +237,13 @@ export default function Form({
 const InputsContainer = styled.div`
   display: flex;
   flex-direction: column;
-  height: ${({ height }) => height || "50vh"};
+  height: ${({ height }) => height || "60vh"};
   flex-wrap: wrap;
 `;
 const FormWrapper = styled.form`
   max-width: ${({ maxWidth }) => maxWidth || "60%"};
   margin: 0 auto;
+  width: 60vw;
 
   .birthDate {
     background: #fff;
@@ -248,3 +281,23 @@ const Title = styled.div`
     margin-bottom: 3%;
   }
 `;
+
+const CheckboxContainer = styled.div`
+  font-size: 1rem;
+  display: flex;
+  flex-direction: column;
+  margin-top: 2%;
+  input {
+    margin-right: 1%;
+  }
+  display: grid;
+  grid-template-columns: 0.5fr 0.5fr;
+  gap: 0.4rem;
+`;
+
+const Label = styled.label`
+  font-size: 1rem;
+`;
+
+const Checkbox = styled.div`
+marg`;

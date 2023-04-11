@@ -38,7 +38,7 @@ export default function CreateServiceAssociationModal({
   }
 
   return (
-    <Modal modalOpen={showModal} width="70vh" height="29vh">
+    <Modal modalOpen={showModal} width="70vh" height="35vh">
       <Container>
         <Title>Associar serviço</Title>
         <Services>
@@ -64,7 +64,7 @@ export default function CreateServiceAssociationModal({
             onChange={handleChangeService}
           />
         </Services>
-        <Buttons>
+        <ButtonsContainer>
           <Button
             onClick={() => {
               setShowModal(false);
@@ -81,7 +81,7 @@ export default function CreateServiceAssociationModal({
           >
             Confirmar
           </Button>
-        </Buttons>
+        </ButtonsContainer>
       </Container>
     </Modal>
   );
@@ -94,7 +94,7 @@ const Title = styled.h1`
   justify-content: center;
   font-size: 2rem;
   font-weight: 700;
-  margin-bottom: 10px;
+  margin-bottom: 8%;
 `;
 const Services = styled.div`
   margin-bottom: 5%;
@@ -102,8 +102,9 @@ const Services = styled.div`
   flex-wrap: wrap;
   gap: 2vh;
 `;
-const Buttons = styled.div`
+const ButtonsContainer = styled.div`
   display: flex;
+  margin-top: 8%;
   justify-content: space-around;
 `;
 const InputService = styled.input`

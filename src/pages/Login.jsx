@@ -3,9 +3,9 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { IoEyeOff, IoEyeSharp, IoPerson } from "react-icons/io5";
 
-import LogoLsdWhite from "../../assets/logo_lsd_branco.png";
-import Footer from "../../layouts/Footer";
-import { alertUser } from "../../utils/alertUser";
+import LogoLsdWhite from "../assets/logo_lsd_branco.png";
+import Footer from "../layouts/Footer";
+import { alertUser } from "../utils/alertUser";
 import useAuth from "hooks/useAuth";
 
 export default function Login() {
@@ -20,7 +20,7 @@ export default function Login() {
     if (auth) {
       navigate("/home");
     }
-  }, []);
+  }, [auth, navigate]);
 
   async function sendData(e) {
     e.preventDefault();
@@ -122,7 +122,7 @@ const PageGrid = styled.div`
   height: 100%;
 
   @media screen and (max-width: 1200px) {
-    grid-template-columns: 4fr 1fr; // TO-DO isso aqui tá horrivel
+    grid-template-columns: 4fr 1fr;
     grid-template-areas: "l l" "f f";
   }
 `;
@@ -150,7 +150,7 @@ const LogoWrapper = styled.div`
     width: 420px;
     height: 420px;
     object-fit: none;
-    @media screen and (max-width: 1200px) {
+    @media screen and (max-width: 992px) {
       display: none;
       width: 0;
     }

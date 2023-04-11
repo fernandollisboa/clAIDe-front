@@ -42,13 +42,18 @@ export default function MembersMenu() {
   );
 }
 
-const DropDownContainer = styled(Container)`
-  justify-content: left;
-  padding-left: 0.5%;
+const DropDownContainer = styled.div`
+  padding-left: 1.5%;
+  width: 20%;
+  @media screen and (max-width: 992px) {
+    width: 100%;
+    padding: 0 5%;
+  }
 `;
 
-const NavigationsContainer = styled.div`
-  justify-content: top;
-  width: 100%;
+const NavigationsContainer = styled(Container)`
+  display: flex;
+  flex-wrap: wrap;
   height: 100%;
+  gap: 0.5rem;
 `;

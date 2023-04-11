@@ -32,7 +32,6 @@ const HeaderContainer = styled.div`
   top: 0;
   width: 100%;
   z-index: 1;
-  background-color: #bd1c1c75f;
   height: 8%;
 `;
 

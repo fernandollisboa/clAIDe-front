@@ -13,7 +13,7 @@ function getStyleModal({ height, width }) {
   return {
     content: {
       margin: "auto",
-      width: width || "70vw",
+      width: width || "fit-content",
       height: height || "50vh",
       boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
       borderRadius: "20px",
