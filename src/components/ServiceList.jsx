@@ -19,8 +19,7 @@ ServiceList.propTypes = {
 };
 export default function ServiceList({ member, onSubmitReload }) {
   const [managerService, setManagerService] = useState(false);
-  const [serviceSelected, setServiceSelected] = useState("");
-
+  const [serviceSelected, setServiceSelected] = useState(member.services);
   const [showServiceAddModal, setShowServiceAddModal] = useState(false);
   const [showServiceDeleteModal, setShowServiceDeleteModal] = useState(false);
 
@@ -38,7 +37,7 @@ export default function ServiceList({ member, onSubmitReload }) {
     }
   }
   async function onUpdate() {
-    const updatedMember = { ...member, services: [...member.services, serviceSelected] };
+    const updatedMember = { ...member, services: serviceSelected };
     try {
       await MembersService.update(updatedMember);
       setShowServiceAddModal(false);
