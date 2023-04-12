@@ -10,6 +10,7 @@ import Project from "./pages/Project";
 import MembersMenu from "pages/MembersMenu";
 import ProtectedRoute from "components/ProtectedRoute";
 import RegistrationRequests from "pages/RegistrationRequests";
+import RegistrationsRefused from "pages/RegistrationsRefused";
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
         <Route path="projects/new" element={<NewProject />} />
         <Route path="projects" element={<ProjectsList />} />
         <Route path="projects/:id" element={<Project />} />
+        <Route path="registration-refused" element={<RegistrationsRefused />} />
       </Route>
       <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>

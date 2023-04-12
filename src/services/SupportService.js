@@ -9,6 +9,9 @@ class SupportService {
   async getPendingRegistrations() {
     return Api.get("/members?registrationStatus=PENDING");
   }
+  async getRejectedRegistrations() {
+    return Api.get("/members?registrationStatus=REJECTED");
+  }
 }
 
 export default new SupportService();
