@@ -17,6 +17,10 @@ export default function MembersMenu() {
       label: "Solicitações de Cadastro",
       allowedRoles: ["SUPPORT"],
     },
+    {
+      path: "/registration-refused",
+      label: "Solicitações de recusadas",
+    },
   ];
 
   function filterButtonsByRole() {

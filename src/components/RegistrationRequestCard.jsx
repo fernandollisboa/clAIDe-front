@@ -1,10 +1,15 @@
-import { IoCheckbox, IoCloseCircle, IoInformationCircleOutline } from "react-icons/io5";
+import { useState } from "react";
+import { IoCheckbox, IoCloseCircle, IoInformationCircleOutline, IoPencil } from "react-icons/io5";
+import { AiOutlineEdit } from "react-icons/ai";
+
 import styled from "styled-components";
 import maskCpf from "utils/maskCpf";
 import maskDate from "utils/maskDate";
 import parseMemberTypeToPortuguese from "utils/parseMemberTypeToPortuguese";
+import EditMemberModal from "pages/EditMemberModal";
 
 export default function RegistrationRequestCard(props) {
+  const [showEditModal, setShowEditModal] = useState(false);
   const {
     name,
     id,
@@ -23,6 +28,9 @@ export default function RegistrationRequestCard(props) {
     onOpenDetails,
     passport,
     onSubmitReview,
+    services,
+    registrationStatus,
+    onSubmitReload,
   } = props;
 
   function toggleIsDetailsVisible() {
@@ -42,6 +50,13 @@ export default function RegistrationRequestCard(props) {
 
   return (
     <CardWrapper isDetailsVisible={isDetailsVisible}>
+      <EditMemberModal
+        setShowModal={setShowEditModal}
+        showModal={showEditModal}
+        initialState={props}
+        isRejected={true}
+        onSubmitReload={onSubmitReload}
+      />
       <RequestCard>
         <MoreInfoIconWrapper isDetailsVisible={isDetailsVisible}>
           <IoInformationCircleOutline onClick={toggleIsDetailsVisible} />
@@ -50,16 +65,33 @@ export default function RegistrationRequestCard(props) {
           <Title>Novo Membro </Title>
           {name} - {parseMemberTypeToPortuguese(memberType)}
         </RequestInfo>
-        <ActionButtons>
-          <IoCheckbox
-            color={props.isDetailsVisible ? "green" : "grey"}
-            onClick={acceptRegistration}
-          />
-          <IoCloseCircle
-            color={props.isDetailsVisible ? "red" : "grey"}
-            onClick={rejectRegistration}
-          />
-        </ActionButtons>
+        {registrationStatus.status === "REJECTED" ? (
+          <RequestUpdate>
+            <p>
+              Revisado por:<span>{registrationStatus.reviewedBy}</span>
+            </p>
+            <p>
+              Comentário:
+              <span> {registrationStatus.comment}</span>
+            </p>
+            <AiOutlineEdit
+              size={40}
+              color={props.isDetailsVisible ? "#486FBD" : "grey"}
+              onClick={() => setShowEditModal(true)}
+            />
+          </RequestUpdate>
+        ) : (
+          <ActionButtons>
+            <IoCheckbox
+              color={props.isDetailsVisible ? "green" : "grey"}
+              onClick={acceptRegistration}
+            />
+            <IoCloseCircle
+              color={props.isDetailsVisible ? "red" : "grey"}
+              onClick={rejectRegistration}
+            />
+          </ActionButtons>
+        )}
       </RequestCard>
       <DropDownInfo isVisible={isDetailsVisible}>
         <MemberInfo>
@@ -93,6 +125,9 @@ export default function RegistrationRequestCard(props) {
           <p>
             Passaporte: <span>{passport || "-"}</span>
           </p>
+          <p>
+            Serviços: <span>{Object.values(services).join(", ") || "-"}</span>
+          </p>
         </MemberInfo>
       </DropDownInfo>
     </CardWrapper>
@@ -108,13 +143,24 @@ const RequestCard = styled.div`
   width: 700px;
   min-width: 20%;
   height: 70px;
-  justify-content: space-between;
+  justify-content: space-evenly;
 `;
 
 const RequestInfo = styled.div`
   width: 82%;
 `;
-
+const RequestUpdate = styled.div`
+  display: flex;
+  justify-content: center;
+  p {
+    padding: 7px;
+    font-size: 1rem;
+    font-weight: 700;
+    span {
+      font-weight: 400;
+    }
+  }
+`;
 const ActionButtons = styled.div`
   display: flex;
   height: 100%;
