@@ -7,13 +7,17 @@ import SupportService from "services/SupportService";
 import RegistrationRequestCard from "components/RegistrationRequestCard";
 import NoDataMessage from "components/NoDataMessage";
 import { alertUser } from "utils/alertUser";
+import Loader from "components/Loader";
 
 export default function RegistrationsRefused() {
   const [soliciations, setSoliciations] = useState([]);
   const [openCardDetails, setOpenCardDetails] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   async function fetchData() {
+    setIsLoading(true);
     const { data } = await SupportService.getRejectedRegistrations();
+    setIsLoading(false);
     setSoliciations(data);
   }
 
@@ -41,7 +45,9 @@ export default function RegistrationsRefused() {
       <ContentWrapper>
         <Container>
           <CardsContainer>
-            {soliciations.length === 0 ? (
+            {isLoading ? (
+              <Loader />
+            ) : soliciations.length === 0 ? (
               <NoDataMessage message={"Não há novas solicitações de ajuste"} />
             ) : (
               soliciations.map(({ id, ...solicitation }) => (

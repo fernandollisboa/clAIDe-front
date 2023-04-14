@@ -141,7 +141,6 @@ export default function MemberForm({
         { value: "PROFESSOR", label: "Professor" },
         { value: "EXTERNAL", label: "Externo" },
         { value: "SUPPORT", label: "Suporte" },
-        { value: "ADMIN", label: "Administrador" },
       ],
     },
     {

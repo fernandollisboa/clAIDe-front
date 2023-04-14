@@ -7,7 +7,7 @@ import MembersList from "pages/MembersList";
 import Member from "./pages/Member";
 import Activity from "./pages/Activity";
 import Project from "./pages/Project";
-import MembersMenu from "pages/MembersMenu";
+import MainMenu from "pages/MainMenu";
 import ProtectedRoute from "components/ProtectedRoute";
 import RegistrationRequests from "pages/RegistrationRequests";
 import RegistrationsRefused from "pages/RegistrationsRefused";
@@ -23,7 +23,7 @@ function App() {
       </Route>
       <Route element={<ProtectedRoute allowedRoles={["SUPPORT", "RECEPTIONIST", "PROFESSOR"]} />}>
         <Route path="home" element={<Navigate to="/members/menu" replace />} />
-        <Route path="members/menu" element={<MembersMenu />} />
+        <Route path="members/menu" element={<MainMenu />} />
         <Route path="members/new" element={<NewMember />} />
         <Route path="members" element={<MembersList />} />,
         <Route path="members/:id" element={<Member />} />

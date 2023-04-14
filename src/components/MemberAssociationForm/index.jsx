@@ -14,7 +14,7 @@ export default function MemberAssociationForm({
   incomingErrors = false,
   ...rest
 }) {
-  const { setError, removeError, errors } = useErrors();
+  const { errors } = useErrors();
 
   const [projectAssociationData, setProjectAssociationData] = useState({
     startDate: "",
@@ -25,8 +25,6 @@ export default function MemberAssociationForm({
 
   function handleDateInputChange({ id, value, name }) {
     setProjectAssociationData((state) => ({ ...state, [id]: maskDate(value) }));
-    // if (!parseDateBrToISO(value)) setError({ field: id, message: `Data inválida (${name})` });
-    // else removeError({ field: id });
   }
 
   async function handleSubmit() {

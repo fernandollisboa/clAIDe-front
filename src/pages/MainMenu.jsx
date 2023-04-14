@@ -5,7 +5,7 @@ import Container from "components/Container";
 import NavigationCard from "components/NavigationCard";
 import useAuth from "hooks/useAuth";
 
-export default function MembersMenu() {
+export default function MainMenu() {
   const { auth } = useAuth();
   const navigationButtons = [
     { path: "/members", label: "Listar Membros" },

@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { IoCheckbox, IoCloseCircle, IoInformationCircleOutline, IoPencil } from "react-icons/io5";
+import { IoCheckbox, IoCloseCircle, IoInformationCircleOutline } from "react-icons/io5";
 import { AiOutlineEdit } from "react-icons/ai";
+import PropTypes, { string, bool, func, number } from "prop-types";
 
 import styled from "styled-components";
 import maskCpf from "utils/maskCpf";
@@ -44,7 +45,7 @@ export default function RegistrationRequestCard(props) {
   }
 
   async function rejectRegistration() {
-    const comment = prompt("Digite um comentário a revisão");
+    const comment = prompt("Digite um comentário da revisão");
     await onSubmitReview({ memberId: id, comment, status: "REJECTED" });
   }
 
@@ -68,7 +69,7 @@ export default function RegistrationRequestCard(props) {
         {registrationStatus.status === "REJECTED" ? (
           <RequestUpdate>
             <p>
-              Revisado por:<span>{registrationStatus.reviewedBy}</span>
+              Revisado por:<span>{parseMemberTypeToPortuguese(registrationStatus.reviewedBy)}</span>
             </p>
             <p>
               Comentário:
@@ -140,7 +141,7 @@ const RequestCard = styled.div`
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.184);
   border-radius: 10px;
   padding: 2% 1% 2% 1%;
-  width: 700px;
+  width: 800px;
   min-width: 20%;
   height: 70px;
   justify-content: space-evenly;
@@ -229,3 +230,26 @@ const MoreInfoIconWrapper = styled.div`
     }
   }
 `;
+
+RegistrationRequestCard.propTypes = {
+  name: string.isRequired,
+  id: number.isRequired,
+  email: string.isRequired,
+  lsdEmail: string.isRequired,
+  secondaryEmail: string.isRequired,
+  lattes: string.isRequired,
+  roomName: string.isRequired,
+  hasKey: bool.isRequired,
+  memberType: string.isRequired,
+  birthDate: string.isRequired,
+  cpf: string.isRequired,
+  rg: string.isRequired,
+  isDetailsVisible: bool.isRequired,
+  onCloseDetails: func.isRequired,
+  onOpenDetails: func.isRequired,
+  passport: string.isRequired,
+  onSubmitReview: func.isRequired,
+  services: PropTypes.arrayOf(string).isRequired,
+  registrationStatus: string.isRequired,
+  onSubmitReload: func.isRequired,
+};
