@@ -3,7 +3,7 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
 import Card from "../../components/Card";
-import Layout from "../../components/Layout";
+import Layout from "../../layouts/Layout";
 import arrowback from "../../assets/arrow-back.svg";
 
 import ProjectService from "../../services/ProjectsService";

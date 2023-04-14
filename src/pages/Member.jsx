@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
-import Layout from "../components/Layout";
+import Layout from "../layouts/Layout";
 import Card from "../components/Card";
 import EditMemberModal from "pages/EditMemberModal";
 import AssociatedProjects from "components/AssociatedProjects";

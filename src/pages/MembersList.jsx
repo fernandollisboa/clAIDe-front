@@ -4,7 +4,7 @@ import styled from "styled-components";
 
 import Card from "../components/Card";
 import Menu from "../components/Menu";
-import Layout from "../components/Layout";
+import Layout from "../layouts/Layout";
 import { alertUnmappedError, alertUser } from "utils/alertUser";
 import maskPhone from "../utils/maskPhone";
 import MembersService from "../services/MembersService";

@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 
 import Card from "../components/Card";
-import Layout from "../components/Layout";
+import Layout from "../layouts/Layout";
 import Menu from "../components/Menu";
 import { alertUnmappedError, alertUser } from "utils/alertUser";
 

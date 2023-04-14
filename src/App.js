@@ -30,7 +30,7 @@ function App() {
         <Route path="projects/new" element={<NewProject />} />
         <Route path="projects" element={<ProjectsList />} />
         <Route path="projects/:id" element={<Project />} />
-        <Route path="registration-refused" element={<RegistrationsRefused />} />
+        <Route path="members/registration-requests-refused" element={<RegistrationsRefused />} />
       </Route>
       <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>

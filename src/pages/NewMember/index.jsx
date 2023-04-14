@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import Layout from "../../components/Layout";
+import Layout from "../../layouts/Layout";
 import MemberForm from "../../components/MemberForm";
 import MembersService from "../../services/MembersService";
 import { alertUser } from "../../utils/alertUser";
@@ -12,15 +12,9 @@ export default function NewMember() {
   const navigate = useNavigate();
 
   async function handleSubmit(formData) {
-    const { emailLsd, secondEmail } = formData;
-
     try {
-      delete formData.emailLsd;
-      delete formData.secondEmail;
       const member = {
         ...formData,
-        secondaryEmail: secondEmail || "",
-        lsdEmail: emailLsd || "",
       };
 
       await MembersService.create(member);
@@ -34,6 +28,7 @@ export default function NewMember() {
       if (status === 422) {
         alertUser({ text: "Verifique os campos em destaque", type: "error" });
         const { errorLabels } = error.response.data;
+
         setErrors([...errorLabels]);
       } else if (status === 409) {
         const { errorLabels } = error.response.data;

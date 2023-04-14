@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-import Layout from "components/Layout";
+import Layout from "layouts/Layout";
 import Container from "components/Container";
 import NavigationCard from "components/NavigationCard";
 import useAuth from "hooks/useAuth";
@@ -18,8 +18,8 @@ export default function MembersMenu() {
       allowedRoles: ["SUPPORT"],
     },
     {
-      path: "/registration-refused",
-      label: "Solicitações de recusadas",
+      path: "/members/registration-requests-refused",
+      label: "Solicitações Recusadas",
     },
   ];
 
