@@ -39,7 +39,7 @@ export default function MemberForm({
     phone: "",
     lsdEmail: "",
     email: "",
-    secondEmail: "",
+    secondaryEmail: "",
     memberType: "",
     lattes: "",
     roomName: "",

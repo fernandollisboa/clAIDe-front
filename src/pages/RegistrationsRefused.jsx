@@ -37,7 +37,7 @@ export default function RegistrationsRefused() {
 
   return (
     <Layout>
-      <PageTitle>Cadastro recusados de Cadastro</PageTitle>
+      <PageTitle>Cadastros recusados</PageTitle>
       <ContentWrapper>
         <Container>
           <CardsContainer>

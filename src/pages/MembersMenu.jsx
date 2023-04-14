@@ -18,8 +18,8 @@ export default function MembersMenu() {
       allowedRoles: ["SUPPORT"],
     },
     {
-      path: "/registration-refused",
-      label: "Solicitações de recusadas",
+      path: "/members/registration-requests-refused",
+      label: "Solicitações Recusadas",
     },
   ];
 
