@@ -40,7 +40,6 @@ export default function Members() {
 
       setMembers(filteredDataOnlyRegistrationActive);
     } catch (err) {
-      console.log({ err });
       const { status } = err.response;
       if (status === 401) {
         logout();

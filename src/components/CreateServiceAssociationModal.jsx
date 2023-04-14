@@ -24,6 +24,7 @@ export default function CreateServiceAssociationModal({
   serviceSelected,
   setServiceSelected,
 }) {
+  // const [otherService, setOtherService] = useState("");
   const [services] = useState([
     { name: "Mattermost" },
     { name: "GitLab" },
@@ -33,8 +34,17 @@ export default function CreateServiceAssociationModal({
     { name: "OpenStack" },
   ]);
 
-  function handleChangeService(event) {
-    setServiceSelected(event.target.value);
+  // function handleChangeOtherService(event) {
+  //   setOtherService(event.target.value);
+  // }
+
+  function handleChangeService(service) {
+    if (serviceSelected?.includes(service)) {
+      const updateServiceSelected = serviceSelected.filter((item) => service !== item);
+      setServiceSelected(updateServiceSelected);
+    } else {
+      setServiceSelected([...serviceSelected, service]);
+    }
   }
 
   return (
@@ -45,30 +55,29 @@ export default function CreateServiceAssociationModal({
           {services.map((service) => (
             <Card
               key={service.name}
-              onClick={() => setServiceSelected(service.name)}
+              onClick={() => handleChangeService(service.name)}
               style={{
                 maxWidth: "20%",
                 display: "flex",
                 justifyContent: "center",
               }}
-              isSelected={serviceSelected === service.name}
+              isSelected={serviceSelected?.includes(service.name)}
             >
               <div>{service.name}</div>
             </Card>
           ))}
 
-          <InputService
+          {/* <InputService
             type="text"
             placeholder="Outros"
-            onClick={() => setServiceSelected("")}
-            onChange={handleChangeService}
-          />
+            value={otherService}
+            onChange={handleChangeOtherService}
+          /> */}
         </Services>
         <ButtonsContainer>
           <Button
             onClick={() => {
               setShowModal(false);
-              setServiceSelected({});
             }}
             width={"30%"}
           >
@@ -76,7 +85,10 @@ export default function CreateServiceAssociationModal({
           </Button>
           <Button
             width={"30%"}
-            onClick={onUpdate}
+            onClick={() => {
+              onUpdate();
+              // handleChangeService(otherService);
+            }}
             disabled={Object.keys(serviceSelected).length ? false : false}
           >
             Confirmar
@@ -107,11 +119,11 @@ const ButtonsContainer = styled.div`
   margin-top: 8%;
   justify-content: space-around;
 `;
-const InputService = styled.input`
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.184);
-  border-radius: 15px;
-  border: none;
-  width: 20%;
-  padding: 1.2%;
-  margin: 0 0.5% 1% 0.5%;
-`;
+// const InputService = styled.input`
+//   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.184);
+//   border-radius: 15px;
+//   border: none;
+//   width: 20%;
+//   padding: 1.2%;
+//   margin: 0 0.5% 1% 0.5%;
+// `;

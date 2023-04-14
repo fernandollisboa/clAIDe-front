@@ -24,7 +24,6 @@ export default function EditProject({
   const [errors, setErrors] = useState(null);
 
   async function handleSubmit(formData) {
-    console.log("form data");
     try {
       const project = {
         ...formData,

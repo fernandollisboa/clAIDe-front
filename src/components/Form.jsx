@@ -187,12 +187,13 @@ export default function Form({
                   <FormGroup key={id} error={getErrorMessageByFieldName(id)}>
                     <Label htmlFor={id}>{name}</Label>
                     <CheckboxContainer>
-                      {options.map(({ value, label }) => {
+                      {options.map(({ value, label, checked }) => {
                         return (
                           <Checkbox key={value}>
                             <input
                               type="checkbox"
                               id={value}
+                              checked={checked}
                               name={id}
                               value={value}
                               onChange={handleCheckboxChange}

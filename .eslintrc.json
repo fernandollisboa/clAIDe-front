@@ -23,6 +23,12 @@
     "react/prop-types": "warn",
     "no-unused-vars": "warn",
     "react-hooks/rules-of-hooks": "error",
+    "import/no-useless-path-segments": [
+      "error",
+      {
+        "noUselessIndex": true
+      }
+    ],
     "react-hooks/exhaustive-deps": "warn",
     "prettier/prettier": "error"
   },
