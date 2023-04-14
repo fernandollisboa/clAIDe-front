@@ -69,21 +69,20 @@ export default function ServiceList({ member, onSubmitReload }) {
       />
       <ServiceHeader>
         <Title>Serviços</Title>
-        {managerService && (
-          <IoAddCircle
-            cursor={"pointer"}
-            size={40}
-            color="#486fbd"
-            onClick={() => setShowServiceAddModal(true)}
-          />
-        )}
-        <ButtonManager onClick={handleToggleManagerService} style={{ padding: 12 }}>
-          Gerenciar
-        </ButtonManager>
+
+        <IoAddCircle
+          visibility={managerService ? "visible" : "hidden"}
+          cursor={"pointer"}
+          size={40}
+          color="#486fbd"
+          onClick={() => setShowServiceAddModal(true)}
+        />
+
+        <ButtonManager onClick={handleToggleManagerService}>Gerenciar</ButtonManager>
       </ServiceHeader>
       <ServiceContainer>
         {member.services.map((service) => (
-          <div className="cards" key={service.key}>
+          <CardsContainer key={service.key}>
             <ServiceCard>
               {service}
               {managerService && (
@@ -97,7 +96,7 @@ export default function ServiceList({ member, onSubmitReload }) {
                 />
               )}
             </ServiceCard>
-          </div>
+          </CardsContainer>
         ))}
       </ServiceContainer>
     </Services>
@@ -112,21 +111,22 @@ const ButtonManager = styled.button`
   border: 2px solid #131313;
   text-decoration: none;
   border-radius: 4px;
-  padding: 4%;
   background: #fff;
   font-weight: 700;
   font-size: 1rem;
-  margin-right: 5%;
   cursor: pointer;
 `;
 
-const Title = styled.div`
+const CardsContainer = styled.div`
+  align-items: center;
   display: flex;
-  justify-content: center;
+`;
+const Title = styled.div`
   font-weight: 700;
+
   font-size: 20px;
   line-height: 25px;
-  padding: 3% 0;
+  padding: 1%;
 `;
 const Services = styled.div`
   height: 200px;
@@ -134,17 +134,13 @@ const Services = styled.div`
   border-top: 2px solid #bcbcbc;
 `;
 const ServiceHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  display: grid;
+  grid-template-columns: 12fr 1fr 2fr;
 `;
 const ServiceContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
   gap: 2vh;
   font-size: 1rem;
-  .cards {
-    align-items: center;
-    display: flex;
-  }
+  margin-top: 2vh;
 `;
