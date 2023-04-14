@@ -29,7 +29,7 @@ export default function MemberForm({
   initialState = {},
   ...rest
 }) {
-  const { setError, removeError, errors } = useErrors();
+  const { setError, removeError, errors, clearAllErrors } = useErrors();
   const [memberData, setMemberData] = useState({
     name: "",
     username: "",
@@ -86,26 +86,6 @@ export default function MemberForm({
       isBrazilian: !!Number(isBrazilian),
       hasKey: !!Number(hasKey),
     });
-
-    if (formSent) {
-      setMemberData({
-        name: "",
-        birthDate: "",
-        username: "",
-        cpf: "",
-        rg: "",
-        passport: "",
-        phone: "",
-        lsdEmail: "",
-        email: "",
-        secondaryEmail: "",
-        memberType: "",
-        lattes: "",
-        roomName: "",
-        hasKey: false,
-        isBrazilian: true,
-      });
-    }
   }
 
   const inputs = [
@@ -248,12 +228,15 @@ export default function MemberForm({
         { value: "VPN", label: "VPN" },
         { value: "OTRS", label: "OTRS" },
         { value: "OpenStack", label: "OpenStack" },
-      ],
+      ].map((option) => ({ ...option, checked: services.includes(option.value) })),
     },
   ];
 
   useEffect(() => {
     ["passport", "rg", "cpf"].forEach(removeError);
+    return () => {
+      clearAllErrors();
+    };
   }, [isBrazilian]);
 
   const isFormValid =

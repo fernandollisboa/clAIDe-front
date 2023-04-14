@@ -74,15 +74,19 @@ export default function ServiceList({ member, onSubmitReload }) {
           visibility={managerService ? "visible" : "hidden"}
           cursor={"pointer"}
           size={40}
+          title="Adicionar Serviço"
+          alt="Adicionar Serviço"
           color="#486fbd"
           onClick={() => setShowServiceAddModal(true)}
         />
 
-        <ButtonManager onClick={handleToggleManagerService}>Gerenciar</ButtonManager>
+        <ButtonManager isSelected={managerService} onClick={handleToggleManagerService}>
+          Gerenciar
+        </ButtonManager>
       </ServiceHeader>
       <ServiceContainer>
         {member.services.map((service) => (
-          <CardsContainer key={service.key}>
+          <CardsContainer key={service.name}>
             <ServiceCard>
               {service}
               {managerService && (
@@ -108,10 +112,10 @@ const ServiceCard = styled(Card)`
   padding: 4%;
 `;
 const ButtonManager = styled.button`
-  border: 2px solid #131313;
+  background: ${({ isSelected }) => (isSelected ? "#486fbd37" : "#fff")};
+  border: 2px solid ${({ isSelected }) => (isSelected ? "#486fbd" : "#131313")};
   text-decoration: none;
   border-radius: 4px;
-  background: #fff;
   font-weight: 700;
   font-size: 1rem;
   cursor: pointer;
@@ -123,7 +127,6 @@ const CardsContainer = styled.div`
 `;
 const Title = styled.div`
   font-weight: 700;
-
   font-size: 20px;
   line-height: 25px;
   padding: 1%;
