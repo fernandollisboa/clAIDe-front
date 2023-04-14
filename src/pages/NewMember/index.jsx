@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import Layout from "../../components/Layout";
+import Layout from "../../layouts/Layout";
 import MemberForm from "../../components/MemberForm";
 import MembersService from "../../services/MembersService";
 import { alertUser } from "../../utils/alertUser";

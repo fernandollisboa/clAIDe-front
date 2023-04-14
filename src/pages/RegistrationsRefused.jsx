@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import Container from "components/Container";
 import styled from "styled-components";
 
-import Layout from "components/Layout";
+import Layout from "layouts/Layout";
 import SupportService from "services/SupportService";
 import RegistrationRequestCard from "components/RegistrationRequestCard";
 import NoDataMessage from "components/NoDataMessage";

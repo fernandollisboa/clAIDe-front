@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import ProjectForm from "../../components/ProjectForm";
-import Layout from "../../components/Layout";
+import Layout from "../../layouts/Layout";
 import ProjectsService from "../../services/ProjectsService";
 import { alertUser } from "../../utils/alertUser";
 

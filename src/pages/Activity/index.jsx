@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo } from "react";
 
-import Layout from "../../components/Layout";
+import Layout from "../../layouts/Layout";
 import styled from "styled-components";
 
 import arrow from "../../assets/arrow.svg";
