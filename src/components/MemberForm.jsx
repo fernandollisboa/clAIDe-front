@@ -156,7 +156,7 @@ export default function MemberForm({
       id: "memberType",
       value: memberType,
       options: [
-        { value: "", label: "Tipo de Membro" },
+        { value: "", label: "Tipo de Membro *" },
         { value: "STUDENT", label: "Estudante" },
         { value: "PROFESSOR", label: "Professor" },
         { value: "EXTERNAL", label: "Externo" },
