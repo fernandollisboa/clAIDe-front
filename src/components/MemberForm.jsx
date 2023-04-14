@@ -2,20 +2,21 @@ import { string, func, bool, object } from "prop-types";
 import { useState, useEffect, useMemo } from "react";
 
 import { MINIMUM_REQUIRED_AGE, getTodaySubtractYears } from "utils/dateUtil";
-import useErrors from "../../hooks/useErrors";
-import maskCpf from "../../utils/maskCpf";
-import maskPhone from "../../utils/maskPhone";
-import removeChar from "../../utils/removeChar";
+import useErrors from "../hooks/useErrors";
+import maskCpf from "../utils/maskCpf";
+import maskPhone from "../utils/maskPhone";
+import removeChar from "../utils/removeChar";
 import Form from "components/Form";
 import maskDate from "utils/maskDate";
 import parseDateBrToISO from "utils/parseDateBrToISO";
 
 MemberForm.propTypes = {
-  buttonLabel: string.isRequired,
+  buttonLabel: string,
   typeLabel: string.isRequired,
   onSubmit: func.isRequired,
   formSent: bool.isRequired,
   initialState: object,
+  incomingErrors: bool,
   maxWidth: string,
 };
 export default function MemberForm({
@@ -28,7 +29,7 @@ export default function MemberForm({
   initialState = {},
   ...rest
 }) {
-  const { setError, removeError, errors } = useErrors();
+  const { setError, removeError, errors, clearAllErrors } = useErrors();
   const [memberData, setMemberData] = useState({
     name: "",
     username: "",
@@ -38,10 +39,11 @@ export default function MemberForm({
     phone: "",
     lsdEmail: "",
     email: "",
-    secondEmail: "",
+    secondaryEmail: "",
     memberType: "",
     lattes: "",
     roomName: "",
+    services: [],
     ...initialState,
     birthDate: maskDate(initialState?.birthDate),
     isBrazilian: initialState?.isBrazilian ?? 1,
@@ -64,6 +66,7 @@ export default function MemberForm({
     memberType,
     roomName,
     hasKey,
+    services,
   } = memberData;
   function handleBirthDateInputChange(birthDate) {
     setMemberData((state) => ({ ...state, birthDate: maskDate(birthDate) }));
@@ -83,26 +86,6 @@ export default function MemberForm({
       isBrazilian: !!Number(isBrazilian),
       hasKey: !!Number(hasKey),
     });
-
-    if (formSent) {
-      setMemberData({
-        name: "",
-        birthDate: "",
-        username: "",
-        cpf: "",
-        rg: "",
-        passport: "",
-        phone: "",
-        lsdEmail: "",
-        email: "",
-        secondaryEmail: "",
-        memberType: "",
-        lattes: "",
-        roomName: "",
-        hasKey: false,
-        isBrazilian: true,
-      });
-    }
   }
 
   const inputs = [
@@ -149,16 +132,15 @@ export default function MemberForm({
     {
       inputType: "select",
       required: true,
-      name: "Tipo de Membro",
+      name: "Tipo de Membro *",
       id: "memberType",
       value: memberType,
       options: [
-        { value: "", label: "Tipo de Membro" },
+        { value: "", label: "Tipo de Membro *" },
         { value: "STUDENT", label: "Estudante" },
         { value: "PROFESSOR", label: "Professor" },
         { value: "EXTERNAL", label: "Externo" },
         { value: "SUPPORT", label: "Suporte" },
-        { value: "ADMIN", label: "Administrador" },
       ],
     },
     {
@@ -231,10 +213,29 @@ export default function MemberForm({
       value: secondaryEmail,
       type: "email",
     },
+    {
+      inputType: "checkbox",
+      name: "Acesso à serviços:",
+      id: "services",
+      placeholder: "Acesso à serviços:",
+      value: services,
+      options: [
+        { value: "GitHub", label: "GitHub" },
+        { value: "Mattermost", label: "Mattermost" },
+        { value: "GitLab", label: "GitLab" },
+        { value: "Redmine", label: "Redmine" },
+        { value: "VPN", label: "VPN" },
+        { value: "OTRS", label: "OTRS" },
+        { value: "OpenStack", label: "OpenStack" },
+      ].map((option) => ({ ...option, checked: services.includes(option.value) })),
+    },
   ];
 
   useEffect(() => {
     ["passport", "rg", "cpf"].forEach(removeError);
+    return () => {
+      clearAllErrors();
+    };
   }, [isBrazilian]);
 
   const isFormValid =

@@ -4,6 +4,7 @@ import { reset } from "styled-reset";
 const GlobalStyle = createGlobalStyle`
     ${reset}
     body {
+      margin-top: 500px;
       background-color: #F6F5FC;
       font-family: 'CircularStd-Medium', sans-serif;
       font-size: 12px;

@@ -1,7 +1,8 @@
 import styled from "styled-components";
 
 export default function NoDataMessage(props) {
-  return <NoDataWrapper>{props.message || "Sem dados por enquanto"}</NoDataWrapper>;
+  const message = props.message || "Sem dados por enquanto";
+  return <NoDataWrapper>{message}</NoDataWrapper>;
 }
 
 const NoDataWrapper = styled.div`

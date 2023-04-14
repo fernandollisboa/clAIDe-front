@@ -3,7 +3,7 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
 import Card from "../../components/Card";
-import Layout from "../../components/Layout";
+import Layout from "../../layouts/Layout";
 import arrowback from "../../assets/arrow-back.svg";
 
 import ProjectService from "../../services/ProjectsService";
@@ -24,7 +24,6 @@ export default function Project() {
   const { id } = params;
 
   const loadDashboardProject = useCallback(async () => {
-    console.log("useEffect");
     setIsLoading(true);
     try {
       const { data: project } = await ProjectService.getById(id);
@@ -48,7 +47,7 @@ export default function Project() {
   }, [loadDashboardProject]);
 
   function navigateToMember(id) {
-    navigate(`/member/${id}`);
+    navigate(`/members/${id}`);
   }
 
   return (

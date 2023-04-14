@@ -2,20 +2,21 @@ import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
-import Card from "../../components/Card";
-import Menu from "../../components/Menu";
-import Layout from "../../components/Layout";
-import { setSession } from "contexts/AuthContext";
+import Card from "../components/Card";
+import Menu from "../components/Menu";
+import Layout from "../layouts/Layout";
 import { alertUnmappedError, alertUser } from "utils/alertUser";
-import maskPhone from "../../utils/maskPhone";
-import MembersService from "../../services/MembersService";
+import maskPhone from "../utils/maskPhone";
+import MembersService from "../services/MembersService";
 import Loader from "components/Loader";
 import NoDataMessage from "components/NoDataMessage";
+import useAuth from "hooks/useAuth";
 
 export default function Members() {
+  const { logout } = useAuth();
   const [members, setMembers] = useState([]);
   const [membersNameToBeSearched, setMembersNameToBeSearched] = useState("");
-  const [isActive, setIsActive] = useState(true);
+  const [isActive, setIsActive] = useState("");
   const [desc, setDesc] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
@@ -31,14 +32,18 @@ export default function Members() {
   async function loadMembers() {
     setIsLoading(true);
     try {
-      const membersList = await MembersService.getAll(isActive, desc);
+      const { data } = await MembersService.getAll(isActive, desc);
 
-      setMembers(membersList.data);
+      const filteredDataOnlyRegistrationActive = data.filter(
+        (member) => member.registrationStatus.status === "APPROVED"
+      );
+
+      setMembers(filteredDataOnlyRegistrationActive);
     } catch (err) {
       const { status } = err.response;
       if (status === 401) {
-        setSession(null);
-        alertUser({ text: "Token expirado, por favor logue novamente", type: "warning" });
+        logout();
+        alertUser({ text: "Token expirado, por favor entre novamente", type: "warning" });
         navigate("/");
       } else alertUnmappedError(err);
     }
@@ -53,13 +58,13 @@ export default function Members() {
     setIsActive(event.target.value);
   }
   function handleToggleDesc() {
-    setDesc((prevState) => !prevState);
+    setDesc((s) => !s);
   }
   function handleChangeSearchMember(event) {
     setMembersNameToBeSearched(event.target.value);
   }
   function navigateToMember(id) {
-    navigate(`/member/${id}`);
+    navigate(`/members/${id}`);
   }
   return (
     <>
@@ -71,7 +76,7 @@ export default function Members() {
           nameToBeSearched={membersNameToBeSearched}
           handleChangeSearch={handleChangeSearchMember}
           handleToggleIsActive={handleToggleIsActive}
-          url="/newMember"
+          url="/members/new"
         />
         <Container>
           {isLoading ? (
@@ -134,7 +139,9 @@ const FontData = styled.span`
 `;
 
 const MemberListContainer = styled.div`
-  width: 100%;
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
+  width: 100%;
+  gap: 0.2vh;
 `;

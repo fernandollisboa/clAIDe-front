@@ -3,12 +3,13 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { IoEyeOff, IoEyeSharp, IoPerson } from "react-icons/io5";
 
-import LogoLsdWhite from "../../assets/logo_lsd_branco.png";
-import Footer from "../../layouts/Footer";
-import LoginService from "../../services/LoginService";
-import { alertUser } from "../../utils/alertUser";
+import LogoLsdWhite from "../assets/logo_lsd_branco.png";
+import Footer from "../layouts/Footer";
+import { alertUser } from "../utils/alertUser";
+import useAuth from "hooks/useAuth";
 
 export default function Login() {
+  const { auth, login } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -16,29 +17,18 @@ export default function Login() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    (async () => {
-      try {
-        const accessToken = localStorage.getItem("claideToken");
-        if (accessToken) {
-          localStorage.setItem("claideToken", accessToken);
-          navigate("/members");
-        }
-      } catch (err) {
-        // console.log(err);
-      }
-    })();
-  }, []);
+    if (auth) {
+      navigate("/home");
+    }
+  }, [auth, navigate]);
 
   async function sendData(e) {
     e.preventDefault();
     setIsLoading(true);
     try {
-      const response = await LoginService.post({ username, password });
-      if (localStorage.getItem("claideToken")) localStorage.removeItem("claideToken");
-
-      localStorage.setItem("claideToken", response.data.token);
+      await login({ username, password });
       alertUser({ text: "Bem-vindo(a)!", type: "success" });
-      navigate("/members");
+      navigate("/home");
     } catch (err) {
       const { message } = err;
       if (message === "Network Error") {
@@ -132,7 +122,7 @@ const PageGrid = styled.div`
   height: 100%;
 
   @media screen and (max-width: 1200px) {
-    grid-template-columns: 4fr 1fr; // TO-DO isso aqui tá horrivel
+    grid-template-columns: 4fr 1fr;
     grid-template-areas: "l l" "f f";
   }
 `;
@@ -160,7 +150,7 @@ const LogoWrapper = styled.div`
     width: 420px;
     height: 420px;
     object-fit: none;
-    @media screen and (max-width: 1200px) {
+    @media screen and (max-width: 992px) {
       display: none;
       width: 0;
     }

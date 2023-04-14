@@ -3,14 +3,11 @@ import { createHeaders, createQueryString } from "./requestBuilders";
 
 class MembersService {
   create(body) {
-    const config = createHeaders();
-    return api.post("members/", body, config);
+    return api.post("members/", body);
   }
   getAll(isActive, desc = false) {
-    const config = createHeaders();
     const query = createQueryString({ isActive, desc });
-
-    return api.get(`members/${query}`, config);
+    return api.get(`members/${query}`);
   }
   getById(id) {
     const config = createHeaders();
@@ -34,6 +31,7 @@ class MembersService {
       lsdEmail,
       secondaryEmail,
       roomName,
+      services,
     } = memberData;
     const body = {
       name,
@@ -51,6 +49,7 @@ class MembersService {
       lsdEmail,
       secondaryEmail,
       roomName,
+      services,
     };
     const config = createHeaders();
     return api.put(`members/${id}`, body, config);

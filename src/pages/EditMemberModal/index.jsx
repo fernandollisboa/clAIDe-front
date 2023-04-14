@@ -5,16 +5,25 @@ import MemberForm from "../../components/MemberForm";
 import MembersService from "../../services/MembersService";
 import { alertUser } from "../../utils/alertUser";
 import Modal from "components/Modal";
+import SupportService from "services/SupportService";
 
 EditMemberModal.propTypes = {
   showModal: bool.isRequired,
   setShowModal: func.isRequired,
+  isRejected: bool,
   initialState: object,
+  onSubmitReload: func,
 };
 EditMemberModal.defaultProps = {
   initialState: {},
 };
-export default function EditMemberModal({ showModal, setShowModal, initialState, onSubmitReload }) {
+export default function EditMemberModal({
+  showModal,
+  setShowModal,
+  initialState,
+  onSubmitReload,
+  isRejected,
+}) {
   const [formSent, setFormSent] = useState(false);
   const [errors, setErrors] = useState(null);
 
@@ -22,7 +31,12 @@ export default function EditMemberModal({ showModal, setShowModal, initialState,
     try {
       const member = { ...formData };
       await MembersService.update(member);
-
+      if (isRejected) {
+        await SupportService.postRegistrationReview({
+          status: "PENDING",
+          memberId: member.id,
+        });
+      }
       alertUser({ text: "Formulário enviado", type: "success" });
       setFormSent(true);
       setShowModal(false);
@@ -54,7 +68,7 @@ export default function EditMemberModal({ showModal, setShowModal, initialState,
   }
 
   return (
-    <Modal modalOpen={showModal} height="75vh">
+    <Modal modalOpen={showModal} height="fit-content">
       <MemberForm
         onSubmit={handleSubmit}
         typeLabel="Editar Membro"

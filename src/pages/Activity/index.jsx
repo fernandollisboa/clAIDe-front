@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo } from "react";
 
-import Layout from "../../components/Layout";
+import Layout from "../../layouts/Layout";
 import styled from "styled-components";
 
 import arrow from "../../assets/arrow.svg";
@@ -9,7 +9,7 @@ import ProjectsService from "../../services/ProjectsService";
 import maskDate from "../../utils/maskDate";
 import Loader from "components/Loader";
 
-export default function Activty() {
+export default function Activity() {
   const [activitys, setActivitys] = useState([]);
   const [activityUserNameToBeSearched, setActivityUserNameToBeSearched] = useState("");
   const [desc, setDesc] = useState(false);
@@ -144,7 +144,6 @@ const Container = styled.div`
 `;
 const Title = styled.h1`
   justify-content: center;
-  font-style: italic;
   font-weight: 700;
   font-size: 3rem;
   padding-bottom: 8%;

@@ -24,7 +24,6 @@ export default function EditProject({
   const [errors, setErrors] = useState(null);
 
   async function handleSubmit(formData) {
-    console.log("form data");
     try {
       const project = {
         ...formData,
@@ -63,7 +62,7 @@ export default function EditProject({
   }
 
   return (
-    <Modal modalOpen={showModal} height="75vh">
+    <Modal modalOpen={showModal} height="fit-content">
       <ProjectForm
         onSubmit={handleSubmit}
         typeLabel="Editar Projeto"
